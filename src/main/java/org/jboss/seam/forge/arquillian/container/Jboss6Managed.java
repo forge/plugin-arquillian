@@ -26,7 +26,8 @@ public class Jboss6Managed implements Container {
         DependencyBuilder dep3 = DependencyBuilder.create()
                 .setGroupId("org.jboss.jbossas")
                 .setArtifactId("jboss-server-manager")
-                .setVersion("1.0.3.GA");
+                .setVersion("6.0.0.Final")
+                .setPackagingType("pom");
         builder.addProfile("jbossas-managed-6", dep1, dep2, dep3);
     }
 }
