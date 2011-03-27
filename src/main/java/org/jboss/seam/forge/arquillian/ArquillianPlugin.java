@@ -152,9 +152,9 @@ public class ArquillianPlugin implements Plugin {
 
     private String createDeploymentFor(JavaSource<?> javaSource, boolean enableJPA) {
         StringBuilder b = new StringBuilder();
-        b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")\\n")
-                .append(".addClass(").append(javaSource.getName()).append(".class)\\n")
-                .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))\\n");
+        b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")")
+                .append(".addClass(").append(javaSource.getName()).append(".class)")
+                .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))");
 
         if(enableJPA) {
             b.append(".addAsManifestResource(\"persistence.xml\", ArchivePaths.create(\"persistence.xml\"))");
