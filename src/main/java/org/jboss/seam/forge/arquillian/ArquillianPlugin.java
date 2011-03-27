@@ -79,14 +79,15 @@ public class ArquillianPlugin implements Plugin {
 
     @Command("create-test")
     public void createTest(
-            @Option(name = "class", required = false, type = PromptType.JAVA_CLASS) String classUnderTest,
+            @Option(name = "class", required = true, type = PromptType.JAVA_CLASS) JavaResource classUnderTest,
+            @Option(name = "enableJPA", required = false, flagOnly = true) boolean enableJPA,
             final PipeOut out) throws FileNotFoundException {
         JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-        JavaResource javaResource = java.getJavaResource(classUnderTest);
+
         DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
         boolean junit = dependencyFacet.hasDependency(createJunitDependency());
 
-        JavaSource<?> javaSource = javaResource.getJavaSource();
+        JavaSource<?> javaSource = classUnderTest.getJavaSource();
         out.println("TestClass: " + javaSource.getQualifiedName());
         JavaClass testclass = JavaParser.create(JavaClass.class)
                 .setPackage(javaSource.getPackage())
@@ -112,7 +113,7 @@ public class ArquillianPlugin implements Plugin {
                 .setName("createDeployment")
                 .setPublic()
                 .setReturnType("JavaArchive")
-                .setBody(createDeploymentFor(javaSource))
+                .setBody(createDeploymentFor(javaSource, enableJPA))
                 .addAnnotation("Deployment");
 
         testclass.addMethod()
@@ -149,11 +150,18 @@ public class ArquillianPlugin implements Plugin {
         return "Assert.assertNotNull(" + instanceName + ");";
     }
 
-    private String createDeploymentFor(JavaSource<?> javaSource) {
+    private String createDeploymentFor(JavaSource<?> javaSource, boolean enableJPA) {
         StringBuilder b = new StringBuilder();
-        return b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")")
-                .append(".addClass(").append(javaSource.getName()).append(".class)")
-                .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"));").toString();
+        b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")\\n")
+                .append(".addClass(").append(javaSource.getName()).append(".class)\\n")
+                .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))\\n");
+
+        if(enableJPA) {
+            b.append(".addAsManifestResource(\"persistence.xml\", ArchivePaths.create(\"persistence.xml\"))");
+        }
+
+        b.append(";");
+        return b.toString();
 
     }
 
