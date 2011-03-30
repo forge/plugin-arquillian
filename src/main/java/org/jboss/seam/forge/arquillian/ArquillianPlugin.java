@@ -1,5 +1,6 @@
 package org.jboss.seam.forge.arquillian;
 
+import org.jboss.arquillian.api.Deployment;
 import org.jboss.seam.forge.arquillian.container.Container;
 import org.jboss.seam.forge.parser.JavaParser;
 import org.jboss.seam.forge.parser.java.JavaClass;
@@ -10,17 +11,25 @@ import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
 import org.jboss.seam.forge.resources.java.JavaResource;
 import org.jboss.seam.forge.shell.PromptType;
+import org.jboss.seam.forge.shell.Shell;
 import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.plugins.*;
 import org.jboss.seam.forge.shell.util.BeanManagerUtils;
+import org.jboss.seam.forge.shell.util.NativeSystemCall;
 import org.jboss.seam.forge.spec.cdi.CDIFacet;
 import org.jboss.seam.forge.spec.jpa.PersistenceFacet;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 @Alias("arquillian")
 @RequiresFacet(CDIFacet.class)
@@ -33,6 +42,13 @@ public class ArquillianPlugin implements Plugin {
     @Inject @Named("arquillianVersion") String arquillianVersion;
     @Inject
     private Event<InstallFacets> request;
+
+    @Inject
+    @Current
+    private JavaResource resource;
+
+    @Inject
+    private Shell shell;
 
 
     @Command("setup")
@@ -88,7 +104,7 @@ public class ArquillianPlugin implements Plugin {
         boolean junit = dependencyFacet.hasDependency(createJunitDependency());
 
         JavaSource<?> javaSource = classUnderTest.getJavaSource();
-        out.println("TestClass: " + javaSource.getQualifiedName());
+
         JavaClass testclass = JavaParser.create(JavaClass.class)
                 .setPackage(javaSource.getPackage())
                 .setName(javaSource.getName() + "Test")
@@ -146,6 +162,70 @@ public class ArquillianPlugin implements Plugin {
 
     }
 
+    @Command("export")
+    @RequiresResource(JavaResource.class)
+    public void exportDeployment(final PipeOut out) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+
+        JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+
+        JavaResource testJavaResource = java.getTestJavaResource("forge/arquillian/DeploymentExporter.java");
+        if (!testJavaResource.exists()) {
+            JavaClass deployementExporterClass = JavaParser.create(JavaClass.class)
+                    .setPackage("forge.arquillian")
+                    .setName("DeploymentExporter")
+                    .setPublic();
+            
+            deployementExporterClass.addMethod()
+                    .setName("main")
+                    .setStatic()
+                    .setPublic()
+                    .setReturnTypeVoid()
+                    .setParameters("String[] args")
+                    .setBody("try { Class<?> testClass = Class.forName(args[0]);" +
+                            "" +
+                            "" +
+                            "        Method[] methods = testClass.getMethods();" +
+                            "        Method deploymentMethod = null;" +
+                            "" +
+                            "        for (Method method : methods) {" +
+                            "            if (method.getAnnotation(Deployment.class) != null) {" +
+                            "                deploymentMethod = method;" +
+                            "                break;" +
+                            "            }" +
+                            "        }" +
+                            "" +
+                            "        Archive<?> archive = (Archive<?>) deploymentMethod.invoke(null);" +
+                            "        archive.as(ZipExporter.class).exportTo(new File(archive.getName()), true); } " +
+                            "catch(Exception ex) { ex.printStackTrace();} ");
+
+            deployementExporterClass.addImport("org.jboss.arquillian.api.Deployment");
+            deployementExporterClass.addImport("org.jboss.shrinkwrap.api.Archive");
+            deployementExporterClass.addImport("org.jboss.shrinkwrap.api.exporter.ZipExporter");
+            deployementExporterClass.addImport("java.io.File");
+            deployementExporterClass.addImport("java.lang.reflect.Method");
+
+            java.saveTestJavaSource(deployementExporterClass);
+        }
+
+
+        String[] compileArgs = {
+                "test-compile"
+        };
+
+        NativeSystemCall.execFromPath("mvn", compileArgs, out, shell.getCurrentProject().getProjectRoot());
+
+
+        String[] args = {
+                "exec:java",
+                "-Dexec.mainClass=forge.arquillian.DeploymentExporter",
+                "-Dexec.args=" + resource.getJavaSource().getQualifiedName() + "",
+                "-Dexec.classpathScope=test",
+                "-X"
+        };
+
+        NativeSystemCall.execFromPath("mvn", args, out, shell.getCurrentProject().getProjectRoot());
+    }
+
     private String createTestMethod(String instanceName) {
         return "Assert.assertNotNull(" + instanceName + ");";
     }
@@ -156,7 +236,7 @@ public class ArquillianPlugin implements Plugin {
                 .append(".addClass(").append(javaSource.getName()).append(".class)")
                 .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))");
 
-        if(enableJPA) {
+        if (enableJPA) {
             b.append(".addAsManifestResource(\"persistence.xml\", ArchivePaths.create(\"persistence.xml\"))");
         }
 
