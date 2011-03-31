@@ -32,10 +32,10 @@ public class ArquillianFacet extends BaseFacet {
     }
 
     private DependencyBuilder createArquillianDependency() {
-        DependencyBuilder dependencyBuilder = DependencyBuilder.create();
-        dependencyBuilder.setGroupId("org.jboss.arquillian");
-        dependencyBuilder.setArtifactId("arquillian-api");
-        dependencyBuilder.setVersion(arquillianVersion);
+        DependencyBuilder dependencyBuilder = DependencyBuilder.create()
+            .setGroupId("org.jboss.arquillian")
+            .setArtifactId("arquillian-api")
+            .setVersion(arquillianVersion);
         return dependencyBuilder;
     }
 
