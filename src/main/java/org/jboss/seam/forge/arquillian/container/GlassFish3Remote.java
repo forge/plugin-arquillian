@@ -1,6 +1,7 @@
 package org.jboss.seam.forge.arquillian.container;
 
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,7 +15,8 @@ public class GlassFish3Remote implements Container {
         DependencyBuilder dep1 = DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.container")
                 .setArtifactId("arquillian-glassfish-remote-3.1")
-                .setVersion(arquillianVersion);
+                .setVersion(arquillianVersion)
+                .setScopeType(ScopeType.TEST);
 
         builder.addProfile("glassfish-remote-3", dep1);
     }

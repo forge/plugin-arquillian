@@ -6,6 +6,7 @@ import org.jboss.seam.forge.parser.java.JavaClass;
 import org.jboss.seam.forge.parser.java.JavaSource;
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.project.facets.JavaSourceFacet;
 import org.jboss.seam.forge.resources.java.JavaResource;
@@ -286,14 +287,16 @@ public class ArquillianPlugin implements Plugin {
         return DependencyBuilder.create()
                 .setGroupId("junit")
                 .setArtifactId("junit")
-                .setVersion(JUNIT_VERSION);
+                .setVersion(JUNIT_VERSION)
+                .setScopeType(ScopeType.TEST);
     }
 
     private DependencyBuilder createJunitArquillianDependency() {
         return DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian")
                 .setArtifactId("arquillian-junit")
-                .setVersion(arquillianVersion);
+                .setVersion(arquillianVersion)
+                .setScopeType(ScopeType.TEST);
     }
 
 
@@ -301,14 +304,16 @@ public class ArquillianPlugin implements Plugin {
         return DependencyBuilder.create()
                 .setGroupId("org.testng")
                 .setArtifactId("testng")
-                .setVersion(TESTNG_VERSION);
+                .setVersion(TESTNG_VERSION)
+                .setScopeType(ScopeType.TEST);
     }
 
     private DependencyBuilder createTestNgArquillianDependency() {
         return DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian")
                 .setArtifactId("arquillian-testng")
-                .setVersion(arquillianVersion);
+                .setVersion(arquillianVersion)
+                .setScopeType(ScopeType.TEST);
     }
 
 

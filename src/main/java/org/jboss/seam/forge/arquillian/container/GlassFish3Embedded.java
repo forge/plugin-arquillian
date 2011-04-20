@@ -1,6 +1,7 @@
 package org.jboss.seam.forge.arquillian.container;
 
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,12 +15,14 @@ public class GlassFish3Embedded implements Container {
         DependencyBuilder dep1 = DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.container")
                 .setArtifactId("arquillian-glassfish-embedded-3.1")
-                .setVersion(arquillianVersion);
+                .setVersion(arquillianVersion)
+                .setScopeType(ScopeType.TEST);
 
         DependencyBuilder dep2 = DependencyBuilder.create()
                 .setGroupId("org.glassfish.extras")
                 .setArtifactId("glassfish-embedded-all")
-                .setVersion(GLASSFISH_VERSION);
+                .setVersion(GLASSFISH_VERSION)
+                .setScopeType(ScopeType.TEST);
 
         builder.addProfile("glassfish-embedded-3", dep1, dep2);
     }

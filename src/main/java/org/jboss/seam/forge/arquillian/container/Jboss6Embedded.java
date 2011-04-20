@@ -8,6 +8,7 @@ import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.ProjectModelException;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
 import org.jboss.seam.forge.project.dependencies.MavenDependencyAdapter;
+import org.jboss.seam.forge.project.dependencies.ScopeType;
 import org.jboss.seam.forge.project.facets.MavenCoreFacet;
 
 import javax.inject.Inject;
@@ -26,19 +27,22 @@ public class Jboss6Embedded implements Container {
         DependencyBuilder dep1 = DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.container")
                 .setArtifactId("arquillian-jbossas-embedded-6")
-                .setVersion(arquillianVersion);
+                .setVersion(arquillianVersion)
+                .setScopeType(ScopeType.TEST);
 
         DependencyBuilder dep2 = DependencyBuilder.create()
                 .setGroupId("org.jboss.jbossas")
                 .setArtifactId("jboss-as-depchain")
                 .setVersion("6.0.0.Final")
-                .setPackagingType("pom");
+                .setPackagingType("pom")
+                .setScopeType(ScopeType.TEST);
 
 
         DependencyBuilder dep3 = DependencyBuilder.create()
                 .setGroupId("org.jboss.jbossas")
                 .setArtifactId("jboss-server-manager")
-                .setVersion("1.0.3.GA");
+                .setVersion("1.0.3.GA")
+                .setScopeType(ScopeType.TEST);
 
 
         MavenCoreFacet facet = project.getFacet(MavenCoreFacet.class);
