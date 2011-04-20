@@ -168,7 +168,7 @@ public class ArquillianPlugin implements Plugin {
 
     private void addDeployementMethod(boolean enableJPA, JavaSource<?> javaSource, JavaClass testclass) {
         testclass.addMethod()
-                .setStatic()
+                .setStatic(true)
                 .setName("createDeployment")
                 .setPublic()
                 .setReturnType("JavaArchive")
@@ -205,7 +205,7 @@ public class ArquillianPlugin implements Plugin {
 
         deployementExporterClass.addMethod()
                 .setName("main")
-                .setStatic()
+                .setStatic(true)
                 .setPublic()
                 .setReturnTypeVoid()
                 .setParameters("String[] args")
