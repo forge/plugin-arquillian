@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <forge.version>1.0.0-SNAPSHOT</forge.version>
+        <forge.version>1.0.0.Alpha3</forge.version>
     </properties>
 
     <dependencies>
