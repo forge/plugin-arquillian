@@ -6,7 +6,7 @@ import org.jboss.seam.forge.project.facets.BaseFacet;
 import org.jboss.seam.forge.project.facets.DependencyFacet;
 import org.jboss.seam.forge.shell.plugins.Alias;
 import org.jboss.seam.forge.shell.plugins.RequiresFacet;
-import org.jboss.seam.forge.spec.cdi.CDIFacet;
+import org.jboss.seam.forge.spec.javaee.CDIFacet;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;

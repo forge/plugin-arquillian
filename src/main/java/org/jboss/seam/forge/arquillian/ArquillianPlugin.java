@@ -16,8 +16,8 @@ import org.jboss.seam.forge.shell.events.InstallFacets;
 import org.jboss.seam.forge.shell.plugins.*;
 import org.jboss.seam.forge.shell.util.BeanManagerUtils;
 import org.jboss.seam.forge.shell.util.NativeSystemCall;
-import org.jboss.seam.forge.spec.cdi.CDIFacet;
-import org.jboss.seam.forge.spec.jpa.PersistenceFacet;
+import org.jboss.seam.forge.spec.javaee.CDIFacet;
+import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.BeanManager;

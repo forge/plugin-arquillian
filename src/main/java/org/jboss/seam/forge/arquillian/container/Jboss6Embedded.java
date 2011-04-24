@@ -4,12 +4,12 @@ import org.apache.maven.model.*;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.jboss.seam.forge.maven.MavenCoreFacet;
+import org.jboss.seam.forge.maven.dependencies.MavenDependencyAdapter;
 import org.jboss.seam.forge.project.Project;
 import org.jboss.seam.forge.project.ProjectModelException;
 import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.dependencies.MavenDependencyAdapter;
 import org.jboss.seam.forge.project.dependencies.ScopeType;
-import org.jboss.seam.forge.project.facets.MavenCoreFacet;
 
 import javax.inject.Inject;
 import javax.inject.Named;

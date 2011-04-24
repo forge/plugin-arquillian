@@ -9,7 +9,7 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <forge.version>1.0.0.Alpha3</forge.version>
+        <forge.version>1.0.0-SNAPSHOT</forge.version>
     </properties>
 
     <dependencies>
@@ -20,14 +20,16 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.seam.forge</groupId>
-            <artifactId>forge-project-model</artifactId>
+            <artifactId>forge-maven-api</artifactId>
             <version>${forge.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.seam.forge</groupId>
-            <artifactId>forge-j2ee-plugins</artifactId>
+            <artifactId>forge-javaee-api</artifactId>
             <version>${forge.version}</version>
         </dependency>
+
     </dependencies>
 
     <repositories>
