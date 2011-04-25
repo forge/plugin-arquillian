@@ -1,84 +1,101 @@
 package org.jboss.seam.forge.arquillian;
 
-import org.jboss.seam.forge.arquillian.container.Container;
-import org.jboss.seam.forge.parser.JavaParser;
-import org.jboss.seam.forge.parser.java.JavaClass;
-import org.jboss.seam.forge.parser.java.JavaSource;
-import org.jboss.seam.forge.project.Project;
-import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.dependencies.ScopeType;
-import org.jboss.seam.forge.project.facets.DependencyFacet;
-import org.jboss.seam.forge.project.facets.JavaSourceFacet;
-import org.jboss.seam.forge.resources.java.JavaResource;
-import org.jboss.seam.forge.shell.PromptType;
-import org.jboss.seam.forge.shell.Shell;
-import org.jboss.seam.forge.shell.events.InstallFacets;
-import org.jboss.seam.forge.shell.plugins.*;
-import org.jboss.seam.forge.shell.util.BeanManagerUtils;
-import org.jboss.seam.forge.shell.util.NativeSystemCall;
-import org.jboss.seam.forge.spec.javaee.CDIFacet;
-import org.jboss.seam.forge.spec.javaee.PersistenceFacet;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.ScopeType;
+import org.jboss.forge.project.facets.DependencyFacet;
+import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.resources.java.JavaResource;
+import org.jboss.forge.shell.PromptType;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.events.InstallFacets;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Current;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresResource;
+import org.jboss.forge.shell.util.BeanManagerUtils;
+import org.jboss.forge.shell.util.NativeSystemCall;
+import org.jboss.forge.spec.javaee.CDIFacet;
+import org.jboss.forge.spec.javaee.PersistenceFacet;
+import org.jboss.seam.forge.arquillian.container.Container;
 
 @Alias("arquillian")
 @RequiresFacet(CDIFacet.class)
 @Help("A plugin that helps setting up Arquillian tests")
-public class ArquillianPlugin implements Plugin {
-    private static final String TESTNG_VERSION = "5.12.1";
-    private static final String JUNIT_VERSION = "4.8.2";
+public class ArquillianPlugin implements Plugin
+{
+   private static final String TESTNG_VERSION = "5.12.1";
+   private static final String JUNIT_VERSION = "4.8.2";
 
-    @Inject private Project project;
-    @Inject BeanManager beanManager;
-    @Inject @Named("arquillianVersion") String arquillianVersion;
-    @Inject
-    private Event<InstallFacets> request;
+   @Inject
+   private Project project;
+   @Inject
+   BeanManager beanManager;
+   @Inject
+   @Named("arquillianVersion")
+   String arquillianVersion;
+   @Inject
+   private Event<InstallFacets> request;
 
-    @Inject
-    @Current
-    private JavaResource resource;
+   @Inject
+   @Current
+   private JavaResource resource;
 
-    @Inject
-    private Shell shell;
+   @Inject
+   private Shell shell;
 
-
-    @Command(value = "setup", help = "Add a container profile to the maven configuration. Multiple containers can exist on a single project.")
-    public void setup(@Option(name = "test-framework", defaultValue = "junit", required = false) String testFramework,
+   @Command(value = "setup", help = "Add a container profile to the maven configuration. Multiple containers can exist on a single project.")
+   public void setup(@Option(name = "test-framework", defaultValue = "junit", required = false) String testFramework,
                       @Option(name = "container", required = true) ArquillianContainer container,
-                      final PipeOut out) {
-        installFacet();
+                      final PipeOut out)
+   {
+      installFacet();
 
-        DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
+      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
 
-        if (testFramework.equals("testng")) {
-            installTestNgDependencies(dependencyFacet);
-        } else {
-            installJunitDependencies(dependencyFacet);
-        }
+      if (testFramework.equals("testng"))
+      {
+         installTestNgDependencies(dependencyFacet);
+      }
+      else
+      {
+         installJunitDependencies(dependencyFacet);
+      }
 
-        Container contextualInstance = BeanManagerUtils.getContextualInstance(beanManager, container.getContainer());
-        contextualInstance.installDependencies();
-    }
+      Container contextualInstance = BeanManagerUtils.getContextualInstance(beanManager, container.getContainer());
+      contextualInstance.installDependencies();
+   }
 
-
-    @Command(value = "create-test", help = "Create a new test class with a default @Deployment method")
-    public void createTest(
+   @Command(value = "create-test", help = "Create a new test class with a default @Deployment method")
+   public void createTest(
             @Option(name = "class", required = true, type = PromptType.JAVA_CLASS) JavaResource classUnderTest,
             @Option(name = "enableJPA", required = false, flagOnly = true) boolean enableJPA,
-            final PipeOut out) throws FileNotFoundException {
-        JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+            final PipeOut out) throws FileNotFoundException
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-        DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-        boolean junit = dependencyFacet.hasDependency(createJunitDependency());
+      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
+      boolean junit = dependencyFacet.hasDependency(createJunitDependency());
 
-        JavaSource<?> javaSource = classUnderTest.getJavaSource();
+      JavaSource<?> javaSource = classUnderTest.getJavaSource();
 
-        JavaClass testclass = JavaParser.create(JavaClass.class)
+      JavaClass testclass = JavaParser.create(JavaClass.class)
                 .setPackage(javaSource.getPackage())
                 .setName(javaSource.getName() + "Test")
                 .setPublic()
@@ -86,99 +103,109 @@ public class ArquillianPlugin implements Plugin {
                 .setLiteralValue("Arquillian.class")
                 .getOrigin();
 
-        if (!junit) {
-            testclass.setSuperType("Arquillian");
-        }
+      if (!junit)
+      {
+         testclass.setSuperType("Arquillian");
+      }
 
-        String testInstanceName = javaSource.getName().toLowerCase();
-        testclass.addField()
+      String testInstanceName = javaSource.getName().toLowerCase();
+      testclass.addField()
                 .setType(javaSource.getName())
                 .setPrivate()
                 .setName(testInstanceName)
                 .addAnnotation(Inject.class);
 
-        addDeployementMethod(enableJPA, javaSource, testclass);
+      addDeployementMethod(enableJPA, javaSource, testclass);
 
-        addTestMethod(testclass, testInstanceName);
+      addTestMethod(testclass, testInstanceName);
 
-        addImports(dependencyFacet, junit, testclass);
+      addImports(dependencyFacet, junit, testclass);
 
-        java.saveTestJavaSource(testclass);
-    }
+      java.saveTestJavaSource(testclass);
+   }
 
+   /**
+    * This command exports an Archive generated by a @Deployment method to disk. Because the project's classpath is not
+    * in the classpath of Forge, the @Deployment method can't be called directly.The plugin works in the following
+    * steps: 1 - Generate a new class to the src/test/java folder 2 - Compile the user's classes using mvn test-compile
+    * 3 - Run the generated class using mvn exec:java (so that the project's classes are on the classpath) 4 - Delete
+    * the generated class
+    */
+   @Command(value = "export", help = "Export a @Deployment configuration to a zip file on disk.")
+   @RequiresResource(JavaResource.class)
+   public void exportDeployment(@Option(name = "keepExporter", flagOnly = true) boolean keepExporter, PipeOut out)
+   {
 
-    /**
-     * This command exports an Archive generated by a @Deployment method to disk. Because the project's classpath
-     * is not in the classpath of Forge, the @Deployment method can't be called directly.The plugin works in the following steps:
-     * 1 - Generate a new class to the src/test/java folder
-     * 2 - Compile the user's classes using mvn test-compile
-     * 3 - Run the generated class using mvn exec:java (so that the project's classes are on the classpath)
-     * 4 - Delete the generated class
-     */
-    @Command(value = "export", help = "Export a @Deployment configuration to a zip file on disk.")
-    @RequiresResource(JavaResource.class)
-    public void exportDeployment(@Option(name = "keepExporter", flagOnly = true) boolean keepExporter, PipeOut out) {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      try
+      {
+         JavaResource testJavaResource = java.getTestJavaResource("forge/arquillian/DeploymentExporter.java");
+         if (!testJavaResource.exists())
+         {
+            generateExporterClass(java);
+         }
 
-        JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-        try {
-            JavaResource testJavaResource = java.getTestJavaResource("forge/arquillian/DeploymentExporter.java");
-            if (!testJavaResource.exists()) {
-                generateExporterClass(java);
-            }
+         compileProjectClasses(out);
 
-            compileProjectClasses(out);
+         runExporterClass(out);
 
-            runExporterClass(out);
+         if (!keepExporter)
+         {
+            testJavaResource.delete();
+         }
+      }
+      catch (Exception ex)
+      {
+         throw new RuntimeException("Error while calling generated DeploymentExporter ", ex);
+      }
+   }
 
-            if (!keepExporter) {
-                testJavaResource.delete();
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Error while calling generated DeploymentExporter ", ex);
-        }
-    }
+   private void addImports(DependencyFacet dependencyFacet, boolean junit, JavaClass testclass)
+   {
+      testclass.addImport("javax.enterprise.inject.spi.BeanManager");
+      testclass.addImport("javax.inject.Inject");
+      testclass.addImport("org.jboss.arquillian.api.Deployment");
+      testclass.addImport("org.jboss.arquillian.junit.Arquillian");
+      testclass.addImport("org.jboss.shrinkwrap.api.ShrinkWrap");
+      testclass.addImport("org.jboss.shrinkwrap.api.ArchivePaths");
+      testclass.addImport("org.jboss.shrinkwrap.api.spec.JavaArchive");
+      testclass.addImport("org.jboss.shrinkwrap.api.asset.EmptyAsset");
 
-    private void addImports(DependencyFacet dependencyFacet, boolean junit, JavaClass testclass) {
-        testclass.addImport("javax.enterprise.inject.spi.BeanManager");
-        testclass.addImport("javax.inject.Inject");
-        testclass.addImport("org.jboss.arquillian.api.Deployment");
-        testclass.addImport("org.jboss.arquillian.junit.Arquillian");
-        testclass.addImport("org.jboss.shrinkwrap.api.ShrinkWrap");
-        testclass.addImport("org.jboss.shrinkwrap.api.ArchivePaths");
-        testclass.addImport("org.jboss.shrinkwrap.api.spec.JavaArchive");
-        testclass.addImport("org.jboss.shrinkwrap.api.asset.EmptyAsset");
+      if (junit)
+      {
+         testclass.addImport("org.junit.Assert");
+         testclass.addImport("org.junit.Test");
+         testclass.addImport("org.junit.runner.RunWith");
+      }
+      else if (dependencyFacet.hasDependency(createTestNgDependency()))
+      {
+         testclass.addImport("org.testng.annotations.Test");
+      }
+   }
 
-
-        if (junit) {
-            testclass.addImport("org.junit.Assert");
-            testclass.addImport("org.junit.Test");
-            testclass.addImport("org.junit.runner.RunWith");
-        } else if (dependencyFacet.hasDependency(createTestNgDependency())) {
-            testclass.addImport("org.testng.annotations.Test");
-        }
-    }
-
-    private void addTestMethod(JavaClass testclass, String testInstanceName) {
-        testclass.addMethod()
+   private void addTestMethod(JavaClass testclass, String testInstanceName)
+   {
+      testclass.addMethod()
                 .setName("testIsDeployed")
                 .setPublic()
                 .setReturnTypeVoid()
                 .setBody(createTestMethod(testInstanceName))
                 .addAnnotation("Test");
-    }
+   }
 
-    private void addDeployementMethod(boolean enableJPA, JavaSource<?> javaSource, JavaClass testclass) {
-        testclass.addMethod()
+   private void addDeployementMethod(boolean enableJPA, JavaSource<?> javaSource, JavaClass testclass)
+   {
+      testclass.addMethod()
                 .setName("createDeployment")
                 .setPublic()
                 .setReturnType("JavaArchive")
                 .setBody(createDeploymentFor(javaSource, enableJPA))
                 .addAnnotation("Deployment");
-    }
+   }
 
-
-    private void runExporterClass(PipeOut out) throws IOException {
-        String[] args = {
+   private void runExporterClass(PipeOut out) throws IOException
+   {
+      String[] args = {
                 "exec:java",
                 "-Dexec.mainClass=forge.arquillian.DeploymentExporter",
                 "-Dexec.args=" + resource.getJavaSource().getQualifiedName() + "",
@@ -186,135 +213,150 @@ public class ArquillianPlugin implements Plugin {
                 "-X"
         };
 
-        NativeSystemCall.execFromPath("mvn", args, out, shell.getCurrentProject().getProjectRoot());
-    }
+      NativeSystemCall.execFromPath("mvn", args, out, shell.getCurrentProject().getProjectRoot());
+   }
 
-    private void compileProjectClasses(PipeOut out) throws IOException {
-        String[] compileArgs = {
+   private void compileProjectClasses(PipeOut out) throws IOException
+   {
+      String[] compileArgs = {
                 "test-compile"
         };
 
-        NativeSystemCall.execFromPath("mvn", compileArgs, out, shell.getCurrentProject().getProjectRoot());
-    }
+      NativeSystemCall.execFromPath("mvn", compileArgs, out, shell.getCurrentProject().getProjectRoot());
+   }
 
-    private void generateExporterClass(JavaSourceFacet java) throws FileNotFoundException {
-        JavaClass deployementExporterClass = JavaParser.create(JavaClass.class)
+   private void generateExporterClass(JavaSourceFacet java) throws FileNotFoundException
+   {
+      JavaClass deployementExporterClass = JavaParser.create(JavaClass.class)
                 .setPackage("forge.arquillian")
                 .setName("DeploymentExporter")
                 .setPublic();
 
-        deployementExporterClass.addMethod()
+      deployementExporterClass.addMethod()
                 .setName("main")
                 .setPublic()
                 .setReturnTypeVoid()
                 .setParameters("String[] args")
                 .setBody("try { Class<?> testClass = Class.forName(args[0]);" +
-                        "" +
-                        "" +
-                        "        Method[] methods = testClass.getMethods();" +
-                        "        Method deploymentMethod = null;" +
-                        "" +
-                        "        for (Method method : methods) {" +
-                        "            if (method.getAnnotation(Deployment.class) != null) {" +
-                        "                deploymentMethod = method;" +
-                        "                break;" +
-                        "            }" +
-                        "        }" +
-                        "" +
-                        "        Archive<?> archive = (Archive<?>) deploymentMethod.invoke(null);" +
-                        "        archive.as(ZipExporter.class).exportTo(new File(archive.getName()), true); } " +
-                        "catch(Exception ex) { ex.printStackTrace();} ");
+                         "" +
+                         "" +
+                         "        Method[] methods = testClass.getMethods();" +
+                         "        Method deploymentMethod = null;" +
+                         "" +
+                         "        for (Method method : methods) {" +
+                         "            if (method.getAnnotation(Deployment.class) != null) {" +
+                         "                deploymentMethod = method;" +
+                         "                break;" +
+                         "            }" +
+                         "        }" +
+                         "" +
+                         "        Archive<?> archive = (Archive<?>) deploymentMethod.invoke(null);" +
+                         "        archive.as(ZipExporter.class).exportTo(new File(archive.getName()), true); } " +
+                         "catch(Exception ex) { ex.printStackTrace();} ");
 
-        deployementExporterClass.addImport("org.jboss.arquillian.api.Deployment");
-        deployementExporterClass.addImport("org.jboss.shrinkwrap.api.Archive");
-        deployementExporterClass.addImport("org.jboss.shrinkwrap.api.exporter.ZipExporter");
-        deployementExporterClass.addImport("java.io.File");
-        deployementExporterClass.addImport("java.lang.reflect.Method");
+      deployementExporterClass.addImport("org.jboss.arquillian.api.Deployment");
+      deployementExporterClass.addImport("org.jboss.shrinkwrap.api.Archive");
+      deployementExporterClass.addImport("org.jboss.shrinkwrap.api.exporter.ZipExporter");
+      deployementExporterClass.addImport("java.io.File");
+      deployementExporterClass.addImport("java.lang.reflect.Method");
 
-        java.saveTestJavaSource(deployementExporterClass);
-    }
+      java.saveTestJavaSource(deployementExporterClass);
+   }
 
-    private void installJunitDependencies(DependencyFacet dependencyFacet) {
-        DependencyBuilder junitDependency = createJunitDependency();
-        if (!dependencyFacet.hasDependency(junitDependency)) {
-            dependencyFacet.addDependency(junitDependency);
-        }
+   private void installJunitDependencies(DependencyFacet dependencyFacet)
+   {
+      DependencyBuilder junitDependency = createJunitDependency();
+      if (!dependencyFacet.hasDependency(junitDependency))
+      {
+         dependencyFacet.addDependency(junitDependency);
+      }
 
-        DependencyBuilder junitArquillianDependency = createJunitArquillianDependency();
-        if (!dependencyFacet.hasDependency(junitArquillianDependency)) {
-            dependencyFacet.addDependency(junitArquillianDependency);
-        }
-    }
+      DependencyBuilder junitArquillianDependency = createJunitArquillianDependency();
+      if (!dependencyFacet.hasDependency(junitArquillianDependency))
+      {
+         dependencyFacet.addDependency(junitArquillianDependency);
+      }
+   }
 
-    private void installTestNgDependencies(DependencyFacet dependencyFacet) {
-        DependencyBuilder testngDependency = createTestNgDependency();
-        if (!dependencyFacet.hasDependency(testngDependency)) {
-            dependencyFacet.addDependency(testngDependency);
-        }
+   private void installTestNgDependencies(DependencyFacet dependencyFacet)
+   {
+      DependencyBuilder testngDependency = createTestNgDependency();
+      if (!dependencyFacet.hasDependency(testngDependency))
+      {
+         dependencyFacet.addDependency(testngDependency);
+      }
 
-        DependencyBuilder testNgArquillianDependency = createTestNgArquillianDependency();
-        if (!dependencyFacet.hasDependency(testNgArquillianDependency)) {
-            dependencyFacet.addDependency(testNgArquillianDependency);
-        }
-    }
+      DependencyBuilder testNgArquillianDependency = createTestNgArquillianDependency();
+      if (!dependencyFacet.hasDependency(testNgArquillianDependency))
+      {
+         dependencyFacet.addDependency(testNgArquillianDependency);
+      }
+   }
 
-    private String createTestMethod(String instanceName) {
-        return "Assert.assertNotNull(" + instanceName + ");";
-    }
+   private String createTestMethod(String instanceName)
+   {
+      return "Assert.assertNotNull(" + instanceName + ");";
+   }
 
-    private String createDeploymentFor(JavaSource<?> javaSource, boolean enableJPA) {
-        StringBuilder b = new StringBuilder();
-        b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")")
+   private String createDeploymentFor(JavaSource<?> javaSource, boolean enableJPA)
+   {
+      StringBuilder b = new StringBuilder();
+      b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")")
                 .append(".addClass(").append(javaSource.getName()).append(".class)")
                 .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))");
 
-        if (enableJPA) {
-            b.append(".addAsManifestResource(\"persistence.xml\", ArchivePaths.create(\"persistence.xml\"))");
-        }
+      if (enableJPA)
+      {
+         b.append(".addAsManifestResource(\"persistence.xml\", ArchivePaths.create(\"persistence.xml\"))");
+      }
 
-        b.append(";");
-        return b.toString();
+      b.append(";");
+      return b.toString();
 
-    }
+   }
 
-    private void installFacet() {
-        if (!project.hasFacet(ArquillianFacet.class)) {
-            request.fire(new InstallFacets(PersistenceFacet.class));
-        }
-    }
+   private void installFacet()
+   {
+      if (!project.hasFacet(ArquillianFacet.class))
+      {
+         request.fire(new InstallFacets(PersistenceFacet.class));
+      }
+   }
 
-    private DependencyBuilder createJunitDependency() {
-        return DependencyBuilder.create()
+   private DependencyBuilder createJunitDependency()
+   {
+      return DependencyBuilder.create()
                 .setGroupId("junit")
                 .setArtifactId("junit")
                 .setVersion(JUNIT_VERSION)
                 .setScopeType(ScopeType.TEST);
-    }
+   }
 
-    private DependencyBuilder createJunitArquillianDependency() {
-        return DependencyBuilder.create()
+   private DependencyBuilder createJunitArquillianDependency()
+   {
+      return DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian")
                 .setArtifactId("arquillian-junit")
                 .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.TEST);
-    }
+   }
 
-
-    private DependencyBuilder createTestNgDependency() {
-        return DependencyBuilder.create()
+   private DependencyBuilder createTestNgDependency()
+   {
+      return DependencyBuilder.create()
                 .setGroupId("org.testng")
                 .setArtifactId("testng")
                 .setVersion(TESTNG_VERSION)
                 .setScopeType(ScopeType.TEST);
-    }
+   }
 
-    private DependencyBuilder createTestNgArquillianDependency() {
-        return DependencyBuilder.create()
+   private DependencyBuilder createTestNgArquillianDependency()
+   {
+      return DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian")
                 .setArtifactId("arquillian-testng")
                 .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.TEST);
-    }
-
+   }
 
 }

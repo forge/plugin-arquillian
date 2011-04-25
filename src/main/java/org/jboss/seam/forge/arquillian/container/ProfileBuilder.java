@@ -1,31 +1,35 @@
 package org.jboss.seam.forge.arquillian.container;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Profile;
-import org.jboss.seam.forge.maven.MavenCoreFacet;
-import org.jboss.seam.forge.maven.dependencies.MavenDependencyAdapter;
-import org.jboss.seam.forge.project.Project;
-import org.jboss.seam.forge.project.dependencies.Dependency;
-import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-
 import javax.inject.Inject;
 
-public class ProfileBuilder {
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
+import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.maven.dependencies.MavenDependencyAdapter;
+import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.Dependency;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
 
-    @Inject Project project;
+public class ProfileBuilder
+{
 
-    public void addProfile(String profileId, Dependency... dependencies) {
-        MavenCoreFacet facet = project.getFacet(MavenCoreFacet.class);
+   @Inject
+   Project project;
 
-        Profile profile = new Profile();
-        profile.setId(profileId);
+   public void addProfile(String profileId, Dependency... dependencies)
+   {
+      MavenCoreFacet facet = project.getFacet(MavenCoreFacet.class);
 
-        for (Dependency dependency : dependencies) {
-            profile.addDependency(new MavenDependencyAdapter(DependencyBuilder.create(dependency)));
-        }
+      Profile profile = new Profile();
+      profile.setId(profileId);
 
-        Model pom = facet.getPOM();
-        pom.addProfile(profile);
-        facet.setPOM(pom);
-    }
+      for (Dependency dependency : dependencies)
+      {
+         profile.addDependency(new MavenDependencyAdapter(DependencyBuilder.create(dependency)));
+      }
+
+      Model pom = facet.getPOM();
+      pom.addProfile(profile);
+      facet.setPOM(pom);
+   }
 }

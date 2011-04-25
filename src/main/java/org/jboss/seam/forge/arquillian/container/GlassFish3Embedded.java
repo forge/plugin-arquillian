@@ -1,29 +1,35 @@
 package org.jboss.seam.forge.arquillian.container;
 
-import org.jboss.seam.forge.project.dependencies.DependencyBuilder;
-import org.jboss.seam.forge.project.dependencies.ScopeType;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class GlassFish3Embedded implements Container {
-    private static final String GLASSFISH_VERSION = "3.1";
-    @Inject ProfileBuilder builder;
-    @Inject @Named("arquillianVersion") String arquillianVersion;
+import org.jboss.forge.project.dependencies.DependencyBuilder;
+import org.jboss.forge.project.dependencies.ScopeType;
 
-    @Override public void installDependencies() {
-        DependencyBuilder dep1 = DependencyBuilder.create()
+public class GlassFish3Embedded implements Container
+{
+   private static final String GLASSFISH_VERSION = "3.1";
+   @Inject
+   ProfileBuilder builder;
+   @Inject
+   @Named("arquillianVersion")
+   String arquillianVersion;
+
+   @Override
+   public void installDependencies()
+   {
+      DependencyBuilder dep1 = DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.container")
                 .setArtifactId("arquillian-glassfish-embedded-3.1")
                 .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.TEST);
 
-        DependencyBuilder dep2 = DependencyBuilder.create()
+      DependencyBuilder dep2 = DependencyBuilder.create()
                 .setGroupId("org.glassfish.extras")
                 .setArtifactId("glassfish-embedded-all")
                 .setVersion(GLASSFISH_VERSION)
                 .setScopeType(ScopeType.TEST);
 
-        builder.addProfile("glassfish-embedded-3", dep1, dep2);
-    }
+      builder.addProfile("glassfish-embedded-3", dep1, dep2);
+   }
 }

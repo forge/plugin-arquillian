@@ -4,8 +4,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jboss.seam.forge.arquillian</groupId>
-    <artifactId>arquillian.plugin</artifactId>
+    <groupId>org.arquillian.forge</groupId>
+    <artifactId>arquillian-plugin</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
@@ -14,18 +14,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.seam.forge</groupId>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-shell-api</artifactId>
             <version>${forge.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.seam.forge</groupId>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-maven-api</artifactId>
             <version>${forge.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.seam.forge</groupId>
+            <groupId>org.jboss.forge</groupId>
             <artifactId>forge-javaee-api</artifactId>
             <version>${forge.version}</version>
         </dependency>
