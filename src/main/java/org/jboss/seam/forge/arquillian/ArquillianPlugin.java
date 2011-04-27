@@ -198,6 +198,7 @@ public class ArquillianPlugin implements Plugin
       testclass.addMethod()
                 .setName("createDeployment")
                 .setPublic()
+                .setStatic(true)
                 .setReturnType("JavaArchive")
                 .setBody(createDeploymentFor(javaSource, enableJPA))
                 .addAnnotation("Deployment");
