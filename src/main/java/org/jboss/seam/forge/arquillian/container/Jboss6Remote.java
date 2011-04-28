@@ -25,7 +25,7 @@ public class Jboss6Remote implements Container
 
       DependencyBuilder dep2 = DependencyBuilder.create()
                 .setGroupId("org.jboss.jbossas")
-                .setArtifactId("jboss-as-client")
+                .setArtifactId("jboss-as-profileservice-client")
                 .setVersion("6.0.0.Final")
                 .setPackagingType("pom")
                 .setScopeType(ScopeType.TEST);
