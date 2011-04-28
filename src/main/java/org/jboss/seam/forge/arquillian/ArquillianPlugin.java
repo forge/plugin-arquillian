@@ -20,6 +20,7 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.InstallFacets;
+import org.jboss.forge.shell.events.PickupResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
 import org.jboss.forge.shell.plugins.Current;
@@ -36,22 +37,29 @@ import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.seam.forge.arquillian.container.Container;
 
 @Alias("arquillian")
-@RequiresFacet(CDIFacet.class)
+@RequiresFacet(JavaSourceFacet.class)
 @Help("A plugin that helps setting up Arquillian tests")
 public class ArquillianPlugin implements Plugin
 {
    private static final String TESTNG_VERSION = "5.12.1";
+
    private static final String JUNIT_VERSION = "4.8.2";
 
    @Inject
    private Project project;
+
    @Inject
    BeanManager beanManager;
+
    @Inject
    @Named("arquillianVersion")
    String arquillianVersion;
+
    @Inject
    private Event<InstallFacets> request;
+
+   @Inject
+   private Event<PickupResource> pickup;
 
    @Inject
    @Current
@@ -103,6 +111,7 @@ public class ArquillianPlugin implements Plugin
                 .setLiteralValue("Arquillian.class")
                 .getOrigin();
 
+      
       if (!junit)
       {
          testclass.setSuperType("Arquillian");
@@ -122,6 +131,8 @@ public class ArquillianPlugin implements Plugin
       addImports(dependencyFacet, junit, testclass);
 
       java.saveTestJavaSource(testclass);
+
+      pickup.fire(new PickupResource(java.getTestJavaResource(testclass)));
    }
 
    /**
@@ -303,24 +314,27 @@ public class ArquillianPlugin implements Plugin
    {
       StringBuilder b = new StringBuilder();
       b.append("return ShrinkWrap.create(JavaArchive.class, \"test.jar\")")
-                .append(".addClass(").append(javaSource.getName()).append(".class)")
-                .append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))");
+                .append(".addClass(").append(javaSource.getName()).append(".class)");
 
-      if (enableJPA)
+      if(project.hasFacet(CDIFacet.class))
+      {
+         b.append(".addAsManifestResource(EmptyAsset.INSTANCE, ArchivePaths.create(\"beans.xml\"))");
+      }
+
+      if(enableJPA) // project.hasFacet(PersistenceFacet.class) ?
       {
          b.append(".addAsManifestResource(\"persistence.xml\", ArchivePaths.create(\"persistence.xml\"))");
       }
 
       b.append(";");
       return b.toString();
-
    }
 
    private void installFacet()
    {
       if (!project.hasFacet(ArquillianFacet.class))
       {
-         request.fire(new InstallFacets(PersistenceFacet.class));
+         request.fire(new InstallFacets(ArquillianFacet.class));
       }
    }
 
@@ -359,5 +373,4 @@ public class ArquillianPlugin implements Plugin
                 .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.TEST);
    }
-
 }
