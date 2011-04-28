@@ -51,6 +51,10 @@ public class ArquillianFacet extends BaseFacet
    @Override
    public boolean isInstalled()
    {
+      if(!project.hasFacet(DependencyFacet.class))
+      {
+         return false;
+      }
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
       return dependencyFacet.hasDependency(createArquillianDependency());
    }
