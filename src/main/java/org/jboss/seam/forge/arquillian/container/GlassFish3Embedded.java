@@ -11,12 +11,10 @@ public class GlassFish3Embedded implements Container
    private static final String GLASSFISH_VERSION = "3.1";
    @Inject
    ProfileBuilder builder;
-   @Inject
-   @Named("arquillianVersion")
-   String arquillianVersion;
+
 
    @Override
-   public void installDependencies()
+   public void installDependencies(String arquillianVersion)
    {
       DependencyBuilder dep1 = DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.container")

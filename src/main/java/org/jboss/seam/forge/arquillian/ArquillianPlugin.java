@@ -4,6 +4,7 @@ import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
@@ -12,7 +13,6 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
-import org.jboss.forge.shell.events.InstallFacets;
 import org.jboss.forge.shell.events.PickupResource;
 import org.jboss.forge.shell.plugins.*;
 import org.jboss.forge.shell.util.BeanManagerUtils;
@@ -22,31 +22,20 @@ import org.jboss.seam.forge.arquillian.container.Container;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 @Alias("arquillian")
 @RequiresFacet(JavaSourceFacet.class)
 @Help("A plugin that helps setting up Arquillian tests")
 public class ArquillianPlugin implements Plugin
 {
-   private static final String TESTNG_VERSION = "5.12.1";
-
-   private static final String JUNIT_VERSION = "4.8.2";
-
    @Inject
    private Project project;
 
    @Inject
    BeanManager beanManager;
-
-   @Inject
-   @Named("arquillianVersion")
-   String arquillianVersion;
-
-   @Inject
-   private Event<InstallFacets> request;
 
    @Inject
    private Event<PickupResource> pickup;
@@ -58,25 +47,51 @@ public class ArquillianPlugin implements Plugin
    @Inject
    private Shell shell;
 
+   private String arquillianVersion;
+
+   private DependencyFacet dependencyFacet;
+
    @Command(value = "setup", help = "Add a container profile to the maven configuration. Multiple containers can exist on a single project.")
    public void setup(@Option(name = "test-framework", defaultValue = "junit", required = false) String testFramework,
                      @Option(name = "container", required = true) ArquillianContainer container,
                      final PipeOut out)
    {
-      installFacet();
 
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
+      dependencyFacet = project.getFacet(DependencyFacet.class);
+
+      installArquillianDependency();
 
       if (testFramework.equals("testng"))
       {
-         installTestNgDependencies(dependencyFacet);
+         installTestNgDependencies();
       } else
       {
-         installJunitDependencies(dependencyFacet);
+         installJunitDependencies();
       }
 
       Container contextualInstance = BeanManagerUtils.getContextualInstance(beanManager, container.getContainer());
-      contextualInstance.installDependencies();
+      contextualInstance.installDependencies(arquillianVersion);
+   }
+
+   private void installArquillianDependency()
+   {
+      DependencyBuilder arquillianDependency = createArquillianDependency();
+      if(dependencyFacet.hasDependency(arquillianDependency)) {
+         arquillianVersion = dependencyFacet.getDependency(arquillianDependency).getVersion();
+      } else {
+         List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(arquillianDependency);
+         Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies);
+         arquillianVersion = dependency.getVersion();
+         dependencyFacet.addDependency(dependency);
+      }
+   }
+
+   private DependencyBuilder createArquillianDependency()
+   {
+      return DependencyBuilder.create()
+                .setGroupId("org.jboss.arquillian")
+                .setArtifactId("arquillian-api")
+                .setScopeType(ScopeType.TEST);
    }
 
    @Command(value = "create-test", help = "Create a new test class with a default @Deployment method")
@@ -245,12 +260,14 @@ public class ArquillianPlugin implements Plugin
       java.saveTestJavaSource(deployementExporterClass);
    }
 
-   private void installJunitDependencies(DependencyFacet dependencyFacet)
+   private void installJunitDependencies()
    {
       DependencyBuilder junitDependency = createJunitDependency();
       if (!dependencyFacet.hasDependency(junitDependency))
       {
-         dependencyFacet.addDependency(junitDependency);
+         List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitDependency);
+         Dependency dependency = shell.promptChoiceTyped("Which version of JUnit do you want to install?", dependencies);
+         dependencyFacet.addDependency(dependency);
       }
 
       DependencyBuilder junitArquillianDependency = createJunitArquillianDependency();
@@ -260,12 +277,14 @@ public class ArquillianPlugin implements Plugin
       }
    }
 
-   private void installTestNgDependencies(DependencyFacet dependencyFacet)
+   private void installTestNgDependencies()
    {
       DependencyBuilder testngDependency = createTestNgDependency();
       if (!dependencyFacet.hasDependency(testngDependency))
       {
-         dependencyFacet.addDependency(testngDependency);
+         List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testngDependency);
+         Dependency dependency = shell.promptChoiceTyped("Which version of TestNG do you want to install?", dependencies);
+         dependencyFacet.addDependency(dependency);
       }
 
       DependencyBuilder testNgArquillianDependency = createTestNgArquillianDependency();
@@ -300,20 +319,13 @@ public class ArquillianPlugin implements Plugin
       return b.toString();
    }
 
-   private void installFacet()
-   {
-      if (!project.hasFacet(ArquillianFacet.class))
-      {
-         request.fire(new InstallFacets(ArquillianFacet.class));
-      }
-   }
+
 
    private DependencyBuilder createJunitDependency()
    {
       return DependencyBuilder.create()
               .setGroupId("junit")
               .setArtifactId("junit")
-              .setVersion(JUNIT_VERSION)
               .setScopeType(ScopeType.TEST);
    }
 
@@ -331,7 +343,6 @@ public class ArquillianPlugin implements Plugin
       return DependencyBuilder.create()
               .setGroupId("org.testng")
               .setArtifactId("testng")
-              .setVersion(TESTNG_VERSION)
               .setScopeType(ScopeType.TEST);
    }
 

@@ -9,13 +9,10 @@ import org.jboss.forge.project.dependencies.ScopeType;
 public class Jboss6Remote implements Container
 {
    @Inject
-   @Named("arquillianVersion")
-   String arquillianVersion;
-   @Inject
    ProfileBuilder builder;
 
    @Override
-   public void installDependencies()
+   public void installDependencies(String arquillianVersion)
    {
       DependencyBuilder dep1 = DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.container")
