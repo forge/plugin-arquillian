@@ -8,13 +8,11 @@ import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
-import org.jboss.forge.resources.Resource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.shrinkwrap.descriptor.spi.Node;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.util.List;
 
 public class Jboss7Managed implements Container {
@@ -37,6 +35,10 @@ public class Jboss7Managed implements Container {
                 .setScopeType(ScopeType.TEST);
 
         List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(dep1);
+
+        if(dependencies.isEmpty()) {
+            throw new RuntimeException("Dependency " + dep1.toCoordinates() + " could not be resolved. Does your POM contain the correct repositories?");
+        }
         Dependency dependency = shell.promptChoiceTyped("Which version of JBoss AS 7 do you want to use?", dependencies, dependencies.get(dependencies.size() - 1));
 
         builder.addProfile("arq-jbossas-7-managed", dependency);
