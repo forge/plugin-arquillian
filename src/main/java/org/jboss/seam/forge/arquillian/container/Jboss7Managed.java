@@ -75,30 +75,20 @@ public class Jboss7Managed implements Container
 
    private void editExistingArquillianConfig(String jbossHome, FileResource<?> resource)
    {
-      boolean containerExists = false;
 
-      Node existing = XMLParser.parse(resource.getResourceInputStream());
-      for (Node node : existing.children())
+      Node existingConfigFile = XMLParser.parse(resource.getResourceInputStream());
+      Node container = existingConfigFile.getSingle("container@qualifier=jboss");
+      if (container == null)
       {
-         if (node.name().equals("container") && node.attribute("qualifier").equals("jboss"))
-         {
-            containerExists = true;
-            shell.println("JBoss container exists in Arquillian.xml, no changes were made");
-            break;
-         }
-      }
-
-      if (!containerExists)
-      {
-         addJbossContainer(jbossHome, existing);
-         resource.setContents(XMLParser.toXMLString(existing));
+         addJbossContainer(jbossHome, existingConfigFile);
+         resource.setContents(XMLParser.toXMLString(existingConfigFile));
       }
    }
 
    private void addJbossContainer(String jbossHome, Node xml)
    {
-      Node container = xml.create("container").attribute("qualifier", "jboss").attribute("default", "true");
-      container.create("configuration").create("property").attribute("name", "jbossHome").text(jbossHome);
-      container.create("protocol").attribute("type", "jmx-as7").create("property").attribute("name", "executionType").text("REMOTE");
+      Node container = xml.create("container@qualifier=jboss&default=true");
+      container.create("configuration").create("property@name=jbossHome").text(jbossHome);
+      container.create("protocol@type=jmx-as7").create("property@name=executionType").text("REMOTE");
    }
 }
