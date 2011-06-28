@@ -30,6 +30,7 @@ public class ProfileBuilder
 
       Model pom = facet.getPOM();
       pom.addProfile(profile);
+       
       facet.setPOM(pom);
    }
 }
