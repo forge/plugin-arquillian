@@ -232,7 +232,10 @@ public class ArquillianPlugin implements Plugin {
         if (!dependencyFacet.hasDependency(junitArquillianDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitArquillianDependency);
             Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, dependencies.get(dependencies.size() - 1));
+            arquillianVersion = dependency.getVersion();
             dependencyFacet.addDependency(dependency);
+        } else {
+           arquillianVersion = dependencyFacet.getDependency(junitArquillianDependency).getVersion();
         }
     }
 
@@ -248,7 +251,10 @@ public class ArquillianPlugin implements Plugin {
         if (!dependencyFacet.hasDependency(testNgArquillianDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testNgArquillianDependency);
             Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, dependencies.get(dependencies.size() - 1));
+            arquillianVersion = dependency.getVersion();
             dependencyFacet.addDependency(dependency);
+        } else {
+           arquillianVersion = dependencyFacet.getDependency(testNgArquillianDependency).getVersion();
         }
     }
 
