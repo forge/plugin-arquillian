@@ -46,6 +46,8 @@ public class ArquillianPlugin implements Plugin {
     @Inject
     private Shell shell;
 
+
+
     private String arquillianVersion;
 
     private DependencyFacet dependencyFacet;
@@ -140,7 +142,7 @@ public class ArquillianPlugin implements Plugin {
     }
 
     private void addImports(DependencyFacet dependencyFacet, boolean junit, JavaClass testclass) {
-        
+
         testclass.addImport("javax.inject.Inject");
         testclass.addImport("org.jboss.arquillian.container.test.api.Deployment");
         testclass.addImport("org.jboss.arquillian.junit.Arquillian");

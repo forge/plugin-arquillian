@@ -3,8 +3,6 @@ package org.jboss.seam.forge.arquillian.container;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
@@ -15,23 +13,30 @@ import org.jboss.shrinkwrap.descriptor.spi.Node;
 import javax.inject.Inject;
 import java.util.List;
 
-public class Jboss7Managed implements Container
+public abstract class AbstractJBoss7Container implements Container
 {
-   @Inject
-   ProfileBuilder builder;
+   protected ProfileBuilder builder;
 
-   @Inject
-   Project project;
+   protected Project project;
 
-   @Inject
-   Shell shell;
+   protected Shell shell;
+
+   protected AbstractJBoss7Container(Shell shell, Project project, ProfileBuilder builder)
+   {
+      this.shell = shell;
+      this.project = project;
+      this.builder = builder;
+   }
+
+   protected abstract Dependency getContainerDependency();
+   protected abstract String getProfileName();
 
    @Override
    public void installDependencies(String arquillianVersion)
    {
       Dependency dependency = createDependency();
 
-      builder.addProfile("arq-jbossas-7-managed", dependency);
+      builder.addProfile(getProfileName(), dependency);
 
       String jbossHome = shell.promptCommon("What is your JBoss home?", PromptType.FILE_PATH);
 
@@ -50,10 +55,7 @@ public class Jboss7Managed implements Container
    {
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
 
-      DependencyBuilder dep1 = DependencyBuilder.create()
-              .setGroupId("org.jboss.as")
-              .setArtifactId("jboss-as-arquillian-container-managed")
-              .setScopeType(ScopeType.TEST);
+      Dependency dep1 = getContainerDependency();
 
       List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(dep1);
 
@@ -64,6 +66,8 @@ public class Jboss7Managed implements Container
 
       return shell.promptChoiceTyped("Which version of JBoss AS 7 do you want to use?", dependencies, dependencies.get(dependencies.size() - 1));
    }
+
+
 
    private void createNewArquillianConfig(String jbossHome, FileResource<?> resource)
    {
