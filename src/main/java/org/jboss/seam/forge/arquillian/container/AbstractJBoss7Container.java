@@ -38,10 +38,11 @@ public abstract class AbstractJBoss7Container implements Container
 
       builder.addProfile(getProfileName(), dependency);
 
-      String jbossHome = shell.promptCommon("What is your JBoss home?", PromptType.FILE_PATH);
+      String jbossHomeVar = System.getenv("JBOSS_HOME");
+      String jbossHome = shell.promptCommon("What is your JBoss home? [" + jbossHomeVar + "]", PromptType.FILE_PATH, jbossHomeVar);
 
       ResourceFacet resources = project.getFacet(ResourceFacet.class);
-      FileResource<?> resource = (FileResource<?>) resources.getResourceFolder().getChild("arquillian.xml");
+      FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
       if (resource.exists())
       {
          editExistingArquillianConfig(jbossHome, resource);
