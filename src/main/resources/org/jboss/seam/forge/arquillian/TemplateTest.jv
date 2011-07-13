@@ -1,4 +1,4 @@
-package org.jboss.seam.forge.arquillian;
+package @{package};
 
 import @{packageImport}.@{ClassToTest};
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.*;
 
 @RunWith(Arquillian.class)
-public class TemplateTest {
+public class @{ClassToTest}Test {
     @Inject private @{ClassToTest} @{classToTest};
 
     @Deployment public static JavaArchive createDeployment() {
