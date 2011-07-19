@@ -1,6 +1,5 @@
 package org.jboss.seam.forge.arquillian;
 
-import com.sun.tools.javac.resources.compiler;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
@@ -17,7 +16,6 @@ import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.PickupResource;
 import org.jboss.forge.shell.plugins.*;
 import org.jboss.forge.shell.util.BeanManagerUtils;
-import org.jboss.forge.spec.javaee.CDIFacet;
 import org.jboss.seam.forge.arquillian.container.Container;
 import org.jboss.seam.render.TemplateCompiler;
 import org.jboss.seam.render.template.CompiledTemplateResource;
