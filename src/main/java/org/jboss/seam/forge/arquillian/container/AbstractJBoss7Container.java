@@ -39,6 +39,10 @@ public abstract class AbstractJBoss7Container implements Container
       builder.addProfile(getProfileName(), dependency);
 
       String jbossHomeVar = System.getenv("JBOSS_HOME");
+      if(jbossHomeVar == null) {
+          jbossHomeVar = "";
+      }
+
       String jbossHome = shell.promptCommon("What is your JBoss home? [" + jbossHomeVar + "]", PromptType.FILE_PATH, jbossHomeVar);
 
       ResourceFacet resources = project.getFacet(ResourceFacet.class);
