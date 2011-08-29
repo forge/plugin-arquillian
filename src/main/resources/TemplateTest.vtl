@@ -1,6 +1,6 @@
-package @{package};
+package $package;
 
-import @{packageImport}.@{ClassToTest};
+import ${packageImport}.${ClassToTest};
 import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -14,20 +14,20 @@ import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.*;
 
 @RunWith(Arquillian.class)
-public class @{ClassToTest}Test {
-    @Inject private @{ClassToTest} @{classToTest};
+public class ${ClassToTest}Test {
+    @Inject private ${ClassToTest} ${classToTest};
 
     @Deployment public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class, "test.jar")
-                .addClass(@{ClassToTest}.class)
-                @if{enableJPA}
+                .addClass(${ClassToTest}.class)
+                #if($enableJPA)
                 .addAsManifestResource("META-INF/persistence.xml", "persistence.xml")
-                @end{}
+                #end
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     public void testIsDeployed() {
-        Assert.assertNotNull(@{classToTest});
+        Assert.assertNotNull(${classToTest});
     }
 }
