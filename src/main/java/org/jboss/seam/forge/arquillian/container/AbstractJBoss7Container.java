@@ -1,5 +1,6 @@
 package org.jboss.seam.forge.arquillian.container;
 
+import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -8,9 +9,7 @@ import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
-import org.jboss.shrinkwrap.descriptor.spi.Node;
 
-import javax.inject.Inject;
 import java.util.List;
 
 public abstract class AbstractJBoss7Container implements Container
@@ -96,8 +95,8 @@ public abstract class AbstractJBoss7Container implements Container
 
    private void addJbossContainer(String jbossHome, Node xml)
    {
-      Node container = xml.create("container@qualifier=jboss&default=true");
-      container.create("configuration").create("property@name=jbossHome").text(jbossHome);
-      container.create("protocol@type=jmx-as7").create("property@name=executionType").text("REMOTE");
+      Node container = xml.createChild("container@qualifier=jboss&default=true");
+      container.createChild("configuration").createChild("property@name=jbossHome").text(jbossHome);
+      container.createChild("protocol@type=jmx-as7").createChild("property@name=executionType").text("REMOTE");
    }
 }
