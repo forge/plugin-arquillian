@@ -31,7 +31,7 @@ Of course you can use the TAB key to navigate to the class that you want to test
 
 Exporting tests
 ================
-Arquillian uses the Shrinkwrap API to create micro deployments. A micro deployment is an actual package (e.g. war file). In some cases it's convinient to access those packages directly. You can do this by exporting a Deployment. 
+Arquillian uses the Shrinkwrap API to create micro deployments. A micro deployment is an actual package (e.g. war file). In some cases it's convenient to access those packages directly. You can do this by exporting a Deployment. 
 
 First navigate to the test class that you want to export, then use the arquillian export command to create the jar/war file. 
 
