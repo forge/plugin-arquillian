@@ -16,6 +16,8 @@ To add a new profile you use the arquillian setup command:
 	arquillian setup
 	
 This command will prompt which container to use. Remember that you can just re-run the arquillian setup command to install an additional container profile.
+For managed containers it might make sense to automatically download & install the container during the build to make installation on a build server more easy. This is only supported for AS7 at this moment.
+
 
 
 Generating tests
