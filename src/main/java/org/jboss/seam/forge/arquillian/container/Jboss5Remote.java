@@ -1,7 +1,6 @@
 package org.jboss.seam.forge.arquillian.container;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
@@ -28,4 +27,19 @@ public class Jboss5Remote implements Container
                 .setScopeType(ScopeType.TEST);
       builder.addProfile("jbossas-remote-5", dep1, dep2);
    }
+
+    @Override
+    public String installContainer(String location) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String installContainerToDefaultLocation() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean supportsContainerInstallation() {
+        return false;
+    }
 }

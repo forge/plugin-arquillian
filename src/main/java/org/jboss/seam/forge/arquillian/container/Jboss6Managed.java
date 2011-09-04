@@ -1,7 +1,6 @@
 package org.jboss.seam.forge.arquillian.container;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -38,4 +37,19 @@ public class Jboss6Managed implements Container
 
       builder.addProfile("jbossas-managed-6", dep1, dep2, dep3);
    }
+
+    @Override
+    public String installContainer(String location) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String installContainerToDefaultLocation() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean supportsContainerInstallation() {
+        return false;
+    }
 }

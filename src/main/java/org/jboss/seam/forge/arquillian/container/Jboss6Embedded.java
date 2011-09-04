@@ -3,7 +3,6 @@ package org.jboss.seam.forge.arquillian.container;
 import java.io.ByteArrayInputStream;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.BuildBase;
@@ -103,4 +102,19 @@ public class Jboss6Embedded implements Container
       pom.addProfile(profile);
       facet.setPOM(pom);
    }
+
+    @Override
+    public String installContainer(String location) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String installContainerToDefaultLocation() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean supportsContainerInstallation() {
+        return false;
+    }
 }
