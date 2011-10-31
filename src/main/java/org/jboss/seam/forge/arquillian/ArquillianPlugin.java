@@ -67,7 +67,6 @@ public class ArquillianPlugin implements Plugin {
     public void setup(@Option(name = "test-framework", defaultValue = "junit", required = false) String testFramework,
                       @Option(name = "container", required = true) ArquillianContainer container,
                       final PipeOut out) {
-
         dependencyFacet = project.getFacet(DependencyFacet.class);
 
         if (testFramework.equals("testng")) {
@@ -86,9 +85,9 @@ public class ArquillianPlugin implements Plugin {
             @Option(name = "class", required = true, type = PromptType.JAVA_CLASS) JavaResource classUnderTest,
             @Option(name = "enableJPA", required = false, flagOnly = true) boolean enableJPA,
             final PipeOut out) throws FileNotFoundException {
-        JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+            JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-        JavaSource<?> javaSource = classUnderTest.getJavaSource();
+            JavaSource<?> javaSource = classUnderTest.getJavaSource();
 
         VelocityContext context = new VelocityContext();
         context.put("package", javaSource.getPackage());
