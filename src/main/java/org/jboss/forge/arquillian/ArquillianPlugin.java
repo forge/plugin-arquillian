@@ -131,21 +131,29 @@ public class ArquillianPlugin implements Plugin {
         Version version = getContainerVersion(profile, container);
 
         Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?", version.getConfigurations());
-        System.out.println(configuration.getName());
+
 
         ResourceFacet resources = project.getFacet(ResourceFacet.class);
         FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
-        if (resource.exists()) {
-            editExistingArquillianConfig(null, resource);
+
+        Node xml = null;
+        if (!resource.exists()) {
+            xml = createNewArquillianConfig(null, resource);
         } else {
-            createNewArquillianConfig(null, resource);
+            xml = XMLParser.parse(resource.getResourceInputStream());
         }
+
+        addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), "myval");
+
+        resource.setContents(XMLParser.toXMLString(xml));
     }
 
     private Version getContainerVersion(Profile profile, Container container) {
-        for (Version version : container.getVersions()) {
-            if (version.getName().equals(getContainerVersionFromProfile(profile, container))) {
-                return version;
+        if (container.getVersions() != null) {
+            for (Version version : container.getVersions()) {
+                if (version.getName().equals(getContainerVersionFromProfile(profile, container))) {
+                    return version;
+                }
             }
         }
 
@@ -184,21 +192,20 @@ public class ArquillianPlugin implements Plugin {
         throw new RuntimeException("Profile " + profile + " could not be found");
     }
 
-    private void createNewArquillianConfig(String jbossHome, FileResource<?> resource) {
-        Node xml = XMLParser.parse("<arquillian xmlns=\"http://jboss.org/schema/arquillian\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+    private Node createNewArquillianConfig(String jbossHome, FileResource<?> resource) {
+        return XMLParser.parse("<arquillian xmlns=\"http://jboss.org/schema/arquillian\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "            xsi:schemaLocation=\"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd\"></arquillian>");
-        //addJbossContainer(jbossHome, xml);
-        resource.setContents(XMLParser.toXMLString(xml));
     }
 
-    private void editExistingArquillianConfig(String jbossHome, FileResource<?> resource) {
+    private void addPropertyToArquillianConfig(Node xml, String container, String key, String value) {
 
-        Node existingConfigFile = XMLParser.parse(resource.getResourceInputStream());
-        Node container = existingConfigFile.getSingle("container@qualifier=jboss");
-        if (container == null) {
-            //addJbossContainer(jbossHome, existingConfigFile);
-            resource.setContents(XMLParser.toXMLString(existingConfigFile));
+        Node config = xml.getSingle("container@qualifier=" + container);
+        if (config == null) {
+            //TODO: finish this
+            config = xml.createChild("container@qualifier=");
         }
+
+        config.createChild("configuration").createChild("property@name=jbossHome").text(jbossHome);
     }
 
 
