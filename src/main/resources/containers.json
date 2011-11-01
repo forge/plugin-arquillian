@@ -1,0 +1,604 @@
+[
+  {
+    "download": {
+      "group_id": "org.jboss.jbossas",
+      "artifact_id": "jboss-as-dist"
+    },
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "dom4j",
+        "artifact_id": "dom4j"
+      },
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-server-manager"
+      },
+      {
+        "group_id": "org.jboss.client",
+        "artifact_id": "jbossall-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Managed 4.2.x",
+    "artifact_id": "arquillian-jbossas-managed-4.2"
+  },
+  {
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "dom4j",
+        "artifact_id": "dom4j"
+      },
+      {
+        "group_id": "org.jboss.client",
+        "artifact_id": "jbossall-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Remote 4.2.x",
+    "artifact_id": "arquillian-jbossas-remote-4.2"
+  },
+  {
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-as-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Remote 5.x",
+    "artifact_id": "arquillian-jbossas-remote-5"
+  },
+  {
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-server-manager"
+      },
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-as-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Managed 5.1.x",
+    "artifact_id": "arquillian-jbossas-managed-5.1"
+  },
+  {
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-as-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Remote 5.1.x",
+    "artifact_id": "arquillian-jbossas-remote-5.1"
+  },
+  {
+    "download": {
+      "group_id": "org.jboss.jbossas",
+      "artifact_id": "jboss-as-distribution"
+    },
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "org.jboss.embedded",
+        "artifact_id": "jboss-embedded-api"
+      },
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-as-depchain"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Embedded 6.x",
+    "artifact_id": "arquillian-jbossas-embedded-6"
+  },
+  {
+    "download": {
+      "group_id": "org.jboss.jbossas",
+      "artifact_id": "jboss-as-distribution"
+    },
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-server-manager"
+      },
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-as-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Managed 6.x",
+    "artifact_id": "arquillian-jbossas-managed-6"
+  },
+  {
+    "group_id": "org.jboss.arquillian.container",
+    "dependencies": [
+      {
+        "group_id": "org.jboss.jbossas",
+        "artifact_id": "jboss-as-client"
+      }
+    ],
+    "versions": [
+      {
+        "name": "1.0.0.CR1",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      },
+      {
+        "name": "1.0.0.CR2",
+        "configurations": [
+          {
+            "type": "java.lang.String",
+            "description": "The ip/host for the containers management interface",
+            "name": "bindAddress",
+            "default": "localhost"
+          },
+          {
+            "type": "java.lang.Integer",
+            "description": "The port for the containers management interface",
+            "name": "httpPort",
+            "default": "8080"
+          }
+        ]
+      }
+    ],
+    "name": "Arquillian Container JBoss AS Remote 6.x",
+    "artifact_id": "arquillian-jbossas-remote-6"
+  },
+  {
+    "artifact_id": "arquillian-tomcat-managed-5.5",
+    "download": {
+      "url": "http://archive.apache.org/dist/tomcat/tomcat-5/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+    },
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Tomcat Managed 5.5.x"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "catalina",
+        "group_id": "org.apache.tomcat"
+      },
+      {
+        "artifact_id": "coyote",
+        "group_id": "org.apache.tomcat"
+      },
+      {
+        "artifact_id": "jasper",
+        "group_id": "org.apache.tomcat"
+      }
+    ],
+    "artifact_id": "arquillian-tomcat-embedded-6",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Tomcat Embedded 6.x"
+  },
+  {
+    "artifact_id": "arquillian-tomcat-remote-6",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Tomcat Remote 6.x"
+  },
+  {
+    "artifact_id": "arquillian-tomcat-managed-6",
+    "download": {
+      "url": "http://archive.apache.org/dist/tomcat/tomcat-6/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+    },
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Tomcat Managed 6.x"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "tomcat-embed-core",
+        "group_id": "org.apache.tomcat.embed"
+      },
+      {
+        "artifact_id": "tomcat-embed-jasper",
+        "group_id": "org.apache.tomcat.embed"
+      },
+      {
+        "artifact_id": "tomcat-embed-logging-juli",
+        "group_id": "org.apache.tomcat.embed"
+      }
+    ],
+    "artifact_id": "arquillian-tomcat-embedded-7",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Tomcat Embedded 7.x"
+  },
+  {
+    "artifact_id": "arquillian-tomcat-managed-7",
+    "download": {
+      "url": "http://archive.apache.org/dist/tomcat/tomcat-7/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
+    },
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Tomcat Managed 7.x"
+  },
+  {
+    "artifact_id": "arquillian-glassfish-remote-3.1",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container GlassFish Remote 3.1 (REST)"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "glassfish-embedded-all",
+        "group_id": "org.glassfish.extras"
+      }
+    ],
+    "artifact_id": "arquillian-glassfish-embedded-3.1",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container GlassFish Embedded 3.1"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "jetty",
+        "group_id": "org.mortbay.jetty"
+      },
+      {
+        "artifact_id": "jetty-plus",
+        "group_id": "org.mortbay.jetty"
+      }
+    ],
+    "artifact_id": "arquillian-jetty-embedded-6.1",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Jetty Embedded 6.1.x"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "jetty-webapp",
+        "group_id": "org.eclipse.jetty"
+      },
+      {
+        "artifact_id": "jetty-plus",
+        "group_id": "org.eclipse.jetty"
+      }
+    ],
+    "artifact_id": "arquillian-jetty-embedded-7",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container Jetty Embedded 7.x and 8.x"
+  },
+  {
+    "artifact_id": "arquillian-was-remote-7",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container WebSphere AS Remote 7.x"
+  },
+  {
+    "artifact_id": "arquillian-was-embedded-8",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container WebSphere AS Embedded 8.x"
+  },
+  {
+    "artifact_id": "arquillian-was-remote-8",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container WebSphere AS Remote 8.x"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "openejb-core",
+        "group_id": "org.apache.openejb"
+      },
+      {
+        "artifact_id": "javax.inject",
+        "group_id": "javax.inject"
+      }
+    ],
+    "artifact_id": "arquillian-openejb-embedded-3.1",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container OpenEJB Embedded 3.1.x"
+  },
+  {
+    "dependencies": [
+      {
+        "artifact_id": "shrinkwrap-impl-base",
+        "group_id": "org.jboss.shrinkwrap"
+      },
+      {
+        "artifact_id": "openwebbeans-spi",
+        "group_id": "org.apache.openwebbeans"
+      },
+      {
+        "artifact_id": "openwebbeans-impl",
+        "group_id": "org.apache.openwebbeans"
+      },
+      {
+        "artifact_id": "geronimo-el_2.2_spec",
+        "group_id": "org.apache.geronimo.specs"
+      },
+      {
+        "artifact_id": "geronimo-jta_1.1_spec",
+        "group_id": "org.apache.geronimo.specs"
+      },
+      {
+        "artifact_id": "geronimo-validation_1.0_spec",
+        "group_id": "org.apache.geronimo.specs"
+      },
+      {
+        "artifact_id": "geronimo-interceptor_1.1_spec",
+        "group_id": "org.apache.geronimo.specs"
+      },
+      {
+        "artifact_id": "geronimo-jcdi_1.0_spec",
+        "group_id": "org.apache.geronimo.specs"
+      },
+      {
+        "artifact_id": "geronimo-atinject_1.0_spec",
+        "group_id": "org.apache.geronimo.specs"
+      },
+      {
+        "artifact_id": "geronimo-servlet_2.5_spec",
+        "group_id": "org.apache.geronimo.specs"
+      }
+    ],
+    "artifact_id": "arquillian-openwebbeans-embedded-1",
+    "group_id": "org.jboss.arquillian.container",
+    "name": "Arquillian Container OpenWebBeans Embedded 1.x"
+  }
+]

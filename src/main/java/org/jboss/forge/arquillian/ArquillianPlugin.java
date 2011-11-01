@@ -1,10 +1,14 @@
-package org.jboss.seam.forge.arquillian;
+package org.jboss.forge.arquillian;
 
+import org.apache.maven.model.Profile;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.xml.Node;
+import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
@@ -12,20 +16,24 @@ import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.project.facets.JavaExecutionFacet;
 import org.jboss.forge.project.facets.JavaSourceFacet;
+import org.jboss.forge.project.facets.ResourceFacet;
+import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.PickupResource;
 import org.jboss.forge.shell.plugins.*;
-import org.jboss.forge.shell.util.BeanManagerUtils;
-import org.jboss.seam.forge.arquillian.container.Container;
+import org.jboss.forge.arquillian.commandcompleter.ContainerCommandCompleter;
+import org.jboss.forge.arquillian.commandcompleter.ProfileCommandCompleter;
+import org.jboss.forge.arquillian.container.*;
+import org.jboss.forge.arquillian.container.ContainerDirectoryParser;
 
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
@@ -63,21 +71,134 @@ public class ArquillianPlugin implements Plugin {
 
     private DependencyFacet dependencyFacet;
 
-    @Command(value = "setup", help = "Add a container profile to the maven configuration. Multiple containers can exist on a single project.")
-    public void setup(@Option(name = "test-framework", defaultValue = "junit", required = false) String testFramework,
-                      @Option(name = "container", required = true) ArquillianContainer container,
-                      final PipeOut out) {
+    @Inject
+    ContainerInstaller containerInstaller;
+
+    @Inject
+    private ContainerDirectoryParser containerDirectoryParser;
+
+
+    @Inject
+    @Any
+    Event<ContainerInstallEvent> installEvent;
+
+    @SetupCommand
+    public void installContainer(
+            @Option(name = "container", required = true, completer = ContainerCommandCompleter.class) String containerId,
+            @Option(name = "testframework", required = false, defaultValue = "junit") String testframework) {
 
         dependencyFacet = project.getFacet(DependencyFacet.class);
 
-        if (testFramework.equals("testng")) {
-            installTestNgDependencies();
-        } else {
+        DependencyBuilder bomDependency = DependencyBuilder.create().setGroupId("org.jboss.arquillian").setArtifactId("arquillian-bom");
+        List<Dependency> bomVersions = dependencyFacet.resolveAvailableVersions(bomDependency);
+        Dependency bom = shell.promptChoiceTyped("What version of Arquillian do you want to use?", bomVersions, bomVersions.get(bomVersions.size() - 1));
+
+        dependencyFacet.addManagedDependency(bom);
+
+        if (testframework.equals("junit")) {
             installJunitDependencies();
+        } else {
+            installTestNgDependencies();
         }
 
-        Container contextualInstance = BeanManagerUtils.getContextualInstance(beanManager, container.getContainer());
-        contextualInstance.installDependencies(arquillianVersion);
+        List<Container> containers = containerDirectoryParser.getContainers();
+
+        boolean foundContainer = false;
+        for (Container container : containers) {
+            if (container.getId().equals(containerId)) {
+                shell.println(container.getName());
+                containerInstaller.installContainer(container);
+
+                installEvent.fire(new ContainerInstallEvent(container));
+
+                foundContainer = true;
+                break;
+            }
+        }
+
+        if (!foundContainer) {
+            throw new RuntimeException("Container not recognized");
+        }
+
+    }
+
+    @Command(value = "configure-container")
+    public void configureContainer(@Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId) {
+
+        Profile profile = getProfile(profileId);
+        Container container = getContainer(profile);
+
+        Version version = getContainerVersion(profile, container);
+
+        Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?", version.getConfigurations());
+        System.out.println(configuration.getName());
+
+        ResourceFacet resources = project.getFacet(ResourceFacet.class);
+        FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
+        if (resource.exists()) {
+            editExistingArquillianConfig(null, resource);
+        } else {
+            createNewArquillianConfig(null, resource);
+        }
+    }
+
+    private Version getContainerVersion(Profile profile, Container container) {
+        for (Version version : container.getVersions()) {
+            if (version.getName().equals(getContainerVersionFromProfile(profile, container))) {
+                return version;
+            }
+        }
+
+        throw new RuntimeException("Container version could not be extracted for profile " + profile);
+    }
+
+    private String getContainerVersionFromProfile(Profile profile, Container container) {
+        for (org.apache.maven.model.Dependency dependency : profile.getDependencies()) {
+            if (container.getArtifact_id().equals(dependency.getArtifactId())) {
+                return dependency.getVersion();
+            }
+        }
+
+        throw new RuntimeException("Container version could not be extracted for profile " + profile);
+    }
+
+    private Container getContainer(Profile profile) {
+        for (Container container : containerDirectoryParser.getContainers()) {
+            if (container.getId().equals(profile.getId())) {
+                return container;
+            }
+        }
+
+        throw new RuntimeException("Container not found for profile " + profile);
+    }
+
+    private Profile getProfile(String profile) {
+        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+        List<Profile> profileList = mavenCoreFacet.getPOM().getProfiles();
+        for (Profile p : profileList) {
+            if (p.getId().equals(profile)) {
+                return p;
+            }
+        }
+
+        throw new RuntimeException("Profile " + profile + " could not be found");
+    }
+
+    private void createNewArquillianConfig(String jbossHome, FileResource<?> resource) {
+        Node xml = XMLParser.parse("<arquillian xmlns=\"http://jboss.org/schema/arquillian\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "            xsi:schemaLocation=\"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd\"></arquillian>");
+        //addJbossContainer(jbossHome, xml);
+        resource.setContents(XMLParser.toXMLString(xml));
+    }
+
+    private void editExistingArquillianConfig(String jbossHome, FileResource<?> resource) {
+
+        Node existingConfigFile = XMLParser.parse(resource.getResourceInputStream());
+        Node container = existingConfigFile.getSingle("container@qualifier=jboss");
+        if (container == null) {
+            //addJbossContainer(jbossHome, existingConfigFile);
+            resource.setContents(XMLParser.toXMLString(existingConfigFile));
+        }
     }
 
 
