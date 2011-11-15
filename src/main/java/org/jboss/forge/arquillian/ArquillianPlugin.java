@@ -89,24 +89,19 @@ public class ArquillianPlugin implements Plugin {
 
         dependencyFacet = project.getFacet(DependencyFacet.class);
 
-        DependencyBuilder bomDependency = DependencyBuilder.create().setGroupId("org.jboss.arquillian").setArtifactId("arquillian-bom");
-        List<Dependency> bomVersions = dependencyFacet.resolveAvailableVersions(bomDependency);
-        Dependency bom = shell.promptChoiceTyped("What version of Arquillian do you want to use?", bomVersions, bomVersions.get(bomVersions.size() - 1));
-
-        dependencyFacet.addManagedDependency(bom);
-
         if (testframework.equals("junit")) {
             installJunitDependencies();
         } else {
             installTestNgDependencies();
         }
 
+        installArquillianBom();
+
         List<Container> containers = containerDirectoryParser.getContainers();
 
         boolean foundContainer = false;
         for (Container container : containers) {
             if (container.getId().equals(containerId)) {
-                shell.println(container.getName());
                 containerInstaller.installContainer(container);
 
                 installEvent.fire(new ContainerInstallEvent(container));
@@ -114,6 +109,8 @@ public class ArquillianPlugin implements Plugin {
                 foundContainer = true;
                 break;
             }
+
+
         }
 
         if (!foundContainer) {
@@ -205,7 +202,7 @@ public class ArquillianPlugin implements Plugin {
             config = xml.createChild("container@qualifier=");
         }
 
-        config.createChild("configuration").createChild("property@name=jbossHome").text(jbossHome);
+        //config.createChild("configuration").createChild("property@name=jbossHome").text(jbossHome);
     }
 
 
@@ -315,6 +312,17 @@ public class ArquillianPlugin implements Plugin {
         } else {
             arquillianVersion = dependencyFacet.getDependency(testNgArquillianDependency).getVersion();
         }
+    }
+
+    private void installArquillianBom() {
+        DependencyBuilder arquillianBom = DependencyBuilder.create()
+                .setGroupId("org.jboss.arquillian")
+                .setArtifactId("arquillian-bom")
+                .setPackagingType("pom")
+                .setVersion(arquillianVersion)
+                .setScopeType(ScopeType.IMPORT);
+
+        dependencyFacet.addManagedDependency(arquillianBom);
     }
 
     private DependencyBuilder createJunitDependency() {
