@@ -135,7 +135,7 @@ public class ArquillianPlugin implements Plugin {
 
         Node xml = null;
         if (!resource.exists()) {
-            xml = createNewArquillianConfig(null, resource);
+            xml = createNewArquillianConfig();
         } else {
             xml = XMLParser.parse(resource.getResourceInputStream());
         }
@@ -189,7 +189,7 @@ public class ArquillianPlugin implements Plugin {
         throw new RuntimeException("Profile " + profile + " could not be found");
     }
 
-    private Node createNewArquillianConfig(String jbossHome, FileResource<?> resource) {
+    private Node createNewArquillianConfig() {
         return XMLParser.parse("<arquillian xmlns=\"http://jboss.org/schema/arquillian\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "            xsi:schemaLocation=\"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd\"></arquillian>");
     }
@@ -198,11 +198,10 @@ public class ArquillianPlugin implements Plugin {
 
         Node config = xml.getSingle("container@qualifier=" + container);
         if (config == null) {
-            //TODO: finish this
-            config = xml.createChild("container@qualifier=");
+            config = xml.createChild("container@qualifier=" + container);
         }
 
-        //config.createChild("configuration").createChild("property@name=jbossHome").text(jbossHome);
+        config.createChild("configuration").createChild("property@name=" + key).text(value);
     }
 
 
