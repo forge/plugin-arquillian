@@ -11,7 +11,7 @@ public class Container {
     private String name;
     private List<Dependency> dependencies;
     private Dependency download;
-    private List<Version> versions;
+    private List<Configuration> configurations;
 
     public String getGroup_id() {
         return group_id;
@@ -53,12 +53,12 @@ public class Container {
         this.download = download;
     }
 
-    public List<Version> getVersions() {
-        return versions;
+    public List<Configuration> getConfigurations() {
+        return configurations;
     }
 
-    public void setVersions(List<Version> versions) {
-        this.versions = versions;
+    public void setConfigurations(List<Configuration> configurations) {
+        this.configurations = configurations;
     }
 
     public String getId() {

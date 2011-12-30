@@ -19,10 +19,6 @@ public class ContainerDirectoryParser {
     @Inject ContainerDirectoryLocationProvider containerDirectoryLocationProvider;
 
     private synchronized void parse() {
-
-        //NEW URL https://gist.github.com/1324966/9228e16adf569e1657d037faa10ae2419daa6719
-        //Old url "https://raw.github.com/gist/1324966/afe53313a2ed345585188a5c1f3d43fdb0c667d6/containers.json"
-        //this.getClass().getClassLoader().getResource("containers.json").toURI().toURL()
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             containers = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(), new TypeReference<List<Container>>() {

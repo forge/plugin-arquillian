@@ -1,5 +1,3 @@
 <beans>
-	<alternatives>
-        <class>org.jboss.forge.arquillian.container.MockContainerDirectoryLocationProvider</class>
-	</alternatives>
+
 </beans>

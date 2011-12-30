@@ -1,11 +1,13 @@
 package org.jboss.forge.arquillian.container;
 
+import javax.enterprise.inject.Alternative;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
+@Alternative
 public class DocumentationContainerDirectoryLocationProvider implements ContainerDirectoryLocationProvider{
     @Override
     public URL getUrl() {

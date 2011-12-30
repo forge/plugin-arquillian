@@ -109,8 +109,6 @@ public class ArquillianPlugin implements Plugin {
                 foundContainer = true;
                 break;
             }
-
-
         }
 
         if (!foundContainer) {
@@ -125,10 +123,7 @@ public class ArquillianPlugin implements Plugin {
         Profile profile = getProfile(profileId);
         Container container = getContainer(profile);
 
-        Version version = getContainerVersion(profile, container);
-
-        Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?", version.getConfigurations());
-
+        Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?", container.getConfigurations());
 
         ResourceFacet resources = project.getFacet(ResourceFacet.class);
         FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
@@ -140,31 +135,10 @@ public class ArquillianPlugin implements Plugin {
             xml = XMLParser.parse(resource.getResourceInputStream());
         }
 
-        addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), "myval");
+        String value = shell.prompt("What value do you want to set?");
+        addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), value);
 
         resource.setContents(XMLParser.toXMLString(xml));
-    }
-
-    private Version getContainerVersion(Profile profile, Container container) {
-        if (container.getVersions() != null) {
-            for (Version version : container.getVersions()) {
-                if (version.getName().equals(getContainerVersionFromProfile(profile, container))) {
-                    return version;
-                }
-            }
-        }
-
-        throw new RuntimeException("Container version could not be extracted for profile " + profile);
-    }
-
-    private String getContainerVersionFromProfile(Profile profile, Container container) {
-        for (org.apache.maven.model.Dependency dependency : profile.getDependencies()) {
-            if (container.getArtifact_id().equals(dependency.getArtifactId())) {
-                return dependency.getVersion();
-            }
-        }
-
-        throw new RuntimeException("Container version could not be extracted for profile " + profile);
     }
 
     private Container getContainer(Profile profile) {
@@ -277,39 +251,39 @@ public class ArquillianPlugin implements Plugin {
 
     private void installJunitDependencies() {
         DependencyBuilder junitDependency = createJunitDependency();
-        if (!dependencyFacet.hasDependency(junitDependency)) {
+        if (!dependencyFacet.hasEffectiveDependency(junitDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitDependency);
-            Dependency dependency = shell.promptChoiceTyped("Which version of JUnit do you want to install?", dependencies);
-            dependencyFacet.addDependency(dependency);
+            Dependency dependency = shell.promptChoiceTyped("Which version of JUnit do you want to install?", dependencies, dependencies.get(dependencies.size() - 1));
+            dependencyFacet.addDirectDependency(dependency);
         }
 
         DependencyBuilder junitArquillianDependency = createJunitArquillianDependency();
-        if (!dependencyFacet.hasDependency(junitArquillianDependency)) {
+        if (!dependencyFacet.hasEffectiveDependency(junitArquillianDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitArquillianDependency);
             Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, dependencies.get(dependencies.size() - 1));
             arquillianVersion = dependency.getVersion();
-            dependencyFacet.addDependency(dependency);
+            dependencyFacet.addDirectDependency(dependency);
         } else {
-            arquillianVersion = dependencyFacet.getDependency(junitArquillianDependency).getVersion();
+            arquillianVersion = dependencyFacet.getDirectDependency(junitArquillianDependency).getVersion();
         }
     }
 
     private void installTestNgDependencies() {
         DependencyBuilder testngDependency = createTestNgDependency();
-        if (!dependencyFacet.hasDependency(testngDependency)) {
+        if (!dependencyFacet.hasEffectiveDependency(testngDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testngDependency);
-            Dependency dependency = shell.promptChoiceTyped("Which version of TestNG do you want to install?", dependencies);
-            dependencyFacet.addDependency(dependency);
+            Dependency dependency = shell.promptChoiceTyped("Which version of TestNG do you want to install?", dependencies, dependencies.get(dependencies.size() - 1));
+            dependencyFacet.addDirectDependency(dependency);
         }
 
         DependencyBuilder testNgArquillianDependency = createTestNgArquillianDependency();
-        if (!dependencyFacet.hasDependency(testNgArquillianDependency)) {
+        if (!dependencyFacet.hasEffectiveDependency(testNgArquillianDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testNgArquillianDependency);
             Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, dependencies.get(dependencies.size() - 1));
             arquillianVersion = dependency.getVersion();
-            dependencyFacet.addDependency(dependency);
+            dependencyFacet.addDirectDependency(dependency);
         } else {
-            arquillianVersion = dependencyFacet.getDependency(testNgArquillianDependency).getVersion();
+            arquillianVersion = dependencyFacet.getManagedDependency(testNgArquillianDependency).getVersion();
         }
     }
 
@@ -321,7 +295,7 @@ public class ArquillianPlugin implements Plugin {
                 .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.IMPORT);
 
-        dependencyFacet.addManagedDependency(arquillianBom);
+        dependencyFacet.addDirectDependency(arquillianBom);
     }
 
     private DependencyBuilder createJunitDependency() {
