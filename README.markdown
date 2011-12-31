@@ -39,3 +39,12 @@ First navigate to the test class that you want to export, then use the arquillia
 
 	cd src/test/java/demo/CoolBeanTest.java
 	arquillian export
+
+Configuring arquillian.xml
+================
+Containers can be configured in arquillian.xml (hostnames, ports etc.). Forge can help you do so.
+Simply type:
+
+    arquillian configure-container --profile [maven-profile-id]
+
+Forge will list all possible configuration options for that specific container. All you have to do is set a value.
