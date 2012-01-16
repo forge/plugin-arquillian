@@ -979,8 +979,13 @@
                 "name":"managementPort",
                 "default":"9999"
             }
+        ],
 
-        ]
+        "download":{
+            "group_id":"org.jboss.as",
+            "artifact_id":"jboss-as-server"
+        }
+
 
     },
     {
@@ -1001,7 +1006,6 @@
                 "default":"9999"
             }
         ]
-
     },
 
     {
