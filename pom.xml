@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.arquillian.forge</groupId>
   <artifactId>arquillian-plugin</artifactId>
-  <version>1.0.0.Beta5</version>
+  <version>1.0.0-SNAPSHOT</version>
   <properties>
     <forge.version>1.0.0-SNAPSHOT</forge.version>
   </properties>
@@ -17,37 +17,37 @@
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell-api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${forge.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-shell</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${forge.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-maven-api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${forge.version}</version>
       <scope>provided</scope>
     </dependency>
-      <dependency>
-          <groupId>org.sonatype.aether</groupId>
-          <artifactId>aether-api</artifactId>
-          <version>1.11</version>
-          <scope>provided</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.sonatype.aether</groupId>
+      <artifactId>aether-api</artifactId>
+      <version>1.11</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-test-harness</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${forge.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge</groupId>
       <artifactId>forge-javaee-api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${forge.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -84,26 +84,4 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>JBOSS_AS_MANAGED_6.X</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.jboss.arquillian.container</groupId>
-          <artifactId>arquillian-jbossas-managed-6</artifactId>
-          <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.jbossas</groupId>
-          <artifactId>jboss-server-manager</artifactId>
-          <version>1.0.4.Final</version>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.jbossas</groupId>
-          <artifactId>jboss-as-client</artifactId>
-          <version>6.1.0.Final</version>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
 </project>
