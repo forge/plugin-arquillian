@@ -58,7 +58,7 @@ public class DownloadServerObserver {
         List<org.jboss.forge.project.dependencies.Dependency> asDependencies = dependencyFacet.resolveAvailableVersions(DependencyBuilder.create()
                 .setGroupId(container.getDownload().getGroup_id())
                 .setArtifactId(container.getDownload().getArtifact_id()));
-        org.jboss.forge.project.dependencies.Dependency asVersion = shell.promptChoiceTyped("Which version of Jboss AS do you want to install?", asDependencies);
+        org.jboss.forge.project.dependencies.Dependency asVersion = shell.promptChoiceTyped("Which version of the container do you want to install?", asDependencies);
 
         ConfigurationBuilder configuration = ConfigurationBuilder.create();
         configuration.createConfigurationElement("artifactItems")
