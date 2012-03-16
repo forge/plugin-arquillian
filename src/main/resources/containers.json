@@ -983,7 +983,7 @@
 
         "download":{
             "group_id":"org.jboss.as",
-            "artifact_id":"jboss-as-server"
+            "artifact_id":"jboss-as-dist"
         }
 
 
