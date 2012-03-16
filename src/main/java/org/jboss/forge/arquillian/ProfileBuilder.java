@@ -27,6 +27,7 @@ public class ProfileBuilder
    {
       MavenCoreFacet facet = project.getFacet(MavenCoreFacet.class);
 
+
       Profile profile = new Profile();
       profile.setId(profileId);
 
@@ -36,8 +37,25 @@ public class ProfileBuilder
       }
 
       Model pom = facet.getPOM();
+      Profile existingProfile = findProfileById(profileId, pom);
+      if(existingProfile != null)
+      {
+         pom.removeProfile(existingProfile);
+      }
       pom.addProfile(profile);
        
       facet.setPOM(pom);
+   }
+
+   private Profile findProfileById(String profileId, Model pom)
+   {
+      for (Profile profile : pom.getProfiles())
+      {
+         if (profileId.equalsIgnoreCase(profile.getId()))
+         {
+            return profile;
+         }
+      }
+      return null;
    }
 }

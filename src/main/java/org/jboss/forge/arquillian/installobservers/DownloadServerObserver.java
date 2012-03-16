@@ -13,6 +13,7 @@ import org.jboss.forge.project.dependencies.*;
 import org.jboss.forge.project.facets.DependencyFacet;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.arquillian.ContainerInstallEvent;
+import org.jboss.forge.arquillian.DependencyUtil;
 import org.jboss.forge.arquillian.container.Container;
 
 import javax.enterprise.event.Observes;
@@ -58,7 +59,7 @@ public class DownloadServerObserver {
         List<org.jboss.forge.project.dependencies.Dependency> asDependencies = dependencyFacet.resolveAvailableVersions(DependencyBuilder.create()
                 .setGroupId(container.getDownload().getGroup_id())
                 .setArtifactId(container.getDownload().getArtifact_id()));
-        org.jboss.forge.project.dependencies.Dependency asVersion = shell.promptChoiceTyped("Which version of Jboss AS do you want to install?", asDependencies);
+        org.jboss.forge.project.dependencies.Dependency asVersion = shell.promptChoiceTyped("Which version of the container do you want to install?", asDependencies, DependencyUtil.getLatestNonSnapshotVersion(asDependencies));
 
         ConfigurationBuilder configuration = ConfigurationBuilder.create();
         configuration.createConfigurationElement("artifactItems")
