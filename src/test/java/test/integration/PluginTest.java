@@ -271,6 +271,29 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
+   public void installMultipleTimesShouldOverwriteProfile() throws Exception
+   {
+      Project project = initializeJavaProject();
+
+      MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
+
+      List<Profile> profiles = coreFacet.getPOM().getProfiles();
+      for (Profile profile : profiles) {
+         System.out.println(profile.getId());
+      }
+      assertThat(profiles.size(), is(0));
+
+      queueInputLines("JBOSS_AS_REMOTE_7.X", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+      getShell().execute("arquillian setup");
+
+      queueInputLines("JBOSS_AS_REMOTE_7.X", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+      getShell().execute("arquillian setup");
+
+      assertThat(coreFacet.getPOM().getProfiles().size(), is(1));
+
+   }
+
+   @Test
    public void installContainerWithDownload() throws Exception
    {
       Project project = initializeJavaProject();
