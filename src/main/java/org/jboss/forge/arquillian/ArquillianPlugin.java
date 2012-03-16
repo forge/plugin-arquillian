@@ -295,7 +295,7 @@ public class ArquillianPlugin implements Plugin {
                 .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.IMPORT);
 
-        dependencyFacet.addDirectDependency(arquillianBom);
+        dependencyFacet.addDirectManagedDependency(arquillianBom);
     }
 
     private DependencyBuilder createJunitDependency() {
