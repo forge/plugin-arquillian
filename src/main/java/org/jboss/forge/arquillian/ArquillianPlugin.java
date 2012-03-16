@@ -170,12 +170,10 @@ public class ArquillianPlugin implements Plugin {
 
     private void addPropertyToArquillianConfig(Node xml, String container, String key, String value) {
 
-        Node config = xml.getSingle("container@qualifier=" + container);
-        if (config == null) {
-            config = xml.createChild("container@qualifier=" + container);
-        }
-
-        config.createChild("configuration").createChild("property@name=" + key).text(value);
+        xml.getOrCreate("container@qualifier=" + container)
+           .getOrCreate("configuration")
+           .getOrCreate("property@name=" + key)
+           .text(value);
     }
 
 

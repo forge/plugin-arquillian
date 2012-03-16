@@ -26,7 +26,9 @@ import org.jboss.seam.render.RenderRoot;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.impl.base.io.IOUtil;
 import org.jboss.solder.SolderRoot;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -323,6 +325,40 @@ public class PluginTest extends AbstractShellTest
       assertThat(arquillianXML, is(notNullValue()));
       assertThat(arquillianXML.exists(), is(true));
 
+      String content = new String(IOUtil.asByteArray(arquillianXML.getResourceInputStream()));
+      Assert.assertTrue("Option should be writen to file", content.indexOf("8000") != -1);
+   }
+
+   @Test
+   public void configureContainerMultipleTimes() throws Exception
+   {
+      Project project = initializeJavaProject();
+
+      MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
+
+      List<Profile> profiles = coreFacet.getPOM().getProfiles();
+      for (Profile profile : profiles) {
+         System.out.println(profile.getId());
+      }
+      assertThat(profiles.size(), is(0));
+
+      queueInputLines("JBOSS_AS_MANAGED_6.X", "", "19", "10", "", "", "", "8", "");
+      getShell().execute("arquillian setup");
+
+      queueInputLines("JBOSS_AS_MANAGED_6.X", "2", "8000");
+      getShell().execute("arquillian configure-container");
+
+      queueInputLines("JBOSS_AS_MANAGED_6.X", "2", "8000");
+      getShell().execute("arquillian configure-container");
+
+      ResourceFacet facet = project.getFacet(ResourceFacet.class);
+      FileResource<?> arquillianXML = facet.getTestResource("arquillian.xml");
+
+      assertThat(arquillianXML, is(notNullValue()));
+      assertThat(arquillianXML.exists(), is(true));
+
+      String content = new String(IOUtil.asByteArray(arquillianXML.getResourceInputStream()));
+      Assert.assertTrue("Option should be overwritten", content.indexOf("8000") == content.lastIndexOf("8000"));
    }
 
    class DependencyMatcher extends BaseMatcher<Dependency>
