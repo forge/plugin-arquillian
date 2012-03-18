@@ -2,6 +2,7 @@ package test.integration;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -51,7 +53,7 @@ public class PluginTest extends AbstractShellTest
       // ArchivePaths.create("beans.xml"));
    }
 
-   private void installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception
+   private Project installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception
    {
       Project project = initializeJavaProject();
 
@@ -63,7 +65,7 @@ public class PluginTest extends AbstractShellTest
       }
       assertThat(profiles.size(), is(0));
 
-      queueInputLines(container, "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+      queueInputLines(container, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
       getShell().execute("arquillian setup");
 
       assertThat(coreFacet.getPOM().getProfiles().size(), is(1));
@@ -72,6 +74,20 @@ public class PluginTest extends AbstractShellTest
       for (DependencyMatcher dependency : dependencies) {
          assertThat(profile.getDependencies(), hasItem(dependency));
       }
+
+      Model pom = coreFacet.getPOM();
+      DependencyMatcher arqBom = new DependencyMatcher("arquillian-bom");
+
+      assertThat("Verify arquillian:bom was added to DependencyManagement ",
+              pom.getDependencyManagement().getDependencies(), hasItem(arqBom));
+
+      assertNotNull("Verify that the plugin use a version property for arquillian core",
+              pom.getProperties().get(ArquillianPlugin.ARQ_CORE_VERSION_PROP_NAME));
+
+      assertNotNull("Verify that the plugin use a version property for junit",
+              pom.getProperties().get(ArquillianPlugin.JUNIT_VERSION_PROP_NAME));
+
+      return project;
    }
 
    @Test

@@ -51,6 +51,15 @@ public class ArquillianPlugin implements Plugin {
         Velocity.init(properties);
     }
 
+    public static final String ARQ_CORE_VERSION_PROP_NAME = "version.arquillian_core";
+    public static final String ARQ_CORE_VERSION_PROP = "${" + ARQ_CORE_VERSION_PROP_NAME + "}";
+
+    public static final String JUNIT_VERSION_PROP_NAME = "version.junit";
+    public static final String JUNIT_VERSION_PROP = "${" + JUNIT_VERSION_PROP_NAME + "}";
+
+    public static final String TESTNG_VERSION_PROP_NAME = "version.testng";
+    public static final String TESTNG_VERSION_PROP = "${" + TESTNG_VERSION_PROP_NAME + "}";
+
     @Inject
     private Project project;
 
@@ -89,13 +98,13 @@ public class ArquillianPlugin implements Plugin {
 
         dependencyFacet = project.getFacet(DependencyFacet.class);
 
+        installArquillianBom();
+
         if (testframework.equals("junit")) {
             installJunitDependencies();
         } else {
             installTestNgDependencies();
         }
-
-        installArquillianBom();
 
         List<Container> containers = containerDirectoryParser.getContainers();
 
@@ -252,17 +261,15 @@ public class ArquillianPlugin implements Plugin {
         if (!dependencyFacet.hasEffectiveDependency(junitDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitDependency);
             Dependency dependency = shell.promptChoiceTyped("Which version of JUnit do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
-            dependencyFacet.addDirectDependency(dependency);
+
+            dependencyFacet.setProperty(JUNIT_VERSION_PROP_NAME, dependency.getVersion());
+            dependencyFacet.addDirectDependency(
+                    DependencyBuilder.create(dependency).setVersion(JUNIT_VERSION_PROP));
         }
 
         DependencyBuilder junitArquillianDependency = createJunitArquillianDependency();
         if (!dependencyFacet.hasEffectiveDependency(junitArquillianDependency)) {
-            List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitArquillianDependency);
-            Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
-            arquillianVersion = dependency.getVersion();
-            dependencyFacet.addDirectDependency(dependency);
-        } else {
-            arquillianVersion = dependencyFacet.getDirectDependency(junitArquillianDependency).getVersion();
+            dependencyFacet.addDirectDependency(junitArquillianDependency);
         }
     }
 
@@ -271,17 +278,15 @@ public class ArquillianPlugin implements Plugin {
         if (!dependencyFacet.hasEffectiveDependency(testngDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testngDependency);
             Dependency dependency = shell.promptChoiceTyped("Which version of TestNG do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
-            dependencyFacet.addDirectDependency(dependency);
+
+            dependencyFacet.setProperty(TESTNG_VERSION_PROP_NAME, dependency.getVersion());
+            dependencyFacet.addDirectDependency(
+                    DependencyBuilder.create(dependency).setVersion(TESTNG_VERSION_PROP));
         }
 
         DependencyBuilder testNgArquillianDependency = createTestNgArquillianDependency();
         if (!dependencyFacet.hasEffectiveDependency(testNgArquillianDependency)) {
-            List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testNgArquillianDependency);
-            Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
-            arquillianVersion = dependency.getVersion();
-            dependencyFacet.addDirectDependency(dependency);
-        } else {
-            arquillianVersion = dependencyFacet.getManagedDependency(testNgArquillianDependency).getVersion();
+            dependencyFacet.addDirectDependency(testNgArquillianDependency);
         }
     }
 
@@ -290,10 +295,21 @@ public class ArquillianPlugin implements Plugin {
                 .setGroupId("org.jboss.arquillian")
                 .setArtifactId("arquillian-bom")
                 .setPackagingType("pom")
-                .setVersion(arquillianVersion)
                 .setScopeType(ScopeType.IMPORT);
 
-        dependencyFacet.addDirectManagedDependency(arquillianBom);
+        arquillianVersion = dependencyFacet.getProperty(ARQ_CORE_VERSION_PROP_NAME);
+        if(arquillianVersion == null) {
+            List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(arquillianBom);
+            Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
+            arquillianVersion = dependency.getVersion();
+            dependencyFacet.setProperty(ARQ_CORE_VERSION_PROP_NAME, arquillianVersion);
+        }
+
+        // need to set version after resolve is done, else nothing will resolve.
+        if(!dependencyFacet.hasDirectManagedDependency(arquillianBom)) {
+            arquillianBom.setVersion(ARQ_CORE_VERSION_PROP);
+            dependencyFacet.addDirectManagedDependency(arquillianBom);
+        }
     }
 
     private DependencyBuilder createJunitDependency() {
@@ -321,6 +337,6 @@ public class ArquillianPlugin implements Plugin {
         return DependencyBuilder.create()
                 .setGroupId("org.jboss.arquillian.testng")
                 .setArtifactId("arquillian-testng-container")
-                .setVersion(arquillianVersion);
+                .setScopeType(ScopeType.TEST);
     }
 }

@@ -50,6 +50,6 @@ public class ContainerInstaller {
         DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
 
         List<org.jboss.forge.project.dependencies.Dependency> versions = dependencyFacet.resolveAvailableVersions(containerDependency);
-        return shell.promptChoiceTyped("What version of " + containerDependency.getArtifactId() + " do you want to use?", versions, versions.get(versions.size() - 1));
+        return shell.promptChoiceTyped("What version of " + containerDependency.getArtifactId() + " do you want to use?", versions, DependencyUtil.getLatestNonSnapshotVersion(versions));
     }
 }
