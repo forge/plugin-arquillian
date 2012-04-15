@@ -399,6 +399,20 @@ public class PluginTest extends AbstractShellTest
       String content = new String(IOUtil.asByteArray(arquillianXML.getResourceInputStream()));
       Assert.assertTrue("Option should be overwritten", content.indexOf("8000") == content.lastIndexOf("8000"));
    }
+   
+   @Test
+   public void createArquillianXmlOnSetup() throws Exception {
+       Project project = initializeJavaProject();
+
+       queueInputLines("JBOSS_AS_MANAGED_6.X", "", "19", "10", "", "", "", "8", "");
+       getShell().execute("arquillian setup");
+
+       ResourceFacet facet = project.getFacet(ResourceFacet.class);
+       FileResource<?> arquillianXML = facet.getTestResource("arquillian.xml");
+
+       assertThat(arquillianXML, is(notNullValue()));
+       assertThat(arquillianXML.exists(), is(true));
+   }
 
    class DependencyMatcher extends BaseMatcher<Dependency>
    {

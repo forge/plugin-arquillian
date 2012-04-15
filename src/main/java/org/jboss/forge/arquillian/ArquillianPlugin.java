@@ -123,7 +123,13 @@ public class ArquillianPlugin implements Plugin {
         if (!foundContainer) {
             throw new RuntimeException("Container not recognized");
         }
-
+        
+        ResourceFacet resources = project.getFacet(ResourceFacet.class);
+        FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
+        if (!resource.exists()) {
+            Node arquillianConfig = createNewArquillianConfig();
+            resource.setContents(XMLParser.toXMLString(arquillianConfig));
+        }
     }
 
     @Command(value = "configure-container")
