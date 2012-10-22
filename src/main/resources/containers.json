@@ -1167,6 +1167,43 @@
             }
         ]
 
+    },
+    {
+        "group_id":"org.jboss.arquillian.container",
+        "artifact_id":"arquillian-openshift-express",
+        "name":"Arquillian Container Openshift",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"Your Openshift domain name",
+                "name":"namespace",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Openshift application name",
+                "name":"application",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The sshUserName can be found in the Repository URL in the Express Console, e.g. ssh:// 4348a6ba9d3943e6a64e0a1607b37bd5 @test-ikecloud.rhcloud.com/~/git/test.git/",
+                "name":"sshUserName",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Openshift password",
+                "name":"passphrase",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Openshift login",
+                "name":"login",
+                "default":""
+            }
+        ]
     }
 
 ]
