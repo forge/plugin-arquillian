@@ -24,7 +24,7 @@ public class ContainerDirectoryParser {
             containers = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(), new TypeReference<List<Container>>() {
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 

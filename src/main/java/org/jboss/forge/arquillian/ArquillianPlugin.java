@@ -1,8 +1,26 @@
 package org.jboss.forge.arquillian;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Properties;
+
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+
 import org.apache.maven.model.Profile;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.jboss.forge.arquillian.commandcompleter.ContainerCommandCompleter;
+import org.jboss.forge.arquillian.commandcompleter.ContainerTypeCommandCompleter;
+import org.jboss.forge.arquillian.commandcompleter.ProfileCommandCompleter;
+import org.jboss.forge.arquillian.container.Configuration;
+import org.jboss.forge.arquillian.container.Container;
+import org.jboss.forge.arquillian.container.ContainerDirectoryParser;
+import org.jboss.forge.arquillian.container.ContainerType;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -22,21 +40,16 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.events.PickupResource;
-import org.jboss.forge.shell.plugins.*;
-import org.jboss.forge.arquillian.commandcompleter.ContainerCommandCompleter;
-import org.jboss.forge.arquillian.commandcompleter.ProfileCommandCompleter;
-import org.jboss.forge.arquillian.container.*;
-import org.jboss.forge.arquillian.container.ContainerDirectoryParser;
-
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Properties;
+import org.jboss.forge.shell.plugins.Alias;
+import org.jboss.forge.shell.plugins.Command;
+import org.jboss.forge.shell.plugins.Current;
+import org.jboss.forge.shell.plugins.Help;
+import org.jboss.forge.shell.plugins.Option;
+import org.jboss.forge.shell.plugins.PipeOut;
+import org.jboss.forge.shell.plugins.Plugin;
+import org.jboss.forge.shell.plugins.RequiresFacet;
+import org.jboss.forge.shell.plugins.RequiresResource;
+import org.jboss.forge.shell.plugins.SetupCommand;
 
 @Alias("arquillian")
 @RequiresFacet(JavaSourceFacet.class)
@@ -46,7 +59,8 @@ public class ArquillianPlugin implements Plugin {
     static {
         Properties properties = new Properties();
         properties.setProperty("resource.loader", "class");
-        properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        properties.setProperty("class.resource.loader.class",
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
         Velocity.init(properties);
     }
@@ -59,6 +73,8 @@ public class ArquillianPlugin implements Plugin {
 
     public static final String TESTNG_VERSION_PROP_NAME = "version.testng";
     public static final String TESTNG_VERSION_PROP = "${" + TESTNG_VERSION_PROP_NAME + "}";
+
+    public static final String OPTION_CONTAINER_TYPE = "containerType";
 
     @Inject
     private Project project;
@@ -86,14 +102,14 @@ public class ArquillianPlugin implements Plugin {
     @Inject
     private ContainerDirectoryParser containerDirectoryParser;
 
-
     @Inject
     @Any
     Event<ContainerInstallEvent> installEvent;
 
     @SetupCommand
     public void installContainer(
-            @Option(name = "container", required = true, completer = ContainerCommandCompleter.class) String containerId,
+            @Option(name = OPTION_CONTAINER_TYPE, required = true, completer = ContainerTypeCommandCompleter.class) ContainerType containerType,
+            @Option(name = "containerName", required = true, completer = ContainerCommandCompleter.class) String containerId,
             @Option(name = "testframework", required = false, defaultValue = "junit") String testframework) {
 
         dependencyFacet = project.getFacet(DependencyFacet.class);
@@ -123,7 +139,7 @@ public class ArquillianPlugin implements Plugin {
         if (!foundContainer) {
             throw new RuntimeException("Container not recognized");
         }
-        
+
         ResourceFacet resources = project.getFacet(ResourceFacet.class);
         FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
         if (!resource.exists()) {
@@ -133,12 +149,14 @@ public class ArquillianPlugin implements Plugin {
     }
 
     @Command(value = "configure-container")
-    public void configureContainer(@Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId) {
+    public void configureContainer(
+            @Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId) {
 
         Profile profile = getProfile(profileId);
         Container container = getContainer(profile);
 
-        Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?", container.getConfigurations());
+        Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?",
+                container.getConfigurations());
 
         ResourceFacet resources = project.getFacet(ResourceFacet.class);
         FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
@@ -179,24 +197,21 @@ public class ArquillianPlugin implements Plugin {
     }
 
     private Node createNewArquillianConfig() {
-        return XMLParser.parse("<arquillian xmlns=\"http://jboss.org/schema/arquillian\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "            xsi:schemaLocation=\"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd\"></arquillian>");
+        return XMLParser
+                .parse("<arquillian xmlns=\"http://jboss.org/schema/arquillian\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                        + "            xsi:schemaLocation=\"http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd\"></arquillian>");
     }
 
     private void addPropertyToArquillianConfig(Node xml, String container, String key, String value) {
 
-        xml.getOrCreate("container@qualifier=" + container)
-           .getOrCreate("configuration")
-           .getOrCreate("property@name=" + key)
-           .text(value);
+        xml.getOrCreate("container@qualifier=" + container).getOrCreate("configuration").getOrCreate("property@name=" + key)
+                .text(value);
     }
 
-
     @Command(value = "create-test", help = "Create a new test class with a default @Deployment method")
-    public void createTest(
-            @Option(name = "class", required = true, type = PromptType.JAVA_CLASS) JavaResource classUnderTest,
-            @Option(name = "enableJPA", required = false, flagOnly = true) boolean enableJPA,
-            final PipeOut out) throws FileNotFoundException {
+    public void createTest(@Option(name = "class", required = true, type = PromptType.JAVA_CLASS) JavaResource classUnderTest,
+            @Option(name = "enableJPA", required = false, flagOnly = true) boolean enableJPA, final PipeOut out)
+            throws FileNotFoundException {
         JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
         JavaSource<?> javaSource = classUnderTest.getJavaSource();
@@ -218,11 +233,10 @@ public class ArquillianPlugin implements Plugin {
     }
 
     /**
-     * This command exports an Archive generated by a @Deployment method to disk. Because the project's classpath is not
-     * in the classpath of Forge, the @Deployment method can't be called directly.The plugin works in the following
-     * steps: 1 - Generate a new class to the src/test/java folder 2 - Compile the user's classes using mvn test-compile
-     * 3 - Run the generated class using mvn exec:java (so that the project's classes are on the classpath) 4 - Delete
-     * the generated class
+     * This command exports an Archive generated by a @Deployment method to disk. Because the project's classpath is not in the
+     * classpath of Forge, the @Deployment method can't be called directly.The plugin works in the following steps: 1 - Generate
+     * a new class to the src/test/java folder 2 - Compile the user's classes using mvn test-compile 3 - Run the generated class
+     * using mvn exec:java (so that the project's classes are on the classpath) 4 - Delete the generated class
      */
     @Command(value = "export", help = "Export a @Deployment configuration to a zip file on disk.")
     @RequiresResource(JavaResource.class)
@@ -266,11 +280,11 @@ public class ArquillianPlugin implements Plugin {
         DependencyBuilder junitDependency = createJunitDependency();
         if (!dependencyFacet.hasEffectiveDependency(junitDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(junitDependency);
-            Dependency dependency = shell.promptChoiceTyped("Which version of JUnit do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
+            Dependency dependency = shell.promptChoiceTyped("Which version of JUnit do you want to install?", dependencies,
+                    DependencyUtil.getLatestNonSnapshotVersion(dependencies));
 
             dependencyFacet.setProperty(JUNIT_VERSION_PROP_NAME, dependency.getVersion());
-            dependencyFacet.addDirectDependency(
-                    DependencyBuilder.create(dependency).setVersion(JUNIT_VERSION_PROP));
+            dependencyFacet.addDirectDependency(DependencyBuilder.create(dependency).setVersion(JUNIT_VERSION_PROP));
         }
 
         DependencyBuilder junitArquillianDependency = createJunitArquillianDependency();
@@ -283,11 +297,11 @@ public class ArquillianPlugin implements Plugin {
         DependencyBuilder testngDependency = createTestNgDependency();
         if (!dependencyFacet.hasEffectiveDependency(testngDependency)) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(testngDependency);
-            Dependency dependency = shell.promptChoiceTyped("Which version of TestNG do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
+            Dependency dependency = shell.promptChoiceTyped("Which version of TestNG do you want to install?", dependencies,
+                    DependencyUtil.getLatestNonSnapshotVersion(dependencies));
 
             dependencyFacet.setProperty(TESTNG_VERSION_PROP_NAME, dependency.getVersion());
-            dependencyFacet.addDirectDependency(
-                    DependencyBuilder.create(dependency).setVersion(TESTNG_VERSION_PROP));
+            dependencyFacet.addDirectDependency(DependencyBuilder.create(dependency).setVersion(TESTNG_VERSION_PROP));
         }
 
         DependencyBuilder testNgArquillianDependency = createTestNgArquillianDependency();
@@ -297,52 +311,40 @@ public class ArquillianPlugin implements Plugin {
     }
 
     private void installArquillianBom() {
-        DependencyBuilder arquillianBom = DependencyBuilder.create()
-                .setGroupId("org.jboss.arquillian")
-                .setArtifactId("arquillian-bom")
-                .setPackagingType("pom")
-                .setScopeType(ScopeType.IMPORT);
+        DependencyBuilder arquillianBom = DependencyBuilder.create().setGroupId("org.jboss.arquillian")
+                .setArtifactId("arquillian-bom").setPackagingType("pom").setScopeType(ScopeType.IMPORT);
 
         arquillianVersion = dependencyFacet.getProperty(ARQ_CORE_VERSION_PROP_NAME);
-        if(arquillianVersion == null) {
+        if (arquillianVersion == null) {
             List<Dependency> dependencies = dependencyFacet.resolveAvailableVersions(arquillianBom);
-            Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?", dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
+            Dependency dependency = shell.promptChoiceTyped("Which version of Arquillian do you want to install?",
+                    dependencies, DependencyUtil.getLatestNonSnapshotVersion(dependencies));
             arquillianVersion = dependency.getVersion();
             dependencyFacet.setProperty(ARQ_CORE_VERSION_PROP_NAME, arquillianVersion);
         }
 
         // need to set version after resolve is done, else nothing will resolve.
-        if(!dependencyFacet.hasDirectManagedDependency(arquillianBom)) {
+        if (!dependencyFacet.hasDirectManagedDependency(arquillianBom)) {
             arquillianBom.setVersion(ARQ_CORE_VERSION_PROP);
             dependencyFacet.addDirectManagedDependency(arquillianBom);
         }
     }
 
     private DependencyBuilder createJunitDependency() {
-        return DependencyBuilder.create()
-                .setGroupId("junit")
-                .setArtifactId("junit")
-                .setScopeType(ScopeType.TEST);
+        return DependencyBuilder.create().setGroupId("junit").setArtifactId("junit").setScopeType(ScopeType.TEST);
     }
 
     private DependencyBuilder createJunitArquillianDependency() {
-        return DependencyBuilder.create()
-                .setGroupId("org.jboss.arquillian.junit")
-                .setArtifactId("arquillian-junit-container")
+        return DependencyBuilder.create().setGroupId("org.jboss.arquillian.junit").setArtifactId("arquillian-junit-container")
                 .setScopeType(ScopeType.TEST);
     }
 
     private DependencyBuilder createTestNgDependency() {
-        return DependencyBuilder.create()
-                .setGroupId("org.testng")
-                .setArtifactId("testng")
-                .setScopeType(ScopeType.TEST);
+        return DependencyBuilder.create().setGroupId("org.testng").setArtifactId("testng").setScopeType(ScopeType.TEST);
     }
 
     private DependencyBuilder createTestNgArquillianDependency() {
-        return DependencyBuilder.create()
-                .setGroupId("org.jboss.arquillian.testng")
-                .setArtifactId("arquillian-testng-container")
-                .setScopeType(ScopeType.TEST);
+        return DependencyBuilder.create().setGroupId("org.jboss.arquillian.testng")
+                .setArtifactId("arquillian-testng-container").setScopeType(ScopeType.TEST);
     }
 }
