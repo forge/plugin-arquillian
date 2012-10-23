@@ -51,6 +51,8 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresResource;
 import org.jboss.forge.shell.plugins.SetupCommand;
 
+import static org.jboss.forge.arquillian.commandcompleter.ContainerCommandCompleter.OPTION_CONTAINER_TYPE;
+
 @Alias("arquillian")
 @RequiresFacet(JavaSourceFacet.class)
 @Help("A plugin that helps setting up Arquillian tests")
@@ -74,7 +76,7 @@ public class ArquillianPlugin implements Plugin {
     public static final String TESTNG_VERSION_PROP_NAME = "version.testng";
     public static final String TESTNG_VERSION_PROP = "${" + TESTNG_VERSION_PROP_NAME + "}";
 
-    public static final String OPTION_CONTAINER_TYPE = "containerType";
+
 
     @Inject
     private Project project;

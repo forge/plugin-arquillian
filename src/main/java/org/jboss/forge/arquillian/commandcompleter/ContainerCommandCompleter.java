@@ -11,12 +11,12 @@ import org.jboss.forge.arquillian.container.ContainerType;
 import org.jboss.forge.shell.completer.CommandCompleterState;
 import org.jboss.forge.shell.completer.SimpleTokenCompleter;
 
-import static org.jboss.forge.arquillian.ArquillianPlugin.OPTION_CONTAINER_TYPE;
-
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
 public class ContainerCommandCompleter extends SimpleTokenCompleter {
+    
+    public static final String OPTION_CONTAINER_TYPE = "containerType";
 
     @Inject
     private ContainerDirectoryParser parser;
