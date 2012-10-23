@@ -39,6 +39,7 @@ import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.events.PickupResource;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -124,7 +125,12 @@ public class ArquillianPlugin implements Plugin {
             installTestNgDependencies();
         }
 
-        List<Container> containers = containerDirectoryParser.getContainers();
+        List<Container> containers;
+        try {
+            containers = containerDirectoryParser.getContainers();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         boolean foundContainer = false;
         for (Container container : containers) {
@@ -155,7 +161,12 @@ public class ArquillianPlugin implements Plugin {
             @Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId) {
 
         Profile profile = getProfile(profileId);
-        Container container = getContainer(profile);
+        Container container;
+        try {
+            container = getContainer(profile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?",
                 container.getConfigurations());
@@ -176,7 +187,7 @@ public class ArquillianPlugin implements Plugin {
         resource.setContents(XMLParser.toXMLString(xml));
     }
 
-    private Container getContainer(Profile profile) {
+    private Container getContainer(Profile profile) throws IOException {
         for (Container container : containerDirectoryParser.getContainers()) {
             if (container.getId().equals(profile.getId())) {
                 return container;
