@@ -22,17 +22,13 @@ public class ContainerDirectoryParser {
 
     @PostConstruct
     void parse() throws IOException {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            containers = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(),
-                    new TypeReference<List<Container>>() {
-                    });
-        } catch (IOException e) {
-            throw e;
-        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Container> list = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(), new TypeReference<List<Container>>() {
+        });
+        containers = Collections.unmodifiableList(list); 
     }
 
     public List<Container> getContainers() throws IOException {
-        return Collections.unmodifiableList(containers);
+        return containers;
     }
 }
