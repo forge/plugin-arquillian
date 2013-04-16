@@ -73,6 +73,10 @@ public class Container {
     public String getId() {
         return name.replace("Arquillian Container ", "").replaceAll(" ", "_").toUpperCase();
     }
+    
+    public String getProfileId() {
+        return "arq-" + name.replace("Arquillian Container ", "").replaceAll(" ", "_").toLowerCase();
+    }
 
     @Override
     public String toString() {
