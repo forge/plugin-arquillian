@@ -1229,6 +1229,12 @@
                 "description":"Openshift login",
                 "name":"login",
                 "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Deployment timeout (in seconds)",
+                "name":"deploymentTimeoutInSeconds",
+                "default":"90"
             }
         ]
     }

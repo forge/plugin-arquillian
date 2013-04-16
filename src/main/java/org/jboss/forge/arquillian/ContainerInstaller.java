@@ -42,7 +42,7 @@ public class ContainerInstaller {
                 dependencies.add(resolveVersion(dependencyBuilder));
             }
         }
-        profileBuilder.addProfile(container.getId(), dependencies);
+        profileBuilder.addProfile(container, dependencies);
 
     }
 
