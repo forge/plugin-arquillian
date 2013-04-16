@@ -152,6 +152,8 @@ public class ArquillianPlugin implements Plugin {
         FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
         if (!resource.exists()) {
             Node arquillianConfig = createNewArquillianConfig();
+            // Add an empty container config
+            arquillianConfig.getOrCreate("container@qualifier=" + containerId);
             resource.setContents(XMLParser.toXMLString(arquillianConfig));
         }
     }
@@ -159,37 +161,43 @@ public class ArquillianPlugin implements Plugin {
     @Command(value = "configure-container")
     public void configureContainer(
             @Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId) {
-
-        Profile profile = getProfile(profileId);
-        Container container;
-        try {
-            container = getContainer(profile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        
+        // loop, user presses ctrl-c to exit
+        while (true) {
+            Profile profile = getProfile(profileId);
+            Container container;
+            try {
+                container = getContainer(profile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+    
+            Configuration configuration = shell.promptChoiceTyped("Which property do you want to set? Or, enter 0 to return to the shell.",
+                    container.getConfigurations(), null);
+            if (configuration == null) {
+                break;
+            }
+    
+            ResourceFacet resources = project.getFacet(ResourceFacet.class);
+            FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
+    
+            Node xml = null;
+            if (!resource.exists()) {
+                xml = createNewArquillianConfig();
+            } else {
+                xml = XMLParser.parse(resource.getResourceInputStream());
+            }
+    
+            String value = shell.prompt("What value do you want to set?");
+            addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), value);
+    
+            resource.setContents(XMLParser.toXMLString(xml));
         }
-
-        Configuration configuration = shell.promptChoiceTyped("Which property do you want to set?",
-                container.getConfigurations());
-
-        ResourceFacet resources = project.getFacet(ResourceFacet.class);
-        FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
-
-        Node xml = null;
-        if (!resource.exists()) {
-            xml = createNewArquillianConfig();
-        } else {
-            xml = XMLParser.parse(resource.getResourceInputStream());
-        }
-
-        String value = shell.prompt("What value do you want to set?");
-        addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), value);
-
-        resource.setContents(XMLParser.toXMLString(xml));
     }
 
     private Container getContainer(Profile profile) throws IOException {
         for (Container container : containerDirectoryParser.getContainers()) {
-            if (container.getId().equals(profile.getId())) {
+            if (container.getProfileId().equals(profile.getId())) {
                 return container;
             }
         }
