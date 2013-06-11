@@ -93,7 +93,7 @@ public class ProfileBuilder
     }
    }
 
-   private Profile findProfileById(String profileId, Model pom)
+   public static Profile findProfileById(String profileId, Model pom)
    {
       for (Profile profile : pom.getProfiles())
       {
