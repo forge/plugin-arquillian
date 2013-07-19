@@ -954,6 +954,213 @@
         ]
     },
     {
+        "artifact_id":"arquillian-tomee-embedded",
+        "group_id":"org.apache.openejb",
+        "name":"Arquillian Container TomEE Embedded",
+        "containerType":"EMBEDDED",
+        "dependencies":[],
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"Description not provided",
+                "name":"httpPort",
+                "default":"8080"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Description not provided",
+                "name":"stopPort",
+                "default":"8005"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"host",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"stopHost",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"stopCommand",
+                "default":"SHUTDOWN"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"dir",
+                "default":"${java.io.tmpdir}/arquillian-apache-tomee"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"appWorkingDir",
+                "default":"$java.io.tmpdir"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"serverXml",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"properties",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"only used if port < 0, empty means whatever, can be 1024-65535",
+                "name":"portRange",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"quickSession",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"unpackWars",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"exportConfAsSystemProperty",
+                "default":"false"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-tomee-remote",
+        "group_id":"org.apache.openejb",
+        "name":"Arquillian Container TomEE Remote",
+        "containerType":"REMOTE",
+        "dependencies":[],
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"Description not provided",
+                "name":"httpPort",
+                "default":"8080"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Description not provided",
+                "name":"stopPort",
+                "default":"8005"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"host",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"stopHost",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"stopCommand",
+                "default":"SHUTDOWN"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"dir",
+                "default":"${java.io.tmpdir}/arquillian-apache-tomee"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"appWorkingDir",
+                "default":"$java.io.tmpdir"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"serverXml",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"properties",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"only used if port < 0, empty means whatever, can be 1024-65535",
+                "name":"portRange",
+                "default":""
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Description not provided",
+                "name":"ajpPort",
+                "default":"8009"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"quickSession",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"unpackWars",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"exportConfAsSystemProperty",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Description not provided",
+                "name":"removeUnusedWebapps",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Description not provided",
+                "name":"version",
+                "default":"LATEST"
+            }
+        ]
+    },
+    {
+        "artifact_id":"arquillian-openejb-embedded-4",
+        "group_id":"org.apache.openejb",
+        "name":"Arquillian Container OpenEJB Embedded 4",
+        "containerType":"EMBEDDED",
+        "dependencies":[],
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"One or more Java property assignments used to configure OpenEJB.",
+                "name":"properties",
+                "default":""
+            }
+        ]
+    },
+    {
         "artifact_id":"arquillian-openejb-embedded-3.1",
         "group_id":"org.jboss.arquillian.container",
         "name":"Arquillian Container OpenEJB Embedded 3.1.x",
