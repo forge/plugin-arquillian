@@ -602,7 +602,7 @@
                 "type":"java.lang.Boolean",
                 "description":"Should the server startup console log be piped to the console.",
                 "name":"outputToConsole",
-                "default":"true"
+                "default":"false"
             },
             {
                 "type":"java.lang.Boolean",
