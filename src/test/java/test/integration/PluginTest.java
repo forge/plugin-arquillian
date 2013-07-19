@@ -145,7 +145,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss51ManagedContainer() throws Exception
+   public void installJBossAS51ManagedContainer() throws Exception
    {
       installContainer("jbossas-managed-5.1",
                Arrays.asList(
@@ -153,7 +153,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss51RemoteContainer() throws Exception
+   public void installJBossAS51RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-5.1",
                Arrays.asList(
@@ -161,7 +161,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss5RemoteContainer() throws Exception
+   public void installJBossAS5RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-5",
                Arrays.asList(
@@ -169,7 +169,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss6EmbeddedContainer() throws Exception
+   public void installJBossAS6EmbeddedContainer() throws Exception
    {
       installContainer("jbossas-embedded-6",
                Arrays.asList(
@@ -177,7 +177,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss6ManagedContainer() throws Exception
+   public void installJBossAS6ManagedContainer() throws Exception
    {
       installContainer("jbossas-managed-6",
                Arrays.asList(
@@ -185,7 +185,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss6RemoteContainer() throws Exception
+   public void installJBossAS6RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-6",
                Arrays.asList(
@@ -193,7 +193,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss7ManagedContainer() throws Exception
+   public void installJBossAS7ManagedContainer() throws Exception
    {
       installContainer("jbossas-managed-7",
                Arrays.asList(
@@ -201,7 +201,7 @@ public class PluginTest extends AbstractShellTest
    }
 
    @Test
-   public void installJBoss7RemoteContainer() throws Exception
+   public void installJBossAS7RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-7",
                Arrays.asList(
