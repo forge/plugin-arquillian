@@ -71,6 +71,8 @@ public class ProfileBuilder
       Profile existingProfile = findProfileById(container.getProfileId(), pom);
       if(existingProfile != null)
       {
+         // preserve existing id
+         profile.setId(existingProfile.getId());
          pom.removeProfile(existingProfile);
       }
       pom.addProfile(profile);
@@ -97,7 +99,7 @@ public class ProfileBuilder
    {
       for (Profile profile : pom.getProfiles())
       {
-         if (profileId.equalsIgnoreCase(profile.getId()))
+         if (profileId.equalsIgnoreCase(profile.getId().replaceFirst("^arq-", "arquillian-")))
          {
             return profile;
          }

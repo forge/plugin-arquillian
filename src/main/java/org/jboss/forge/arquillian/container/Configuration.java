@@ -43,11 +43,17 @@ public class Configuration {
 
     @Override
     public String toString() {
+        return " " + type.replaceFirst("^java\\.lang\\.", "") + " " + name + " = " + ("java.lang.String".equals(type) ? '"' + defaultValue + '"' : defaultValue) + "; // " + description + " ";
+    }
+
+    /*
+    @Override
+    public String toString() {
         return "Configuration{" +
                 "type='" + type + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", defaultValue='" + defaultValue + '\'' +
                 '}';
-    }
+    }*/
 }

@@ -527,9 +527,83 @@
         "containerType":"MANAGED"
     },
     {
+        "artifact_id":"arquillian-glassfish-managed-3.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container GlassFish Managed 3.1",
+        "containerType":"MANAGED",
+        "configurations":[
+            {
+                "type":"java.lang.Integer",
+                "description":"The administrative port the client should connect to.",
+                "name":"adminPort",
+                "default":"4848"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Glassfish Admin Server (DAS) host address.",
+                "name":"adminHost",
+                "default":"localhost"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Use SSL for communicating with the admin server.",
+                "name":"adminHttps",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The name of the admin user of your DAS. If omitted, no authentication will be used to access the DAS. This case you must have empty password for your admin user.",
+                "name":"adminUser",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The password of the admin user of your DAS. Canot be omitted if you declare the admin user. If no authentication will be used to access the DAS you must have empty password for your admin user.",
+                "name":"adminPassword",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies the target to which you are deploying. We use the “target” as property key with the same semantics as the standard GlassFish utilities do.",
+                "name":"target",
+                "default":"server"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"A comma-separated list of library JAR files. Specify the library JAR  files by their relative or absolute paths. Specify relative paths relative to domain-dir/lib/applibs. The libraries are made available to the application in the order specified. For more detail, please refer to GlassFish Server 3.1 Administration Guide.",
+                "name":"libraries",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Optional keyword-value pairs  that  specify  additional properties for the deployment. The available properties are determined by the implementation of the  component that is being deployed. For more detail, please refer to GlassFish Server 3.1 Administration Guide.",
+                "name":"properties",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The packaging archive type of the component that is being deployed. Only valid value is: osgi meaning that the component is package is an OSGi Alliance bundle. The type option is optional. If the component is packaged as a regular archive, omit this option. For more detail, please refer to OSGi Application Development using GlassFish Server.",
+                "name":"type",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The GlassFish domain to use or the default domain if not specified.",
+                "name":"domain",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Permit Arquillian to use an already running GlassFish instance.",
+                "name":"allowConnectingToRunningServer",
+                "default":"false"
+            }
+        ]
+    },
+    {
         "artifact_id":"arquillian-glassfish-remote-3.1",
         "group_id":"org.jboss.arquillian.container",
-        "name":"Arquillian Container GlassFish Remote 3.1 (REST)",
+        "name":"Arquillian Container GlassFish Remote 3.1",
         "containerType":"REMOTE",
         "configurations":[
             {

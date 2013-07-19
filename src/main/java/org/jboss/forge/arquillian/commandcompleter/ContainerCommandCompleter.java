@@ -2,6 +2,7 @@ package org.jboss.forge.arquillian.commandcompleter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,8 +40,15 @@ public class ContainerCommandCompleter extends SimpleTokenCompleter {
     public Iterable<?> getCompletionTokens() {
         List<Container> containers = null;
         try {
-            containers = parser.getContainers();
-            ContainerType containerType = ContainerType.valueOf(getInformedContainerType());
+            containers = new ArrayList<Container>(parser.getContainers());
+            Collections.sort(containers);
+            ContainerType containerType = null;
+            try {
+                containerType = ContainerType.valueOf(getInformedContainerType());
+            }
+            catch (Exception e) {
+                return containers;
+            }
             List<Container> filtered = new ArrayList<Container>();
             for (Container container : containers) {
                 if (container.getContainerType() == containerType) {
@@ -48,9 +56,6 @@ public class ContainerCommandCompleter extends SimpleTokenCompleter {
                 }
             }
             return filtered;
-        } catch (IndexOutOfBoundsException e) {
-            // If not containerType was informed
-            return containers;
         } catch (IOException e) {
             ShellMessages.error(shell, e.getMessage());
             return null;

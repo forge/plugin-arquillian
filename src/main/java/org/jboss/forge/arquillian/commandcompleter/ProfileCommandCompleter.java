@@ -7,6 +7,7 @@ import org.jboss.forge.shell.completer.SimpleTokenCompleter;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,6 +29,7 @@ public class ProfileCommandCompleter extends SimpleTokenCompleter {
             profiles.add(profile.getId());
         }
 
+        Collections.sort(profiles);
         return profiles;
     }
 }

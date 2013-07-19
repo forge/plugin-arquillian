@@ -60,9 +60,9 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      for (Profile profile : profiles) {
-         System.out.println(profile.getId());
-      }
+      //for (Profile profile : profiles) {
+      //   System.out.println(profile.getId());
+      //}
       assertThat(profiles.size(), is(0));
 
       queueInputLines(container, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
@@ -93,7 +93,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installOpenEJBContainer() throws Exception
    {
-      installContainer("OPENEJB_EMBEDDED_3.1.X",
+      installContainer("openejb-embedded-3.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-openejb-embedded-3.1"),
                         new DependencyMatcher("openejb-core")));
@@ -102,7 +102,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installOpenWebBeansContainer() throws Exception
    {
-      installContainer("OPENWEBBEANS_EMBEDDED_1.X",
+      installContainer("openwebbeans-embedded-1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-openwebbeans-embedded-1"),
                         new DependencyMatcher("openwebbeans-impl")));
@@ -111,16 +111,24 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installGlassfishEmbeddedContainer() throws Exception
    {
-      installContainer("GLASSFISH_EMBEDDED_3.1",
+      installContainer("glassfish-embedded-3.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-glassfish-embedded-3.1"),
                         new DependencyMatcher("glassfish-embedded-all")));
    }
 
    @Test
+   public void installGlassfishManagedContainer() throws Exception
+   {
+      installContainer("glassfish-managed-3.1",
+               Arrays.asList(
+                        new DependencyMatcher("arquillian-glassfish-managed-3.1")));
+   }
+
+   @Test
    public void installGlassfishRemoteContainer() throws Exception
    {
-      installContainer("GLASSFISH_REMOTE_3.1_(REST)",
+      installContainer("glassfish-remote-3.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-glassfish-remote-3.1")));
    }
@@ -128,7 +136,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss51ManagedContainer() throws Exception
    {
-      installContainer("JBOSS_AS_MANAGED_5.1.X",
+      installContainer("jbossas-managed-5.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jbossas-managed-5.1")));
    }
@@ -136,7 +144,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss51RemoteContainer() throws Exception
    {
-      installContainer("JBOSS_AS_REMOTE_5.1.X",
+      installContainer("jbossas-remote-5.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jbossas-remote-5.1")));
    }
@@ -144,7 +152,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss5RemoteContainer() throws Exception
    {
-      installContainer("JBOSS_AS_REMOTE_5.X",
+      installContainer("jbossas-remote-5",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jbossas-remote-5")));
    }
@@ -152,7 +160,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss6EmbeddedContainer() throws Exception
    {
-      installContainer("JBOSS_AS_EMBEDDED_6.X",
+      installContainer("jbossas-embedded-6",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jbossas-embedded-6")));
    }
@@ -160,7 +168,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss6ManagedContainer() throws Exception
    {
-      installContainer("JBOSS_AS_MANAGED_6.X",
+      installContainer("jbossas-managed-6",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jbossas-managed-6")));
    }
@@ -168,7 +176,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss6RemoteContainer() throws Exception
    {
-      installContainer("JBOSS_AS_REMOTE_6.X",
+      installContainer("jbossas-remote-6",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jbossas-remote-6")));
    }
@@ -176,7 +184,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss7ManagedContainer() throws Exception
    {
-      installContainer("JBOSS_AS_MANAGED_7.X",
+      installContainer("jbossas-managed-7",
                Arrays.asList(
                         new DependencyMatcher("jboss-as-arquillian-container-managed")));
    }
@@ -184,7 +192,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJBoss7RemoteContainer() throws Exception
    {
-      installContainer("JBOSS_AS_REMOTE_7.X",
+      installContainer("jbossas-remote-7",
                Arrays.asList(
                         new DependencyMatcher("jboss-as-arquillian-container-remote")));
    }
@@ -192,7 +200,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJetty6EmbeddedContainer() throws Exception
    {
-      installContainer("JETTY_EMBEDDED_6.1.X",
+      installContainer("jetty-embedded-6.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jetty-embedded-6.1"),
                         new DependencyMatcher("jetty")));
@@ -201,7 +209,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installJetty7EmbeddedContainer() throws Exception
    {
-      installContainer("JETTY_EMBEDDED_7.X_AND_8.X",
+      installContainer("jetty-embedded-7",
                Arrays.asList(
                         new DependencyMatcher("arquillian-jetty-embedded-7"),
                         new DependencyMatcher("jetty-webapp")));
@@ -210,7 +218,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installTomcat6EmbeddedContainer() throws Exception
    {
-      installContainer("TOMCAT_EMBEDDED_6.X",
+      installContainer("tomcat-embedded-6",
                Arrays.asList(
                         new DependencyMatcher("arquillian-tomcat-embedded-6"),
                         new DependencyMatcher("catalina"),
@@ -223,7 +231,7 @@ public class PluginTest extends AbstractShellTest
    @Ignore("Not in default maven repo")
    public void installWAS7RemoteContainer() throws Exception
    {
-      installContainer("WEBSPHERE_AS_REMOTE_7.X",
+      installContainer("was-remote-7",
                Arrays.asList(
                         new DependencyMatcher("arquillian-was-remote-7")));
    }
@@ -232,7 +240,7 @@ public class PluginTest extends AbstractShellTest
    @Ignore("Not in default maven repo")
    public void installWAS8EmbeddedContainer() throws Exception
    {
-      installContainer("WEBSPHERE_AS_EMBEDDED_8.X",
+      installContainer("was-embedded-8",
                Arrays.asList(
                         new DependencyMatcher("arquillian-was-embedded-8")));
    }
@@ -241,7 +249,7 @@ public class PluginTest extends AbstractShellTest
    @Ignore("Not in default maven repo")
    public void installWAS8RemoteContainer() throws Exception
    {
-      installContainer("WEBSPHERE_AS_REMOTE_8.X",
+      installContainer("was-remote-8",
                Arrays.asList(
                         new DependencyMatcher("arquillian-was-remote-8")));
    }
@@ -249,7 +257,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installTomcat6RemoteContainer() throws Exception
    {
-      installContainer("TOMCAT_REMOTE_6.X",
+      installContainer("tomcat-remote-6",
                Arrays.asList(
                         new DependencyMatcher("arquillian-tomcat-remote-6")));
    }
@@ -257,7 +265,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installWeldEEEmbeddedContainer() throws Exception
    {
-      installContainer("WELD_EE_EMBEDDED_1.1",
+      installContainer("weld-ee-embedded-1.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-weld-ee-embedded-1.1")));
    }
@@ -265,7 +273,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installWeldSEEmbeddedContainer() throws Exception
    {
-      installContainer("WELD_SE_EMBEDDED_1.0",
+      installContainer("weld-se-embedded-1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-weld-se-embedded-1")));
    }
@@ -273,7 +281,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installWeldSEEmbedded1_1Container() throws Exception
    {
-      installContainer("WELD_SE_EMBEDDED_1.1",
+      installContainer("weld-se-embedded-1.1",
                Arrays.asList(
                         new DependencyMatcher("arquillian-weld-se-embedded-1.1")));
    }
@@ -281,7 +289,7 @@ public class PluginTest extends AbstractShellTest
    @Test
    public void installWWeblogicRemoteContainer() throws Exception
    {
-      installContainer("WEBLOGIC_REMOTE_10.3",
+      installContainer("wls-remote-10.3",
                Arrays.asList(
                         new DependencyMatcher("arquillian-wls-remote-10.3")));
    }
@@ -294,15 +302,15 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      for (Profile profile : profiles) {
-         System.out.println(profile.getId());
-      }
+      //for (Profile profile : profiles) {
+      //   System.out.println(profile.getId());
+      //}
       assertThat(profiles.size(), is(0));
 
-      queueInputLines("JBOSS_AS_REMOTE_7.X", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+      queueInputLines("JBOSS_AS_REMOTE_7", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
       getShell().execute("arquillian setup");
 
-      queueInputLines("JBOSS_AS_REMOTE_7.X", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+      queueInputLines("JBOSS_AS_REMOTE_7", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
       getShell().execute("arquillian setup");
 
       assertThat(coreFacet.getPOM().getProfiles().size(), is(1));
@@ -317,12 +325,13 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      for (Profile profile : profiles) {
-         System.out.println(profile.getId());
-      }
+      //for (Profile profile : profiles) {
+      //   System.out.println(profile.getId());
+      //}
       assertThat(profiles.size(), is(0));
 
-      queueInputLines("JBOSS_AS_MANAGED_4.2.X", "", "19", "10", "", "", "", "", "y", "");
+      // answer y to download server
+      queueInputLines("JBOSS_AS_MANAGED_4.2", "", "", "", "", "", "", "y", "");
       getShell().execute("arquillian setup");
 
       assertThat(coreFacet.getPOM().getProfiles().size(), is(1));
@@ -334,8 +343,8 @@ public class PluginTest extends AbstractShellTest
                new DependencyMatcher("dom4j"),
                new DependencyMatcher("jbossall-client")));
 
-      assertThat(profile.getBuild().getPlugins().size(), is(1));
-      assertThat(profile.getBuild().getPlugins().get(0).getArtifactId(), is("maven-dependency-plugin"));
+      assertThat(profile.getBuild().getPlugins().size(), is(2));
+      assertThat(profile.getBuild().getPlugins().get(1).getArtifactId(), is("maven-dependency-plugin"));
 
    }
 
@@ -347,15 +356,15 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      for (Profile profile : profiles) {
-         System.out.println(profile.getId());
-      }
+      //for (Profile profile : profiles) {
+      //   System.out.println(profile.getId());
+      //}
       assertThat(profiles.size(), is(0));
 
-      queueInputLines("JBOSS_AS_MANAGED_6.X", "", "19", "10", "", "", "", "8", "");
+      queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
       getShell().execute("arquillian setup");
 
-      queueInputLines("JBOSS_AS_MANAGED_6.X", "2", "8000");
+      queueInputLines("arquillian-jbossas-managed-6", "2", "8000", "");
       getShell().execute("arquillian configure-container");
 
       ResourceFacet facet = project.getFacet(ResourceFacet.class);
@@ -376,18 +385,18 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      for (Profile profile : profiles) {
-         System.out.println(profile.getId());
-      }
+      //for (Profile profile : profiles) {
+      //   System.out.println(profile.getId());
+      //}
       assertThat(profiles.size(), is(0));
 
-      queueInputLines("JBOSS_AS_MANAGED_6.X", "", "19", "10", "", "", "", "8", "");
+      queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
       getShell().execute("arquillian setup");
 
-      queueInputLines("JBOSS_AS_MANAGED_6.X", "2", "8000");
+      queueInputLines("arquillian-jbossas-managed-6", "2", "8000", "");
       getShell().execute("arquillian configure-container");
 
-      queueInputLines("JBOSS_AS_MANAGED_6.X", "2", "8000");
+      queueInputLines("arquillian-jbossas-managed-6", "2", "8000", "");
       getShell().execute("arquillian configure-container");
 
       ResourceFacet facet = project.getFacet(ResourceFacet.class);
@@ -404,7 +413,7 @@ public class PluginTest extends AbstractShellTest
    public void createArquillianXmlOnSetup() throws Exception {
        Project project = initializeJavaProject();
 
-       queueInputLines("JBOSS_AS_MANAGED_6.X", "", "19", "10", "", "", "", "8", "");
+       queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
        getShell().execute("arquillian setup");
 
        ResourceFacet facet = project.getFacet(ResourceFacet.class);

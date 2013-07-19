@@ -109,10 +109,11 @@ public class ArquillianPlugin implements Plugin
 
    @SetupCommand
    public void installContainer(
-            @Option(name = OPTION_CONTAINER_TYPE, required = true) ContainerType containerType,
-            @Option(name = "containerName", required = true, completer = ContainerCommandCompleter.class) String containerId,
+            @Option(name = OPTION_CONTAINER_TYPE, required = false) ContainerType containerType,
+            @Option(name = "containerName", required = true, completer = ContainerCommandCompleter.class) String containerName,
             @Option(name = "testframework", required = false, defaultValue = "junit") String testframework)
    {
+      String containerId = Container.idForDisplayName(containerName);
 
       dependencyFacet = project.getFacet(DependencyFacet.class);
 
@@ -122,9 +123,13 @@ public class ArquillianPlugin implements Plugin
       {
          installJunitDependencies();
       }
-      else
+      else if (testframework.equals("testng"))
       {
          installTestNgDependencies();
+      }
+      else
+      {
+         throw new RuntimeException("Unknown test framework: " + testframework);
       }
 
       List<Container> containers;
@@ -171,7 +176,6 @@ public class ArquillianPlugin implements Plugin
    public void configureContainer(
             @Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId)
    {
-
       // loop, user presses ctrl-c to exit
       while (true)
       {
@@ -186,8 +190,9 @@ public class ArquillianPlugin implements Plugin
             throw new RuntimeException(e);
          }
 
+         // TODO: show current values in options list
          Configuration configuration = shell.promptChoiceTyped(
-                  "Which property do you want to set? Or, enter 0 to return to the shell.",
+                  "Which property do you want to set? (default values shown)\n(Press Enter to return to shell)",
                   container.getConfigurations(), null);
          if (configuration == null)
          {
@@ -207,7 +212,8 @@ public class ArquillianPlugin implements Plugin
             xml = XMLParser.parse(resource.getResourceInputStream());
          }
 
-         String value = shell.prompt("What value do you want to set?");
+         // TODO show current value
+         String value = shell.prompt("What value do you want to assign to the " + configuration.getName() + " property?");
          addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), value);
 
          resource.setContents(XMLParser.toXMLString(xml));
@@ -216,9 +222,10 @@ public class ArquillianPlugin implements Plugin
 
    private Container getContainer(Profile profile) throws IOException
    {
+      String profileId = profile.getId().replaceFirst("^arq-", "arquillian-");
       for (Container container : containerDirectoryParser.getContainers())
       {
-         if (container.getProfileId().equals(profile.getId()))
+         if (container.getProfileId().equals(profileId))
          {
             return container;
          }
@@ -251,7 +258,6 @@ public class ArquillianPlugin implements Plugin
 
    private void addPropertyToArquillianConfig(Node xml, String container, String key, String value)
    {
-
       xml.getOrCreate("container@qualifier=" + container).getOrCreate("configuration")
                .getOrCreate("property@name=" + key)
                .text(value);
