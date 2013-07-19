@@ -533,6 +533,12 @@
         "containerType":"MANAGED",
         "configurations":[
             {
+                "type":"java.lang.String",
+                "description":"The local GlassFish installation directory.",
+                "name":"glassFishHome",
+                "default":"$GLASSFISH_HOME"
+            },
+            {
                 "type":"java.lang.Integer",
                 "description":"The administrative port the client should connect to.",
                 "name":"adminPort",
@@ -591,6 +597,18 @@
                 "description":"The GlassFish domain to use or the default domain if not specified.",
                 "name":"domain",
                 "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Should the server startup console log be piped to the console.",
+                "name":"outputToConsole",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Flag to start the server in debug mode using standard GlassFish debug port",
+                "name":"debug",
+                "default":"false"
             },
             {
                 "type":"java.lang.Boolean",
