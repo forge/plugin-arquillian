@@ -20,6 +20,8 @@ import org.jboss.forge.Root;
 import org.jboss.forge.arquillian.ArquillianPlugin;
 import org.jboss.forge.arquillian.container.Container;
 import org.jboss.forge.maven.MavenCoreFacet;
+import org.jboss.forge.parser.xml.Node;
+import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
@@ -86,6 +88,15 @@ public class PluginTest extends AbstractShellTest
 
       assertNotNull("Verify that the plugin use a version property for junit",
               pom.getProperties().get(ArquillianPlugin.JUNIT_VERSION_PROP_NAME));
+
+      ResourceFacet facet = project.getFacet(ResourceFacet.class);
+      FileResource<?> arquillianXml = facet.getTestResource("arquillian.xml");
+
+      assertThat(arquillianXml, is(notNullValue()));
+      assertThat(arquillianXml.exists(), is(true));
+
+      Node arquillianXmlRoot = XMLParser.parse(arquillianXml.getResourceInputStream());
+      assertThat(arquillianXmlRoot.getSingle("container@qualifier=" + container), is(notNullValue()));
 
       return project;
    }

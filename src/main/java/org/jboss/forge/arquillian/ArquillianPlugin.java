@@ -163,12 +163,22 @@ public class ArquillianPlugin implements Plugin
 
       ResourceFacet resources = project.getFacet(ResourceFacet.class);
       FileResource<?> resource = (FileResource<?>) resources.getTestResourceFolder().getChild("arquillian.xml");
+      Node arquillianConfig = null;
       if (!resource.exists())
       {
-         Node arquillianConfig = createNewArquillianConfig();
-         // Add an empty container config
-         arquillianConfig.getOrCreate("container@qualifier=" + containerId);
-         resource.setContents(XMLParser.toXMLString(arquillianConfig));
+         arquillianConfig = createNewArquillianConfig();
+      }
+      else
+      {
+         arquillianConfig = XMLParser.parse(resource.getResourceInputStream());
+      }
+
+      // Make sure a container config exists for this container (otherwise activating it will fail)
+      Node containerConfig = arquillianConfig.getSingle("container@qualifier=" + containerId);
+      if (containerConfig == null)
+      {
+          arquillianConfig.createChild("container@qualifier=" + containerId);
+          resource.setContents(XMLParser.toXMLString(arquillianConfig));
       }
    }
 
