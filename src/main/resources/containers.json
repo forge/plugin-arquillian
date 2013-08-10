@@ -1536,6 +1536,158 @@
                 "default": "90"
             }
         ]
+    },
+    {
+        "group_id":"org.arquillian.container",
+        "artifact_id":"arquillian-droidium-container-depchain",
+        "name":"Arquillian Container Droidium 0.0.1-SNAPSHOT",
+        "container_type":"MANAGED",
+        "configurations":[
+            {
+                "type":"java.lang.String",
+                "description":"Holds the directory where your Android SDK is installed, automatically taken from $ANDROID_HOME when not specified.",
+                "name":"home",
+                "default":"$ANDROID_HOME"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Sets the directory where your JDK installation is placed, automatically taken from $JAVA_HOME when not specified.",
+                "name":"javaHome",
+                "default":"$JAVA_HOME"
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Specifies if Android Debug Bridge (ADB) should be forced to be created even it already is.",
+                "name":"forceNewBridge",
+                "default":"true"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Holds the identification number of your physical mobile phone or device.",
+                "name":"serialId",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Tells Android container which Android Virtual Device it should use or try to connect to.",
+                "name":"avdName",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Tells which ABI your container should use",
+                "name":"abi",
+                "default":""
+            },
+            {
+                "type":"java.lang.Long",
+                "description":"Specifies timeout after which container is considered to be unsuccessfuly started.",
+                "name":"emulatorBootupTimeoutInSeconds",
+                "default":"120"
+            },
+            {
+                "type":"java.lang.Long",
+                "description":"Specifies timeout after which container is considered to be unsuccessfuly stopped.",
+                "name":"emulatorShutdownTimeoutInSeconds",
+                "default":"60"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"All other configuration switches you want to use for your emulator instance upon its start but there is not the configuration property for it.",
+                "name":"emulatorOptions",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies which console port an emulator should use. It has to be even number in range 5554 - 5584.",
+                "name":"consolePort",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies which adb port should emulator connect to. It has to be odd number in range 5555 - 5585.",
+                "name":"adbPort",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Instructs Droidium container adapter that the newly generated AVD should be saved in this directory. Directory has to exist and user has to have write and read permissions.",
+                "name":"generatedAvdPath",
+                "default":""
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Sets a port number on the localhost from where the communication to Android device will be carried out.",
+                "name":"droneHostPort",
+                "default":"14444"
+            },
+            {
+                "type":"java.lang.Integer",
+                "description":"Sets a port number on the Android device from where the communication to localhost will be carried out.",
+                "name":"droneGuestPort",
+                "default":"8080"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies that SD card of this is going to be used. Enter it like XM where X is a number.",
+                "name":"sdSize",
+                "default":"128M"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies full file path where SD card is placed or where it should be created when it does not exist yet.",
+                "name":"sdCard",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Specifies label to use for a SD card we want to be created automatically.",
+                "name":"sdCardLabel",
+                "default":""
+            },
+            {
+                "type":"java.lang.Boolean",
+                "description":"Tells Arquillian that we want to generate card we specified. When this flag is used, the card is deleted after tests are done.",
+                "name":"generateSDCard",
+                "default":"false"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Sets the logging level filter. Options: Verbose, Debug, Info, Warning, Error. Enter only the first letter.",
+                "name":"logLevel",
+                "default":"W"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"Used to define what should be done with the logs read from logcat. Options: output, logger, file, disable",
+                "name":"logType",
+                "default":"output"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"If 'logType' is set to 'file', this is the path, where the output log file will be stored. Make sure this path is accessible and writable.",
+                "name":"logFilePath",
+                "default":"target/logcat.log"
+            },
+            {
+                "type":"java.lang.String",
+                "description":"What would you like to always log? Enter comma separated list of application packages",
+                "name":"logPackageWhitelist",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"What would you like not to always log? Enter comma separated list of application packages",
+                "name":"logPackageBlacklist",
+                "default":""
+            },
+            {
+                "type":"java.lang.String",
+                "description":"The implementation class of Arquillian Droidium container. In case you use another type of container adapter on the classpath (e.g JBoss), this must be specified.",
+                "name":"adapterImplClass",
+                "default":"org.arquillian.droidium.container.AndroidDeployableContainer"
+            }
+        ]
     }
 
 ]
