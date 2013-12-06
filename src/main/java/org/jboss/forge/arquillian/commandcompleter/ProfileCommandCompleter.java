@@ -13,23 +13,24 @@ import java.util.List;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class ProfileCommandCompleter extends SimpleTokenCompleter {
+public class ProfileCommandCompleter extends SimpleTokenCompleter
+{
 
-    @Inject
-    private Project project;
+   @Inject
+   private Project project;
 
-    @Override
-    public List<String> getCompletionTokens()
-    {
-        MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-        List<String> profiles = new ArrayList<String>();
-        List<Profile> profileList = mavenCoreFacet.getPOM().getProfiles();
-        for (Profile profile : profileList)
-        {
-            profiles.add(profile.getId());
-        }
+   @Override
+   public List<String> getCompletionTokens()
+   {
+      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+      List<String> profiles = new ArrayList<String>();
+      List<Profile> profileList = mavenCoreFacet.getPOM().getProfiles();
+      for (Profile profile : profileList)
+      {
+         profiles.add(profile.getId());
+      }
 
-        Collections.sort(profiles);
-        return profiles;
-    }
+      Collections.sort(profiles);
+      return profiles;
+   }
 }

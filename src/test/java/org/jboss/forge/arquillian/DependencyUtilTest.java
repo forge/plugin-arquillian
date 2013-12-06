@@ -17,14 +17,13 @@
  */
 package org.jboss.forge.arquillian;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.Assert;
-
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DependencyUtilTestCase
@@ -41,9 +40,9 @@ public class DependencyUtilTest
       List<Dependency> deps = new ArrayList<Dependency>();
       deps.add(DependencyBuilder.create().setVersion("1.0"));
       deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT"));
-      
+
       Dependency dep = DependencyUtil.getLatestNonSnapshotVersion(deps);
-     
+
       Assert.assertEquals("1.0", dep.getVersion());
    }
 
@@ -53,9 +52,9 @@ public class DependencyUtilTest
       List<Dependency> deps = new ArrayList<Dependency>();
       deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT"));
       deps.add(DependencyBuilder.create().setVersion("2.0-SNAPSHOT"));
-      
+
       Dependency dep = DependencyUtil.getLatestNonSnapshotVersion(deps);
-     
+
       Assert.assertEquals("2.0-SNAPSHOT", dep.getVersion());
    }
 }

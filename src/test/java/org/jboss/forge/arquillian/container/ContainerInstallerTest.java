@@ -5,9 +5,11 @@ import org.junit.Test;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class ContainerInstallerTest {
-    @Test
-    public void testInstallContainer() throws Exception {
+public class ContainerInstallerTest
+{
+   @Test
+   public void testInstallContainer() throws Exception
+   {
 
-    }
+   }
 }

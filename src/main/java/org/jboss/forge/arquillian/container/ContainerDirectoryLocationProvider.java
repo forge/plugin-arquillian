@@ -5,6 +5,7 @@ import java.net.URL;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public interface ContainerDirectoryLocationProvider {
-    URL getUrl();
+public interface ContainerDirectoryLocationProvider
+{
+   URL getUrl();
 }

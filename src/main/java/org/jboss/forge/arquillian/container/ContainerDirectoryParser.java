@@ -14,21 +14,25 @@ import java.util.List;
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
 @Singleton
-public class ContainerDirectoryParser {
-    private List<Container> containers;
+public class ContainerDirectoryParser
+{
+   private List<Container> containers;
 
-    @Inject
-    private ContainerDirectoryLocationProvider containerDirectoryLocationProvider;
+   @Inject
+   private ContainerDirectoryLocationProvider containerDirectoryLocationProvider;
 
-    @PostConstruct
-    void parse() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Container> list = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(), new TypeReference<List<Container>>() {
-        });
-        containers = Collections.unmodifiableList(list); 
-    }
+   @PostConstruct
+   void parse() throws IOException
+   {
+      ObjectMapper objectMapper = new ObjectMapper();
+      List<Container> list = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(), new TypeReference<List<Container>>()
+      {
+      });
+      containers = Collections.unmodifiableList(list);
+   }
 
-    public List<Container> getContainers() throws IOException {
-        return containers;
-    }
+   public List<Container> getContainers() throws IOException
+   {
+      return containers;
+   }
 }

@@ -24,10 +24,10 @@ package org.jboss.forge.arquillian.container;
 
 /**
  * @author <a href="mailto:benevides@redhat.com">Rafael Benevides</a>
- * 
  */
-public enum ContainerType {
+public enum ContainerType
+{
 
-    REMOTE, MANAGED, EMBEDDED
+   REMOTE, MANAGED, EMBEDDED
 
 }
