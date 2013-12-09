@@ -11,6 +11,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.jboss.forge.arquillian.commandcompleter.ContainerCommandCompleter;
 import org.jboss.forge.arquillian.commandcompleter.ProfileCommandCompleter;
+import org.jboss.forge.arquillian.commandcompleter.TestFrameworkCompleter;
 import org.jboss.forge.arquillian.container.Configuration;
 import org.jboss.forge.arquillian.container.Container;
 import org.jboss.forge.arquillian.container.ContainerDirectoryParser;
@@ -72,12 +73,16 @@ public class ArquillianPlugin implements Plugin
 
    public static final String TESTNG_VERSION_PROP_NAME = "version.testng";
    public static final String TESTNG_VERSION_PROP = "${" + TESTNG_VERSION_PROP_NAME + "}";
+   private static final String TESTNG = "testng";
+   private static final String JUNIT = "junit";
+   private static final String OPTION_TEST_FRAMEWORK = "testFramework";
+   private static final String OPTION_CONTAINER_NAME = "containerName";
 
    @Inject
    private Project project;
 
    @Inject
-   BeanManager beanManager;
+   private BeanManager beanManager;
 
    @Inject
    private Event<PickupResource> pickup;
@@ -94,20 +99,20 @@ public class ArquillianPlugin implements Plugin
    private DependencyFacet dependencyFacet;
 
    @Inject
-   ContainerInstaller containerInstaller;
+   private ContainerInstaller containerInstaller;
 
    @Inject
    private ContainerDirectoryParser containerDirectoryParser;
 
    @Inject
    @Any
-   Event<ContainerInstallEvent> installEvent;
+   private Event<ContainerInstallEvent> installEvent;
 
    @SetupCommand
    public void installContainer(
          @Option(name = OPTION_CONTAINER_TYPE, required = false) ContainerType containerType,
-         @Option(name = "containerName", required = true, completer = ContainerCommandCompleter.class) String containerName,
-         @Option(name = "testframework", required = false, defaultValue = "junit") String testframework)
+         @Option(name = OPTION_CONTAINER_NAME, required = true, completer = ContainerCommandCompleter.class) String containerName,
+         @Option(name = OPTION_TEST_FRAMEWORK, required = false, completer = TestFrameworkCompleter.class, defaultValue = "junit") String testFramework)
    {
       String containerId = Container.idForDisplayName(containerName);
 
@@ -115,22 +120,14 @@ public class ArquillianPlugin implements Plugin
 
       installArquillianBom();
 
-      if (testframework.equals("junit"))
-      {
-         installJunitDependencies();
-      } else if (testframework.equals("testng"))
-      {
-         installTestNgDependencies();
-      } else
-      {
-         throw new RuntimeException("Unknown test framework: " + testframework);
-      }
+      resolveTestFramework(testFramework);
 
       List<Container> containers;
       try
       {
          containers = containerDirectoryParser.getContainers();
-      } catch (IOException e)
+      }
+      catch (IOException e)
       {
          throw new RuntimeException(e);
       }
@@ -171,6 +168,22 @@ public class ArquillianPlugin implements Plugin
       {
          arquillianConfig.createChild("container@qualifier=" + containerId);
          resource.setContents(XMLParser.toXMLString(arquillianConfig));
+      }
+   }
+
+   private void resolveTestFramework(String testFramework)
+   {
+      if (JUNIT.equalsIgnoreCase(testFramework))
+      {
+         installJunitDependencies();
+      }
+      else if (TESTNG.equalsIgnoreCase(testFramework))
+      {
+         installTestNgDependencies();
+      }
+      else
+      {
+         throw new RuntimeException("Unknown test framework: " + testFramework);
       }
    }
 
@@ -269,6 +282,8 @@ public class ArquillianPlugin implements Plugin
          @Option(name = "enableJPA", required = false, flagOnly = true) boolean enableJPA, final PipeOut out)
          throws FileNotFoundException
    {
+
+      // TODO add class generator based on selected test framework
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       JavaSource<?> javaSource = classUnderTest.getJavaSource();
@@ -281,7 +296,7 @@ public class ArquillianPlugin implements Plugin
       context.put("enableJPA", enableJPA);
 
       StringWriter writer = new StringWriter();
-      Velocity.mergeTemplate("TemplateTest.vtl", "UTF-8", context, writer);
+      Velocity.mergeTemplate("JUnitTest.vtl", "UTF-8", context, writer);
 
       JavaClass testClass = JavaParser.parse(JavaClass.class, writer.toString());
       java.saveTestJavaSource(testClass);
@@ -301,13 +316,13 @@ public class ArquillianPlugin implements Plugin
    public void exportDeployment(@Option(name = "keepExporter", flagOnly = true) boolean keepExporter, PipeOut out)
    {
 
-      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       try
       {
-         JavaResource testJavaResource = java.getTestJavaResource("forge/arquillian/DeploymentExporter.java");
+         JavaResource testJavaResource = javaSourceFacet.getTestJavaResource("forge/arquillian/DeploymentExporter.java");
          if (!testJavaResource.exists())
          {
-            generateExporterClass(java);
+            generateExporterClass(javaSourceFacet);
          }
 
          runExporterClass(out);
@@ -316,7 +331,8 @@ public class ArquillianPlugin implements Plugin
          {
             testJavaResource.delete();
          }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
          throw new RuntimeException("Error while calling generated DeploymentExporter ", ex);
       }

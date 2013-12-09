@@ -56,9 +56,6 @@ public class PluginTest extends AbstractShellTest
             .addPackages(true, SolderRoot.class.getPackage())
             .addPackages(true, ArquillianPlugin.class.getPackage(), Container.class.getPackage())
             .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-      // .addManifestResource(new
-      // ByteArrayAsset("<beans><alternatives><class>org.jboss.forge.arquillian.container.FileContainerDirectoryLocationProvider</class></alternatives></beans>".getBytes()),
-      // ArchivePaths.create("beans.xml"));
    }
 
    private Project installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception
@@ -68,9 +65,7 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      //for (Profile profile : profiles) {
-      //   System.out.println(profile.getId());
-      //}
+
       assertThat(profiles.size(), is(0));
 
       queueInputLines(container, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
@@ -320,9 +315,6 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      //for (Profile profile : profiles) {
-      //   System.out.println(profile.getId());
-      //}
       assertThat(profiles.size(), is(0));
 
       queueInputLines("JBOSS_AS_REMOTE_7", "19", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
@@ -332,7 +324,6 @@ public class PluginTest extends AbstractShellTest
       getShell().execute("arquillian setup");
 
       assertThat(coreFacet.getPOM().getProfiles().size(), is(1));
-
    }
 
    @Test
@@ -343,9 +334,6 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      //for (Profile profile : profiles) {
-      //   System.out.println(profile.getId());
-      //}
       assertThat(profiles.size(), is(0));
 
       // answer y to download server
@@ -374,9 +362,6 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      //for (Profile profile : profiles) {
-      //   System.out.println(profile.getId());
-      //}
       assertThat(profiles.size(), is(0));
 
       queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
@@ -403,9 +388,6 @@ public class PluginTest extends AbstractShellTest
       MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
 
       List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      //for (Profile profile : profiles) {
-      //   System.out.println(profile.getId());
-      //}
       assertThat(profiles.size(), is(0));
 
       queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");

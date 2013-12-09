@@ -28,7 +28,7 @@ public class ProfileBuilder
 {
 
    @Inject
-   Project project;
+   private Project project;
 
    public void addProfile(Container container, List<Dependency> dependencies)
    {
@@ -45,7 +45,7 @@ public class ProfileBuilder
       profile.setId(container.getProfileId());
 
       /*
-       * Create the surefire plugin configuration, so we call the relevant Arqullina container config
+       * Create the surefire plugin configuration, so we call the relevant Arquillian container config
        * 
        *  <plugin>
        *      <artifactId>maven-surefire-plugin</artifactId>
@@ -86,23 +86,23 @@ public class ProfileBuilder
       facet.setPOM(pom);
    }
 
-   private Object buildConfiguration(String profileId)
-   {
-      try
-      {
-         return Xpp3DomBuilder.build(new StringReader(
-               "<configuration>\n" +
-                     "    <systemPropertyVariables>\n" +
-                     "        <arquillian.launch>" + profileId + "</arquillian.launch>\n" +
-                     "    </systemPropertyVariables>\n" +
-                     "</configuration>"));
-      } catch (XmlPullParserException e)
-      {
-         throw new IllegalStateException(e);
-      } catch (IOException e)
-      {
-         throw new java.lang.IllegalStateException(e);
-      }
+   private Object buildConfiguration(String profileId) {
+       try {
+        return Xpp3DomBuilder.build(new StringReader(
+                   "<configuration>\n" +
+                   "    <systemPropertyVariables>\n" +
+                   "        <arquillian.launch>" + profileId + "</arquillian.launch>\n" +
+                   "    </systemPropertyVariables>\n" +
+                   "</configuration>"));
+    }
+    catch (XmlPullParserException e)
+    {
+        throw new IllegalStateException(e);
+    }
+    catch (IOException e)
+    {
+        throw new java.lang.IllegalStateException(e);
+    }
    }
 
    public static Profile findProfileById(String profileId, Model pom)

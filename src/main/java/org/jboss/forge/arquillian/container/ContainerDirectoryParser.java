@@ -7,6 +7,7 @@
 package org.jboss.forge.arquillian.container;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.PropertyNamingStrategy;
 import org.codehaus.jackson.type.TypeReference;
 
 import javax.annotation.PostConstruct;
@@ -31,9 +32,9 @@ public class ContainerDirectoryParser
    void parse() throws IOException
    {
       ObjectMapper objectMapper = new ObjectMapper();
-      List<Container> list = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(), new TypeReference<List<Container>>()
-      {
-      });
+      objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+      List<Container> list = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(),
+            new TypeReference<List<Container>>() {});
       containers = Collections.unmodifiableList(list);
    }
 

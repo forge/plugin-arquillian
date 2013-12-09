@@ -21,10 +21,12 @@ public class FileContainerDirectoryLocationProvider implements ContainerDirector
       try
       {
          return this.getClass().getClassLoader().getResource("containers.json").toURI().toURL();
-      } catch (MalformedURLException e)
+      }
+      catch (MalformedURLException e)
       {
          throw new RuntimeException(e);
-      } catch (URISyntaxException e)
+      }
+      catch (URISyntaxException e)
       {
          throw new RuntimeException(e);
       }

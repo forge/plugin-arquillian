@@ -21,8 +21,7 @@ public class ContainerTest
    {
       Container container = new Container();
       container.setName("Arquillian Container Tomcat Embedded 6.x");
-      container.setArtifact_id("tomcat-embedded-6");
-
+      container.setArtifactId("tomcat-embedded-6");
       assertThat(container.getId(), is("tomcat-embedded-6"));
    }
 
@@ -31,8 +30,7 @@ public class ContainerTest
    {
       Container container = new Container();
       container.setName("Arquillian Container GlassFish Remote 3.1");
-      container.setArtifact_id("glassfish-remote-3.1");
-
+      container.setArtifactId("glassfish-remote-3.1");
       assertThat(container.getProfileId(), is("arquillian-glassfish-remote-3.1"));
    }
 }

@@ -35,10 +35,9 @@ public class ContainerInstaller
    {
       List<org.jboss.forge.project.dependencies.Dependency> dependencies = new ArrayList<org.jboss.forge.project.dependencies.Dependency>();
 
-      DependencyBuilder containerDependency = DependencyBuilder.create()
-            .setGroupId(container.getGroup_id())
-            .setArtifactId(container.getArtifact_id());
-
+        DependencyBuilder containerDependency = DependencyBuilder.create()
+                .setGroupId(container.getGroupId())
+                .setArtifactId(container.getArtifactId());
 
       dependencies.add(resolveVersion(containerDependency));
 

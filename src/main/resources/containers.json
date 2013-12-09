@@ -35,7 +35,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Managed 4.2.x",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "artifact_id": "arquillian-jbossas-managed-4.2"
     },
     {
@@ -66,7 +66,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Remote 4.2.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "artifact_id": "arquillian-jbossas-remote-4.2"
     },
     {
@@ -93,7 +93,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Remote 5.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "artifact_id": "arquillian-jbossas-remote-5"
     },
     {
@@ -172,7 +172,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Managed 5.1.x",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "artifact_id": "arquillian-jbossas-managed-5.1"
     },
     {
@@ -200,7 +200,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Remote 5.1.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "artifact_id": "arquillian-jbossas-remote-5.1"
     },
     {
@@ -235,7 +235,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Embedded 6.x",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "artifact_id": "arquillian-jbossas-embedded-6"
     },
     {
@@ -271,7 +271,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Managed 6.x",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "artifact_id": "arquillian-jbossas-managed-6"
     },
     {
@@ -299,7 +299,7 @@
             }
         ],
         "name": "Arquillian Container JBoss AS Remote 6.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "artifact_id": "arquillian-jbossas-remote-6"
     },
     {
@@ -308,7 +308,7 @@
             "url": "http://archive.apache.org/dist/tomcat/tomcat-5/v${version.org.apache.tomcat}/bin/apache-tomcat-${version.org.apache.tomcat}.zip"
         },
         "group_id": "org.jboss.arquillian.container",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "name": "Arquillian Container Tomcat Managed 5.5.x"
     },
     {
@@ -329,7 +329,7 @@
         "artifact_id": "arquillian-tomcat-embedded-6",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Tomcat Embedded 6.x",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -379,7 +379,7 @@
         "artifact_id": "arquillian-tomcat-remote-6",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Tomcat Remote 6.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -420,7 +420,7 @@
         },
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Tomcat Managed 6.x",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -514,7 +514,7 @@
         ],
         "artifact_id": "arquillian-tomcat-embedded-7",
         "group_id": "org.jboss.arquillian.container",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "name": "Arquillian Container Tomcat Embedded 7.x"
     },
     {
@@ -524,13 +524,13 @@
         },
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Tomcat Managed 7.x",
-        "containerType": "MANAGED"
+        "container_type": "MANAGED"
     },
     {
         "artifact_id": "arquillian-glassfish-managed-3.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container GlassFish Managed 3.1",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "configurations": [
             {
                 "type": "java.lang.String",
@@ -622,7 +622,7 @@
         "artifact_id": "arquillian-glassfish-remote-3.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container GlassFish Remote 3.1",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -690,7 +690,7 @@
         "artifact_id": "arquillian-glassfish-embedded-3.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container GlassFish Embedded 3.1",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -745,7 +745,7 @@
         "artifact_id": "arquillian-jetty-embedded-6.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Jetty Embedded 6.1.x",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -787,7 +787,7 @@
         "artifact_id": "arquillian-jetty-embedded-7",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Jetty Embedded 7.x and 8.x",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -819,7 +819,7 @@
         "artifact_id": "arquillian-was-remote-7",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container WebSphere AS Remote 7.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -881,7 +881,7 @@
         "artifact_id": "arquillian-was-embedded-8",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container WebSphere AS Embedded 8.x",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "configurations": [
             {
                 "type": "java.lang.String",
@@ -895,7 +895,7 @@
         "artifact_id": "arquillian-was-remote-8",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container WebSphere AS Remote 8.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.Integer",
@@ -957,7 +957,7 @@
         "artifact_id": "arquillian-tomee-embedded",
         "group_id": "org.apache.openejb",
         "name": "Arquillian Container TomEE Embedded",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "dependencies": [],
         "configurations": [
             {
@@ -1044,7 +1044,7 @@
         "artifact_id": "arquillian-tomee-remote",
         "group_id": "org.apache.openejb",
         "name": "Arquillian Container TomEE Remote",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "dependencies": [],
         "configurations": [
             {
@@ -1149,7 +1149,7 @@
         "artifact_id": "arquillian-openejb-embedded-4",
         "group_id": "org.apache.openejb",
         "name": "Arquillian Container OpenEJB Embedded 4",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "dependencies": [],
         "configurations": [
             {
@@ -1164,7 +1164,7 @@
         "artifact_id": "arquillian-openejb-embedded-3.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container OpenEJB Embedded 3.1.x",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "dependencies": [
             {
                 "artifact_id": "openejb-core",
@@ -1236,14 +1236,14 @@
         ],
         "artifact_id": "arquillian-openwebbeans-embedded-1",
         "group_id": "org.jboss.arquillian.container",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "name": "Arquillian Container OpenWebBeans Embedded 1.x"
     },
     {
         "artifact_id": "jboss-as-arquillian-container-managed",
         "group_id": "org.jboss.as",
         "name": "Arquillian Container JBoss AS Managed 7.x",
-        "containerType": "MANAGED",
+        "container_type": "MANAGED",
         "configurations": [
             {
                 "type": "java.lang.String",
@@ -1312,7 +1312,7 @@
         "artifact_id": "jboss-as-arquillian-container-remote",
         "group_id": "org.jboss.as",
         "name": "Arquillian Container JBoss AS Remote 7.x",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.String",
@@ -1333,7 +1333,7 @@
         "artifact_id": "arquillian-weld-ee-embedded-1.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Weld EE Embedded 1.1",
-        "containerType": "EMBEDDED",
+        "container_type": "EMBEDDED",
         "configurations": [
             {
                 "type": "java.lang.Boolean",
@@ -1362,19 +1362,19 @@
         "artifact_id": "arquillian-weld-se-embedded-1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Weld SE Embedded 1.0",
-        "containerType": "EMBEDDED"
+        "container_type": "EMBEDDED"
     },
     {
         "artifact_id": "arquillian-weld-se-embedded-1.1",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Weld SE Embedded 1.1",
-        "containerType": "EMBEDDED"
+        "container_type": "EMBEDDED"
     },
     {
         "artifact_id": "arquillian-wls-remote-10.3",
         "group_id": "org.jboss.arquillian.container",
         "name": "Arquillian Container Weblogic Remote 10.3",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.String",
@@ -1497,7 +1497,7 @@
         "group_id": "org.jboss.arquillian.container",
         "artifact_id": "arquillian-openshift-express",
         "name": "Arquillian Container Openshift",
-        "containerType": "REMOTE",
+        "container_type": "REMOTE",
         "configurations": [
             {
                 "type": "java.lang.String",
