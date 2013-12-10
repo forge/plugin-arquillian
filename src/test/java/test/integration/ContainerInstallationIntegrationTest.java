@@ -15,6 +15,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.Root;
 import org.jboss.forge.arquillian.ArquillianPlugin;
 import org.jboss.forge.arquillian.container.Container;
+import org.jboss.forge.arquillian.testframework.JUnitProvider;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
@@ -26,9 +27,7 @@ import org.jboss.seam.render.RenderRoot;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.impl.base.io.IOUtil;
 import org.jboss.solder.SolderRoot;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -45,7 +44,7 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class PluginTest extends AbstractShellTest
+public class ContainerInstallationIntegrationTest extends AbstractShellTest
 {
    @Deployment
    public static JavaArchive getDeployment()
@@ -89,7 +88,7 @@ public class PluginTest extends AbstractShellTest
             pom.getProperties().get(ArquillianPlugin.ARQ_CORE_VERSION_PROP_NAME));
 
       assertNotNull("Verify that the plugin use a version property for junit",
-            pom.getProperties().get(ArquillianPlugin.JUNIT_VERSION_PROP_NAME));
+            pom.getProperties().get(JUnitProvider.JUNIT_VERSION_PROP_NAME));
 
       ResourceFacet facet = project.getFacet(ResourceFacet.class);
       FileResource<?> arquillianXml = facet.getTestResource("arquillian.xml");
@@ -352,76 +351,6 @@ public class PluginTest extends AbstractShellTest
       assertThat(profile.getBuild().getPlugins().size(), is(2));
       assertThat(profile.getBuild().getPlugins().get(1).getArtifactId(), is("maven-dependency-plugin"));
 
-   }
-
-   @Test
-   public void configureContainer() throws Exception
-   {
-      Project project = initializeJavaProject();
-
-      MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
-
-      List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      assertThat(profiles.size(), is(0));
-
-      queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
-      getShell().execute("arquillian setup");
-
-      queueInputLines("arquillian-jbossas-managed-6", "2", "8000", "");
-      getShell().execute("arquillian configure-container");
-
-      ResourceFacet facet = project.getFacet(ResourceFacet.class);
-      FileResource<?> arquillianXML = facet.getTestResource("arquillian.xml");
-
-      assertThat(arquillianXML, is(notNullValue()));
-      assertThat(arquillianXML.exists(), is(true));
-
-      String content = new String(IOUtil.asByteArray(arquillianXML.getResourceInputStream()));
-      Assert.assertTrue("Option should be writen to file", content.indexOf("8000") != -1);
-   }
-
-   @Test
-   public void configureContainerMultipleTimes() throws Exception
-   {
-      Project project = initializeJavaProject();
-
-      MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
-
-      List<Profile> profiles = coreFacet.getPOM().getProfiles();
-      assertThat(profiles.size(), is(0));
-
-      queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
-      getShell().execute("arquillian setup");
-
-      queueInputLines("arquillian-jbossas-managed-6", "2", "8000", "");
-      getShell().execute("arquillian configure-container");
-
-      queueInputLines("arquillian-jbossas-managed-6", "2", "8000", "");
-      getShell().execute("arquillian configure-container");
-
-      ResourceFacet facet = project.getFacet(ResourceFacet.class);
-      FileResource<?> arquillianXML = facet.getTestResource("arquillian.xml");
-
-      assertThat(arquillianXML, is(notNullValue()));
-      assertThat(arquillianXML.exists(), is(true));
-
-      String content = new String(IOUtil.asByteArray(arquillianXML.getResourceInputStream()));
-      Assert.assertTrue("Option should be overwritten", content.indexOf("8000") == content.lastIndexOf("8000"));
-   }
-
-   @Test
-   public void createArquillianXmlOnSetup() throws Exception
-   {
-      Project project = initializeJavaProject();
-
-      queueInputLines("JBOSS_AS_MANAGED_6", "", "", "", "", "", "", "");
-      getShell().execute("arquillian setup");
-
-      ResourceFacet facet = project.getFacet(ResourceFacet.class);
-      FileResource<?> arquillianXML = facet.getTestResource("arquillian.xml");
-
-      assertThat(arquillianXML, is(notNullValue()));
-      assertThat(arquillianXML.exists(), is(true));
    }
 
    class DependencyMatcher extends BaseMatcher<Dependency>
