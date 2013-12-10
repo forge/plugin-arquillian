@@ -6,10 +6,7 @@
  */
 package test.integration;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Profile;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.Root;
 import org.jboss.forge.arquillian.ArquillianPlugin;

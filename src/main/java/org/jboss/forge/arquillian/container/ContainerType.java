@@ -32,5 +32,7 @@ package org.jboss.forge.arquillian.container;
  */
 public enum ContainerType
 {
-   REMOTE, MANAGED, EMBEDDED
+   REMOTE,
+   MANAGED,
+   EMBEDDED
 }

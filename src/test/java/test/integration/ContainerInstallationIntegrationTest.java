@@ -15,7 +15,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.Root;
 import org.jboss.forge.arquillian.ArquillianPlugin;
 import org.jboss.forge.arquillian.container.Container;
-import org.jboss.forge.arquillian.testframework.JUnitProvider;
+import org.jboss.forge.arquillian.testframework.junit.JUnitFacet;
+import org.jboss.forge.arquillian.testframework.junit.JUnitFacetInstaller;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
@@ -87,8 +88,10 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
       assertNotNull("Verify that the plugin use a version property for arquillian core",
             pom.getProperties().get(ArquillianPlugin.ARQ_CORE_VERSION_PROP_NAME));
 
+      System.out.println(pom.getProperties());
+
       assertNotNull("Verify that the plugin use a version property for junit",
-            pom.getProperties().get(JUnitProvider.JUNIT_VERSION_PROP_NAME));
+            pom.getProperties().get(new JUnitFacet().getVersionPropertyName()));
 
       ResourceFacet facet = project.getFacet(ResourceFacet.class);
       FileResource<?> arquillianXml = facet.getTestResource("arquillian.xml");

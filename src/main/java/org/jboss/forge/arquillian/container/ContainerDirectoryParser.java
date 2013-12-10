@@ -31,11 +31,12 @@ public class ContainerDirectoryParser
    @PostConstruct
    void parse() throws IOException
    {
-      ObjectMapper objectMapper = new ObjectMapper();
+      final ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-      List<Container> list = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(),
+      List<Container> parsedContainers = objectMapper.readValue(containerDirectoryLocationProvider.getUrl(),
             new TypeReference<List<Container>>() {});
-      containers = Collections.unmodifiableList(list);
+
+      this.containers = Collections.unmodifiableList(parsedContainers);
    }
 
    public List<Container> getContainers() throws IOException

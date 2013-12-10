@@ -1,0 +1,32 @@
+package $package;
+
+import ${packageImport}.${ClassToTest};
+import javax.inject.Inject;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.testng.annotations.Test;
+import org.testng.Assert;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.arquillian.testng.Arquillian;
+
+
+public class ${ClassToTest}Test  extends Arquillian{
+
+    @Inject
+    private ${ClassToTest} ${classToTest};
+
+    @Deployment public static JavaArchive createDeployment() {
+        return ShrinkWrap.create(JavaArchive.class, "test.jar")
+                .addClass(${ClassToTest}.class)
+                #if($enableJPA)
+                .addAsManifestResource("META-INF/persistence.xml", "persistence.xml")
+                #end
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    @Test
+    public void testIsDeployed() {
+        Assert.assertNotNull(${classToTest});
+    }
+}

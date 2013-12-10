@@ -28,6 +28,10 @@ public class ContainerCommandCompleter extends SimpleTokenCompleter
 
    public static final String OPTION_CONTAINER_TYPE = "containerType";
 
+   public static final String OPTION_CONTAINER_NAME = "containerName";
+
+   private static final String NOT_FOUND = "container-type-not-found";
+
    @Inject
    private ContainerDirectoryParser parser;
 
@@ -46,54 +50,63 @@ public class ContainerCommandCompleter extends SimpleTokenCompleter
    @Override
    public Iterable<?> getCompletionTokens()
    {
-      List<Container> containers = null;
+      List<Container> availableContainers = null;
       try
       {
-         containers = new ArrayList<Container>(parser.getContainers());
-         Collections.sort(containers);
-         ContainerType containerType = null;
-         try
+         availableContainers = new ArrayList<Container>(parser.getContainers());
+         Collections.sort(availableContainers);
+
+         String containerTypeAsString = resolveContainerType();
+         if (NOT_FOUND.equals(containerTypeAsString))
          {
-            containerType = ContainerType.valueOf(getInformedContainerType());
-         } catch (Exception e)
-         {
-            return containers;
+            return availableContainers;
          }
-         List<Container> filtered = new ArrayList<Container>();
-         for (Container container : containers)
-         {
-            if (container.getContainerType() == containerType)
-            {
-               filtered.add(container);
-            }
-         }
-         return filtered;
-      } catch (IOException e)
+
+         return filterByType(availableContainers, ContainerType.valueOf(containerTypeAsString));
+      }
+      catch (IOException e)
       {
          ShellMessages.error(shell, e.getMessage());
          return null;
       }
    }
 
-   /**
-    * Get the value of containerType command option
-    *
-    * @return informed ContainerType as String
-    */
-   private String getInformedContainerType()
+   private Iterable<?> filterByType(List<Container> containers, ContainerType containerType)
    {
-      String completeCommand = state.getBuffer();
-      String[] splitedCommand = completeCommand.split("[\\s]++"); // split by one or more whitespaces
-      int cont = 0;
-      for (String token : splitedCommand)
+      List<Container> filtered = new ArrayList<Container>();
+      for (Container container : containers)
       {
-         cont++;
+         if (containerType.equals(container.getContainerType()))
+         {
+            filtered.add(container);
+         }
+      }
+      return filtered;
+   }
+
+   /**
+    * Resolves the value of containerType command option if already specified
+    */
+   private String resolveContainerType()
+   {
+      final String completeCommand = state.getBuffer();
+      final String[] commands = completeCommand.split("[\\s]++"); // split by one or more whitespaces
+      int containerTypePosition = 0;
+      for (String token : commands)
+      {
+         containerTypePosition++;
          if (("--" + OPTION_CONTAINER_TYPE).equals(token))
          {
             break;
          }
       }
-      return splitedCommand[cont];
+
+      if (containerTypePosition == commands.length)
+      {
+         return NOT_FOUND;
+      }
+
+      return commands[containerTypePosition];
    }
 
 }
