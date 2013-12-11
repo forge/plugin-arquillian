@@ -8,22 +8,16 @@ package test.integration;
 
 import org.apache.maven.model.Profile;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.forge.Root;
-import org.jboss.forge.arquillian.ArquillianPlugin;
-import org.jboss.forge.arquillian.container.Container;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.seam.render.RenderRoot;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.impl.base.io.IOUtil;
-import org.jboss.solder.SolderRoot;
 import org.junit.Assert;
 import org.junit.Test;
+import test.integration.util.Deployments;
 
 import java.util.List;
 
@@ -39,12 +33,7 @@ public class ConfigurationIntegrationTest extends AbstractShellTest
    @Deployment
    public static JavaArchive getDeployment()
    {
-      return ShrinkWrap.create(JavaArchive.class, "test.jar")
-            .addPackages(true, Root.class.getPackage())
-            .addPackages(true, RenderRoot.class.getPackage())
-            .addPackages(true, SolderRoot.class.getPackage())
-            .addPackages(true, ArquillianPlugin.class.getPackage(), Container.class.getPackage())
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+      return Deployments.basicPluginInfrastructure();
    }
 
    @Test

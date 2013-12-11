@@ -11,28 +11,28 @@ package org.jboss.forge.arquillian.container;
  */
 public class Dependency
 {
-   private String group_id;
-   private String artifact_id;
+   private String groupId;
+   private String artifactId;
    private String url;
 
-   public String getGroup_id()
+   public String getGroupId()
    {
-      return group_id;
+      return groupId;
    }
 
-   public void setGroup_id(String group_id)
+   public void setGroupId(String groupId)
    {
-      this.group_id = group_id;
+      this.groupId = groupId;
    }
 
-   public String getArtifact_id()
+   public String getArtifactId()
    {
-      return artifact_id;
+      return artifactId;
    }
 
-   public void setArtifact_id(String artifact_id)
+   public void setArtifactId(String artifactId)
    {
-      this.artifact_id = artifact_id;
+      this.artifactId = artifactId;
    }
 
    public String getUrl()

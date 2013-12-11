@@ -68,8 +68,8 @@ public class DownloadServerObserver
 
       List<org.jboss.forge.project.dependencies.Dependency> asDependencies = dependencyFacet
             .resolveAvailableVersions(DependencyBuilder.create()
-                  .setGroupId(container.getDownload().getGroup_id())
-                  .setArtifactId(container.getDownload().getArtifact_id()));
+                  .setGroupId(container.getDownload().getGroupId())
+                  .setArtifactId(container.getDownload().getArtifactId()));
       org.jboss.forge.project.dependencies.Dependency asVersion = shell.promptChoiceTyped(
             "Which version of the container do you want to install?", asDependencies,
             DependencyUtil.getLatestNonSnapshotVersion(asDependencies));
@@ -77,8 +77,8 @@ public class DownloadServerObserver
       ConfigurationBuilder configuration = ConfigurationBuilder.create();
       configuration.createConfigurationElement("artifactItems")
             .createConfigurationElement("artifactItem")
-            .addChild("groupId").setText(container.getDownload().getGroup_id()).getParentElement()
-            .addChild("artifactId").setText(container.getDownload().getArtifact_id()).getParentElement()
+            .addChild("groupId").setText(container.getDownload().getGroupId()).getParentElement()
+            .addChild("artifactId").setText(container.getDownload().getArtifactId()).getParentElement()
             .addChild("version").setText(asVersion.getVersion()).getParentElement()
             .addChild("type").setText("zip").getParentElement()
             .addChild("overWrite").setText("false").getParentElement()

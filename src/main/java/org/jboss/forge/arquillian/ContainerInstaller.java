@@ -46,8 +46,8 @@ public class ContainerInstaller
          for (Dependency dependency : container.getDependencies())
          {
             DependencyBuilder dependencyBuilder = DependencyBuilder.create()
-                  .setGroupId(dependency.getGroup_id())
-                  .setArtifactId(dependency.getArtifact_id());
+                  .setGroupId(dependency.getGroupId())
+                  .setArtifactId(dependency.getArtifactId());
             dependencies.add(resolveVersion(dependencyBuilder));
          }
       }

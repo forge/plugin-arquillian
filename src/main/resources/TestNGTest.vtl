@@ -11,7 +11,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.arquillian.testng.Arquillian;
 
 
-public class ${ClassToTest}Test  extends Arquillian{
+public class ${ClassToTest}Test  extends Arquillian {
 
     @Inject
     private ${ClassToTest} ${classToTest};
@@ -26,7 +26,7 @@ public class ${ClassToTest}Test  extends Arquillian{
     }
 
     @Test
-    public void testIsDeployed() {
+    public void should_be_deployed() {
         Assert.assertNotNull(${classToTest});
     }
 }

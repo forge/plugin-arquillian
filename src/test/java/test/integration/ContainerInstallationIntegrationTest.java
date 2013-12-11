@@ -6,17 +6,11 @@
  */
 package test.integration;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.forge.Root;
 import org.jboss.forge.arquillian.ArquillianPlugin;
-import org.jboss.forge.arquillian.container.Container;
 import org.jboss.forge.arquillian.testframework.junit.JUnitFacet;
-import org.jboss.forge.arquillian.testframework.junit.JUnitFacetInstaller;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
@@ -24,13 +18,11 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.seam.render.RenderRoot;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.solder.SolderRoot;
 import org.junit.Ignore;
 import org.junit.Test;
+import test.integration.util.DependencyMatcher;
+import test.integration.util.Deployments;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,36 +42,31 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
    @Deployment
    public static JavaArchive getDeployment()
    {
-      return ShrinkWrap.create(JavaArchive.class, "test.jar")
-            .addPackages(true, Root.class.getPackage())
-            .addPackages(true, RenderRoot.class.getPackage())
-            .addPackages(true, SolderRoot.class.getPackage())
-            .addPackages(true, ArquillianPlugin.class.getPackage(), Container.class.getPackage())
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+      return Deployments.basicPluginInfrastructure();
    }
 
    private Project installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception
    {
       Project project = initializeJavaProject();
 
-      MavenCoreFacet coreFacet = project.getFacet(MavenCoreFacet.class);
+      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
 
-      List<Profile> profiles = coreFacet.getPOM().getProfiles();
+      List<Profile> profiles = mavenCoreFacet.getPOM().getProfiles();
 
       assertThat(profiles.size(), is(0));
 
       queueInputLines(container, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
       getShell().execute("arquillian setup");
 
-      assertThat(coreFacet.getPOM().getProfiles().size(), is(1));
-      Profile profile = coreFacet.getPOM().getProfiles().get(0);
+      assertThat(mavenCoreFacet.getPOM().getProfiles().size(), is(1));
+      Profile profile = mavenCoreFacet.getPOM().getProfiles().get(0);
 
       for (DependencyMatcher dependency : dependencies)
       {
          assertThat(profile.getDependencies(), hasItem(dependency));
       }
 
-      Model pom = coreFacet.getPOM();
+      Model pom = mavenCoreFacet.getPOM();
       DependencyMatcher arqBom = new DependencyMatcher("arquillian-bom");
 
       assertThat("Verify arquillian:bom was added to DependencyManagement ",
@@ -87,8 +74,6 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
 
       assertNotNull("Verify that the plugin use a version property for arquillian core",
             pom.getProperties().get(ArquillianPlugin.ARQ_CORE_VERSION_PROP_NAME));
-
-      System.out.println(pom.getProperties());
 
       assertNotNull("Verify that the plugin use a version property for junit",
             pom.getProperties().get(new JUnitFacet().getVersionPropertyName()));
@@ -356,25 +341,4 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
 
    }
 
-   class DependencyMatcher extends BaseMatcher<Dependency>
-   {
-      private final String artifactId;
-
-      public DependencyMatcher(final String artifactId)
-      {
-         this.artifactId = artifactId;
-      }
-
-      @Override
-      public boolean matches(final Object o)
-      {
-         Dependency d = (Dependency) o;
-         return d.getArtifactId().equals(artifactId);
-      }
-
-      @Override
-      public void describeTo(final Description description)
-      {
-      }
-   }
 }

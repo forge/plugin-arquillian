@@ -10,12 +10,14 @@ import org.jboss.forge.arquillian.testframework.TestFrameworkFacet;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.ScopeType;
 import org.jboss.forge.shell.ShellPrompt;
+import org.jboss.forge.shell.plugins.Alias;
 
 import javax.inject.Inject;
 
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
+@Alias("arq.testframework.junit")
 public class JUnitFacet extends TestFrameworkFacet
 {
 

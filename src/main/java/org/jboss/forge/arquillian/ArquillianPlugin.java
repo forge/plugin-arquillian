@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.arquillian;
 
-
 import static org.jboss.forge.arquillian.commandcompleter.TestFrameworkCompleter.OPTION_TEST_FRAMEWORK;
 import static org.jboss.forge.arquillian.commandcompleter.ContainerCommandCompleter.*;
 
@@ -57,8 +56,9 @@ import java.util.List;
 import java.util.Properties;
 
 @Alias("arquillian")
-@RequiresFacet(JavaSourceFacet.class)
-@Help("A plugin that helps setting up Arquillian tests")
+@RequiresProject
+@RequiresFacet({ DependencyFacet.class, JavaSourceFacet.class })
+@Help("This plugin will help you setting up Arquillian tests.")
 public class ArquillianPlugin implements Plugin
 {
 
