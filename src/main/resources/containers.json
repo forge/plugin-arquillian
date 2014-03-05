@@ -1309,6 +1309,75 @@
 
     },
     {
+        "artifact_id": "wildfly-arquillian-container-managed",
+        "group_id": "org.wildfly",
+        "name": "Arquillian Container WildFly Managed 8.x",
+        "container_type": "MANAGED",
+        "configurations": [
+            {
+                "type": "java.lang.String",
+                "description": "The JBoss configuration to start.",
+                "name": "jbossHome",
+                "default": "$JBOSS_HOME"
+            },
+            {
+                "type": "java.lang.String",
+                "description": "The Java runtime to use to start the server.",
+                "name": "javaHome",
+                "default": "$JAVA_HOME"
+            },
+            {
+                "type": "java.lang.String",
+                "description": "The location of the module repository.",
+                "name": "modulePath",
+                "default": "$module.path"
+            },
+            {
+                "type": "java.lang.String",
+                "description": "JVM arguments used to start the server.",
+                "name": "javaVmArguments",
+                "default": "-Xmx512m -XX:MaxPermSize=128m"
+            },
+            {
+                "type": "java.lang.Integer",
+                "description": "Time to wait before throwing Exception on server startup.",
+                "name": "startupTimeoutInSeconds",
+                "default": "30"
+            },
+            {
+                "type": "java.lang.Boolean",
+                "description": "Should the server startup console log be piped to the console",
+                "name": "outputToConsole",
+                "default": "true"
+            },
+            {
+                "type": "java.lang.String",
+                "description": "Which server configuration file to startup with",
+                "name": "serverConfig",
+                "default": "standalone.xml"
+            },
+            {
+                "type": "java.lang.String",
+                "description": "The ip address of the running server instances manage interface",
+                "name": "managementAddress",
+                "default": "127.0.0.1"
+            },
+            {
+                "type": "java.lang.Integer",
+                "description": "The management port for deployment",
+                "name": "managementPort",
+                "default": "9999"
+            }
+        ],
+
+        "download": {
+            "group_id": "org.wildfly",
+            "artifact_id": "wildfly-dist"
+        }
+
+
+    },
+    {
         "artifact_id": "jboss-as-arquillian-container-remote",
         "group_id": "org.jboss.as",
         "name": "Arquillian Container JBoss AS Remote 7.x",
@@ -1328,7 +1397,26 @@
             }
         ]
     },
-
+    {
+        "artifact_id": "wildfly-arquillian-container-remote",
+        "group_id": "org.wildfly",
+        "name": "Arquillian Container WildFly Remote 8.x",
+        "container_type": "REMOTE",
+        "configurations": [
+            {
+                "type": "java.lang.String",
+                "description": "The ip address of the running server instances management interface",
+                "name": "managementAddress",
+                "default": "127.0.0.1"
+            },
+            {
+                "type": "java.lang.Integer",
+                "description": "The management port for deployment",
+                "name": "managementPort",
+                "default": "9999"
+            }
+        ]
+    },
     {
         "artifact_id": "arquillian-weld-ee-embedded-1.1",
         "group_id": "org.jboss.arquillian.container",

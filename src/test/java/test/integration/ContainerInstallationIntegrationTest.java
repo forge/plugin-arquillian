@@ -197,6 +197,22 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
                   new DependencyMatcher("jboss-as-arquillian-container-remote")));
    }
 
+    @Test
+    public void installWildFlyManagedContainer() throws Exception
+    {
+        installContainer("wildfly-managed",
+                Arrays.asList(
+                        new DependencyMatcher("wildfly-arquillian-container-managed")));
+    }
+
+    @Test
+    public void installWildFlyRemoteContainer() throws Exception
+    {
+        installContainer("wildfly-remote",
+                Arrays.asList(
+                        new DependencyMatcher("wildfly-arquillian-container-remote")));
+    }
+
    @Test
    public void installJetty6EmbeddedContainer() throws Exception
    {
