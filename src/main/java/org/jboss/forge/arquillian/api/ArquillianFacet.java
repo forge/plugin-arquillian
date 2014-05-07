@@ -22,12 +22,15 @@ public class ArquillianFacet extends AbstractVersionedFacet {
    public static final String ARQ_CORE_VERSION_PROP_NAME = "version.arquillian_core";
    public static final String ARQ_CORE_VERSION_PROP = "${" + ARQ_CORE_VERSION_PROP_NAME + "}";
 
-   private static final DependencyBuilder arquillianBom = DependencyBuilder.create().setGroupId("org.jboss.arquillian")
-         .setArtifactId("arquillian-bom").setPackaging("pom").setScopeType("import");
+
+   private DependencyBuilder createBOM() {
+      return DependencyBuilder.create().setGroupId("org.jboss.arquillian")
+            .setArtifactId("arquillian-bom").setPackaging("pom").setScopeType("import");
+   }
 
    @Override
-   protected Coordinate getVerionedCoordinate() {
-      return arquillianBom.getCoordinate();
+   protected Coordinate getVersionedCoordinate() {
+      return createBOM().getCoordinate();
    }
    
    @Override
@@ -79,14 +82,15 @@ public class ArquillianFacet extends AbstractVersionedFacet {
       // need to set version after resolve is done, else nothing will resolve.
       if (!isBOMInstalled())
       {
-         arquillianBom.setVersion(ARQ_CORE_VERSION_PROP);
-         dependencyFacet.addDirectManagedDependency(arquillianBom);
+         dependencyFacet.addDirectManagedDependency(
+               createBOM().setVersion(ARQ_CORE_VERSION_PROP)
+         );
       }
    }
    
    private boolean isBOMInstalled() {
       DependencyFacet dependencyFacet = getFaceted().getFacet(DependencyFacet.class);
       // need to set version after resolve is done, else nothing will resolve.
-      return dependencyFacet.hasDirectManagedDependency(arquillianBom);
+      return dependencyFacet.hasDirectManagedDependency(createBOM());
    }
 }

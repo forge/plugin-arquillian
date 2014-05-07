@@ -12,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.arquillian.container.model.Container;
 import org.jboss.forge.arquillian.container.model.Dependency;
 
@@ -23,7 +24,7 @@ public class ContainerInstaller
    @Inject
    private ProfileManager profileManager;
 
-   public void installContainer(Container container, String version)
+   public void installContainer(Project project, Container container, String version)
    {
       List<org.jboss.forge.addon.dependencies.Dependency> dependencies = new ArrayList<org.jboss.forge.addon.dependencies.Dependency>();
       
@@ -43,7 +44,7 @@ public class ContainerInstaller
             //dependencies.add(resolveVersion(dependencyBuilder));
          }
       }
-      profileManager.addProfile(container, dependencies);
+      profileManager.addProfile(project, container, dependencies);
    }
 
    /*

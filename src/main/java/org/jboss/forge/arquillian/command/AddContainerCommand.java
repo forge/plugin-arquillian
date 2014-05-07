@@ -38,18 +38,6 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
    private ProjectFactory projectFactory;
 
    @Inject
-   @WithAttributes(shortName = 't', label = "Container Adapter", type = InputType.DROPDOWN, required = false)
-   private UISelectOne<ContainerType> containerAdapterType;
-
-   @Inject
-   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN)
-   private UISelectOne<Container> containerAdapter;
-
-   @Inject
-   @WithAttributes(shortName = 'x', label = "Container Adapter Version", type = InputType.DROPDOWN)
-   private UISelectOne<String> containerAdapterVersion;
-
-   @Inject
    private ContainerInstaller containerInstaller;
 
    @Inject
@@ -61,6 +49,18 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
    @Inject
    @Any
    private Event<ContainerInstallEvent> installEvent;
+
+   @Inject
+   @WithAttributes(shortName = 't', label = "Container Adapter", type = InputType.DROPDOWN, required = false)
+   private UISelectOne<ContainerType> containerAdapterType;
+
+   @Inject
+   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN)
+   private UISelectOne<Container> containerAdapter;
+
+   @Inject
+   @WithAttributes(shortName = 'x', label = "Container Adapter Version", type = InputType.DROPDOWN)
+   private UISelectOne<String> containerAdapterVersion;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context) {
@@ -112,18 +112,19 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception {
-      installContainer(containerAdapter.getValue(), containerAdapterVersion.getValue());
+      containerInstaller.installContainer(
+            getSelectedProject(context),
+            containerAdapter.getValue(),
+            containerAdapterVersion.getValue());
+
       ArquillianFacet arquillian = getSelectedProject(context).getFacet(ArquillianFacet.class);
       ArquillianConfig config = arquillian.getConfig();
       config.addContainer(containerAdapter.getValue().getProfileId());
       arquillian.setConfig(config);
 
-      return Results.success("Installed");
-   }
+      installEvent.fire(new ContainerInstallEvent(containerAdapter.getValue()));
 
-   private void installContainer(Container container, String version) {
-      containerInstaller.installContainer(container, version);
-      installEvent.fire(new ContainerInstallEvent(container));
+      return Results.success("Installed");
    }
    
    @Override

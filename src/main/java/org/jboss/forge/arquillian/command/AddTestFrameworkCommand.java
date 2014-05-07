@@ -35,16 +35,16 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
    private FacetFactory facetFactory;
 
    @Inject
+   @Any
+   private Event<TestFrameworkInstallEvent> installEvent;
+
+   @Inject
    @WithAttributes(shortName = 't', label = "Test Framework", type = InputType.DROPDOWN)
    private UISelectOne<TestFrameworkFacet> testFramework;
 
    @Inject
    @WithAttributes(shortName = 'f', label = "Test Framework Version", type = InputType.DROPDOWN)
    private UISelectOne<String> testFrameworkVersion;
-
-   @Inject
-   @Any
-   private Event<TestFrameworkInstallEvent> installEvent;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context) {
@@ -82,7 +82,7 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
       testFrameworkVersion.setEnabled(new Callable<Boolean>() {
          @Override
          public Boolean call() throws Exception {
-            return testFramework != null && testFramework.getValue() != null;
+            return testFramework.hasValue();
          }
       });
       testFrameworkVersion.setValueChoices(new Callable<Iterable<String>>() {

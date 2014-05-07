@@ -25,12 +25,9 @@ import org.jboss.forge.arquillian.container.model.Container;
 public class ProfileManager {
 
    @Inject
-   private Project project;
-
-   @Inject
    private ContainerResolver containerResolver;
    
-   public List<Profile> getArquillianProfiles() {
+   public List<Profile> getArquillianProfiles(Project project) {
       MavenFacet mavenCoreFacet = project.getFacet(MavenFacet.class);
       List<Profile> profiles = new ArrayList<Profile>();
       List<Profile> profileList = mavenCoreFacet.getModel().getProfiles();
@@ -48,12 +45,12 @@ public class ProfileManager {
       return profiles;
    }
    
-   public void addProfile(Container container, List<Dependency> dependencies) {
+   public void addProfile(Project project, Container container, List<Dependency> dependencies) {
       Dependency[] deps = new Dependency[dependencies.size()];
-      addProfile(container, dependencies.toArray(deps));
+      addProfile(project, container, dependencies.toArray(deps));
    }
 
-   public void addProfile(Container container, Dependency... dependencies) {
+   public void addProfile(Project project, Container container, Dependency... dependencies) {
       MavenFacet facet = project.getFacet(MavenFacet.class);
 
 

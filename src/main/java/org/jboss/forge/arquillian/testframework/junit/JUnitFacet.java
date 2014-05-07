@@ -6,15 +6,12 @@
  */
 package org.jboss.forge.arquillian.testframework.junit;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.arquillian.api.TestFrameworkFacet;
 
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-@ApplicationScoped
 public class JUnitFacet extends TestFrameworkFacet
 {
    @Override

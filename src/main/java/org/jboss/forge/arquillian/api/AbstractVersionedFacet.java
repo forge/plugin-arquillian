@@ -39,8 +39,8 @@ abstract class AbstractVersionedFacet extends AbstractFacet<Project> implements 
    public List<String> getAvailableVersions() {
       return DependencyUtil.toVersionString(
             resolver.resolveVersions(
-                  DependencyQueryBuilder.create(getVerionedCoordinate())));
+                  DependencyQueryBuilder.create(getVersionedCoordinate())));
    }
 
-   protected abstract Coordinate getVerionedCoordinate();
+   protected abstract Coordinate getVersionedCoordinate();
 }

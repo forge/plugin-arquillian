@@ -54,7 +54,7 @@ public abstract class TestFrameworkFacet extends AbstractVersionedFacet {
    }
    
    @Override
-   protected Coordinate getVerionedCoordinate() {
+   protected Coordinate getVersionedCoordinate() {
       return createFrameworkDependency().getCoordinate();
    }
 

@@ -29,6 +29,9 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
 
    @Inject
    private ProjectFactory projectFactory;
+
+   @Inject
+   private ProfileManager profileManager;   
    
    @Inject
    @WithAttributes(shortName = 'c', label = "Container", type = InputType.DROPDOWN)
@@ -42,9 +45,6 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
    @WithAttributes(shortName = 'v', label = "Container Configuration Value", type = InputType.DROPDOWN)
    private UISelectOne<String> containerValue;
 
-   @Inject
-   private ProfileManager profileManager;
-   
    @Override
    public UICommandMetadata getMetadata(UIContext context) {
       return Metadata.from(super.getMetadata(context), getClass())
@@ -54,7 +54,7 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
    }
    
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception {
+   public void initializeUI(final UIBuilder builder) throws Exception {
       builder.add(container)
              .add(containerOption)
              .add(containerValue);
@@ -62,7 +62,13 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
       container.setValueChoices(new Callable<Iterable<Profile>>() {
          @Override
          public Iterable<Profile> call() throws Exception {
-            return profileManager.getArquillianProfiles();
+            return profileManager.getArquillianProfiles(getSelectedProject(builder.getUIContext()));
+         }
+      });
+      container.setItemLabelConverter(new Converter<Profile, String>() {
+         @Override
+         public String convert(Profile source) {
+            return source.getId();
          }
       });
       containerOption.setEnabled(new Callable<Boolean>() {
