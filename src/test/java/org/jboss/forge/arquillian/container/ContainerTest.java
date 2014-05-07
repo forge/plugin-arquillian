@@ -6,10 +6,11 @@
  */
 package org.jboss.forge.arquillian.container;
 
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import org.jboss.forge.arquillian.container.model.Container;
+import org.junit.Test;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com

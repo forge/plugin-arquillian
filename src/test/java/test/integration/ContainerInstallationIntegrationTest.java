@@ -6,86 +6,134 @@
  */
 package test.integration;
 
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Profile;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.forge.arquillian.ArquillianPlugin;
-import org.jboss.forge.arquillian.testframework.junit.JUnitFacet;
-import org.jboss.forge.maven.MavenCoreFacet;
-import org.jboss.forge.parser.xml.Node;
-import org.jboss.forge.parser.xml.XMLParser;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.ResourceFacet;
-import org.jboss.forge.resources.FileResource;
-import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Ignore;
-import org.junit.Test;
-import test.integration.util.DependencyMatcher;
-import test.integration.util.Deployments;
-
-import java.util.Arrays;
-import java.util.List;
-
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.maven.projects.MavenFacet;
+import org.jboss.forge.addon.parser.xml.resources.XMLResource;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.arquillian.AddonDependency;
+import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.api.ArquillianFacet;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.command.SetupWizard;
+import org.jboss.forge.arquillian.testframework.junit.JUnitFacet;
+import org.jboss.forge.parser.xml.Node;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import test.integration.util.DependencyMatcher;
+import test.integration.util.Deployments;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class ContainerInstallationIntegrationTest extends AbstractShellTest
+@RunWith(Arquillian.class) @Ignore
+public class ContainerInstallationIntegrationTest 
 {
    @Deployment
-   public static JavaArchive getDeployment()
-   {
+   @Dependencies({
+            @AddonDependency(name = "org.arquillian.forge:arquillian-addon"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
+   })
+   public static ForgeArchive getDeployment() {
       return Deployments.basicPluginInfrastructure();
    }
+   
+   @Inject
+   private UITestHarness testHarness;
+
+   @Inject
+   private ProjectFactory factory;
+
 
    private Project installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception
    {
-      Project project = initializeJavaProject();
-
-      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-
-      List<Profile> profiles = mavenCoreFacet.getPOM().getProfiles();
-
+      Project project = factory.createTempProject();
+      MavenFacet metadataFacet = project.getFacet(MavenFacet.class);
+      List<Profile> profiles = metadataFacet.getModel().getProfiles();
       assertThat(profiles.size(), is(0));
 
-      queueInputLines(container, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
-      getShell().execute("arquillian setup");
+      WizardCommandController setup = testHarness.createWizardController(SetupWizard.class, project.getRootDirectory());
+      setup.initialize();
+      setup.setValueFor("arquillianVersion", "1.1.3.Final");
+      setup.execute();
+      
+      assertTrue(project.hasFacet(ArquillianFacet.class));
+      
+      Assert.assertTrue(setup.canMoveToNextStep());
+      
+      WizardCommandController testFramework = setup.next();
+      testFramework.initialize();
+      testFramework.setValueFor("testFramework", "junit");
+      testFramework.setValueFor("testFrameworkVersion", "4.11");
+      testFramework.execute();
+     
+      Assert.assertTrue(setup.canMoveToNextStep());
 
-      assertThat(mavenCoreFacet.getPOM().getProfiles().size(), is(1));
-      Profile profile = mavenCoreFacet.getPOM().getProfiles().get(0);
-
-      for (DependencyMatcher dependency : dependencies)
-      {
-         assertThat(profile.getDependencies(), hasItem(dependency));
-      }
-
-      Model pom = mavenCoreFacet.getPOM();
+      JUnitFacet junitFacet = new JUnitFacet();
+      Model pom = metadataFacet.getModel();
       DependencyMatcher arqBom = new DependencyMatcher("arquillian-bom");
 
       assertThat("Verify arquillian:bom was added to DependencyManagement ",
             pom.getDependencyManagement().getDependencies(), hasItem(arqBom));
 
       assertNotNull("Verify that the plugin use a version property for arquillian core",
-            pom.getProperties().get(ArquillianPlugin.ARQ_CORE_VERSION_PROP_NAME));
+            pom.getProperties().get(ArquillianFacet.ARQ_CORE_VERSION_PROP_NAME));
 
       assertNotNull("Verify that the plugin use a version property for junit",
-            pom.getProperties().get(new JUnitFacet().getVersionPropertyName()));
+            pom.getProperties().get(junitFacet.getVersionPropertyName()));
 
-      ResourceFacet facet = project.getFacet(ResourceFacet.class);
-      FileResource<?> arquillianXml = facet.getTestResource("arquillian.xml");
+      assertThat("Verify that junit arquillian integration was added",
+            pom.getDependencies(), hasItem(
+                  new DependencyMatcher(junitFacet.createArquillianDependency().getCoordinate().getArtifactId())));
+
+      assertThat("Verify that junit was added",
+            pom.getDependencies(), hasItem(
+                  new DependencyMatcher(junitFacet.createFrameworkDependency().getCoordinate().getArtifactId())));
+      
+      XMLResource arquillianXml = project.getRootDirectory().getChildOfType(XMLResource.class, "src/test/reesources/arquillian.xml");
 
       assertThat(arquillianXml, is(notNullValue()));
       assertThat(arquillianXml.exists(), is(true));
 
-      Node arquillianXmlRoot = XMLParser.parse(arquillianXml.getResourceInputStream());
+      Node arquillianXmlRoot = arquillianXml.getXmlSource();
       assertThat(arquillianXmlRoot.getSingle("container@qualifier=" + container), is(notNullValue()));
+
+      WizardCommandController containerCommand = setup.next();
+      containerCommand.initialize();
+      containerCommand.setValueFor("containerAdapter", container);
+      //containerCommand.setValueFor("testFrameworkVersion", "4.11");
+      containerCommand.execute();
+      Assert.assertFalse(setup.canMoveToNextStep());
+       
+      assertThat(metadataFacet.getModel().getProfiles().size(), is(1));
+      Profile profile = metadataFacet.getModel().getProfiles().get(0);
+      
+      for (DependencyMatcher dependency : dependencies)
+      {
+         assertThat(profile.getDependencies(), hasItem(dependency));
+      }
 
       return project;
    }
@@ -99,6 +147,7 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
                   new DependencyMatcher("openejb-core")));
    }
 
+   /*
    @Test
    public void installOpenWebBeansContainer() throws Exception
    {
@@ -356,5 +405,5 @@ public class ContainerInstallationIntegrationTest extends AbstractShellTest
       assertThat(profile.getBuild().getPlugins().get(1).getArtifactId(), is("maven-dependency-plugin"));
 
    }
-
+*/
 }

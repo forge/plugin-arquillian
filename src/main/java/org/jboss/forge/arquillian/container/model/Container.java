@@ -4,11 +4,13 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.arquillian.container;
+package org.jboss.forge.arquillian.container.model;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
@@ -112,6 +114,12 @@ public class Container implements Comparable<Container> {
 
     public int compareTo(Container other) {
         return getId().compareTo(other.getId());
+    }
+
+    public DependencyBuilder asDependency() {
+       return DependencyBuilder.create()
+             .setGroupId(getGroupId())
+             .setArtifactId(getArtifactId());
     }
 
     @Override

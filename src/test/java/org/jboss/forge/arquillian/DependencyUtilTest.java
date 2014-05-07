@@ -23,13 +23,14 @@
  */
 package org.jboss.forge.arquillian;
 
-import junit.framework.Assert;
-import org.jboss.forge.project.dependencies.Dependency;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.arquillian.util.DependencyUtil;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * DependencyUtilTestCase
@@ -43,24 +44,24 @@ public class DependencyUtilTest
    @Test
    public void shouldGetLastNonSnapshotVersion()
    {
-      List<Dependency> deps = new ArrayList<Dependency>();
-      deps.add(DependencyBuilder.create().setVersion("1.0"));
-      deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT"));
+      List<Coordinate> deps = new ArrayList<Coordinate>();
+      deps.add(DependencyBuilder.create().setVersion("1.0").getCoordinate());
+      deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
 
-      Dependency dep = DependencyUtil.getLatestNonSnapshotVersion(deps);
+      String dep = DependencyUtil.getLatestNonSnapshotVersion(DependencyUtil.toVersionString(deps));
 
-      Assert.assertEquals("1.0", dep.getVersion());
+      Assert.assertEquals("1.0", dep);
    }
 
    @Test
    public void shouldReturnLatestIfAllSnapshots()
    {
-      List<Dependency> deps = new ArrayList<Dependency>();
-      deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT"));
-      deps.add(DependencyBuilder.create().setVersion("2.0-SNAPSHOT"));
+      List<Coordinate> deps = new ArrayList<Coordinate>();
+      deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
+      deps.add(DependencyBuilder.create().setVersion("2.0-SNAPSHOT").getCoordinate());
 
-      Dependency dep = DependencyUtil.getLatestNonSnapshotVersion(deps);
+      String dep = DependencyUtil.getLatestNonSnapshotVersion(DependencyUtil.toVersionString(deps));
 
-      Assert.assertEquals("2.0-SNAPSHOT", dep.getVersion());
+      Assert.assertEquals("2.0-SNAPSHOT", dep);
    }
 }

@@ -4,28 +4,12 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.arquillian.installobservers;
+package org.jboss.forge.arquillian.observers;
 
-import org.apache.maven.model.BuildBase;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Profile;
-import org.jboss.forge.arquillian.ContainerInstallEvent;
-import org.jboss.forge.arquillian.DependencyUtil;
-import org.jboss.forge.arquillian.ProfileBuilder;
-import org.jboss.forge.arquillian.container.Container;
-import org.jboss.forge.maven.MavenCoreFacet;
-import org.jboss.forge.maven.plugins.ConfigurationBuilder;
-import org.jboss.forge.maven.plugins.ExecutionBuilder;
-import org.jboss.forge.maven.plugins.MavenPluginAdapter;
-import org.jboss.forge.maven.plugins.MavenPluginBuilder;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.dependencies.DependencyBuilder;
-import org.jboss.forge.project.facets.DependencyFacet;
-import org.jboss.forge.shell.Shell;
-
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.util.List;
+
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
@@ -36,8 +20,9 @@ public class DownloadServerObserver
    Project project;
 
    @Inject
-   Shell shell;
+   UIPrompt shell;
 
+   /*
    public void install(@Observes ContainerInstallEvent event)
    {
       if (event.getContainer().getDownload() != null)
@@ -50,11 +35,12 @@ public class DownloadServerObserver
       }
    }
 
+
    private void installContainer(Container container)
    {
-      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
+      MavenFacet mavenCoreFacet = project.getFacet(MavenFacet.class);
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-      Model pom = mavenCoreFacet.getPOM();
+      Model pom = mavenCoreFacet.getModel();
       Profile containerProfile = ProfileBuilder.findProfileById(container.getProfileId(), pom);
       if (containerProfile == null)
       {
@@ -66,11 +52,11 @@ public class DownloadServerObserver
                + container.getProfileId() + " not found");
       }
 
-      List<org.jboss.forge.project.dependencies.Dependency> asDependencies = dependencyFacet
+      List<org.jboss.forge.addon.dependencies.Coordinate> asDependencies = dependencyFacet
             .resolveAvailableVersions(DependencyBuilder.create()
                   .setGroupId(container.getDownload().getGroupId())
                   .setArtifactId(container.getDownload().getArtifactId()));
-      org.jboss.forge.project.dependencies.Dependency asVersion = shell.promptChoiceTyped(
+      org.jboss.forge.addon.dependencies.Coordinate asVersion = shell.promptChoiceTyped(
             "Which version of the container do you want to install?", asDependencies,
             DependencyUtil.getLatestNonSnapshotVersion(asDependencies));
 
@@ -87,7 +73,7 @@ public class DownloadServerObserver
 
       MavenPluginBuilder pluginBuilder = MavenPluginBuilder
             .create()
-            .setDependency(DependencyBuilder.create("org.apache.maven.plugins:maven-dependency-plugin"))
+            .setCoordinate(DependencyBuilder.create("org.apache.maven.plugins:maven-dependency-plugin").getCoordinate())
             .addExecution(
                   ExecutionBuilder.create().setId("unpack").setPhase("process-test-classes").addGoal("unpack")
                         .setConfig(configuration));
@@ -103,8 +89,9 @@ public class DownloadServerObserver
       pom.removeProfile(containerProfile);
       pom.addProfile(containerProfile);
 
-      mavenCoreFacet.setPOM(pom);
+      mavenCoreFacet.setModel(pom);
 
    }
+   */
 
 }

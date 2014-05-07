@@ -6,13 +6,9 @@
  */
 package test.integration.util;
 
-import org.jboss.forge.Root;
-import org.jboss.forge.arquillian.ArquillianPlugin;
-import org.jboss.seam.render.RenderRoot;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.solder.SolderRoot;
 
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
@@ -20,13 +16,19 @@ import org.jboss.solder.SolderRoot;
 public class Deployments
 {
 
-   public static JavaArchive basicPluginInfrastructure()
+   public static ForgeArchive basicPluginInfrastructure()
    {
-      return ShrinkWrap.create(JavaArchive.class, "test.jar")
-                       .addPackages(true, Root.class.getPackage())
-                       .addPackages(true, RenderRoot.class.getPackage())
-                       .addPackages(true, SolderRoot.class.getPackage())
-                       .addPackages(true, ArquillianPlugin.class.getPackage())
-                       .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+      ForgeArchive archive = ShrinkWrap
+            .create(ForgeArchive.class)
+            .addBeansXML()
+            .addAsAddonDependencies(
+                     AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                     AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
+                     AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                     AddonDependencyEntry.create("org.arquillian.forge:arquillian-addon"),
+                     AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+            ).addClasses(DependencyMatcher.class);
+
+      return archive;
    }
 }

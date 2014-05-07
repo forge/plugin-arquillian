@@ -6,30 +6,17 @@
  */
 package test.integration;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.maven.MavenCoreFacet;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.JavaSourceFacet;
-import org.jboss.forge.test.AbstractShellTest;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
-import test.integration.util.DependencyMatcher;
-import test.integration.util.Deployments;
-
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-@RunWith(Arquillian.class)
-public class JUnitTestGenerationIntegrationTest extends AbstractShellTest
+@RunWith(Arquillian.class) @Ignore
+public class JUnitTestGenerationIntegrationTest
 {
-
+/*
    @Deployment
    public static JavaArchive getDeployment()
    {
@@ -68,4 +55,6 @@ public class JUnitTestGenerationIntegrationTest extends AbstractShellTest
 
       getShell().execute("build --profile arquillian-glassfish-embedded-3.1");
    }
+
+*/
 }
