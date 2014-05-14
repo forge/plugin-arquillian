@@ -1,5 +1,6 @@
 package org.jboss.forge.arquillian.command;
 
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
    private UISelectOne<Profile> container;
 
    @Inject
-   @WithAttributes(shortName = 'o', label = "Container Configuration Option", type = InputType.DROPDOWN)
+   @WithAttributes(shortName = 'o', label = "Container Configuration Option", type = InputType.DROPDOWN, required = true)
    private UISelectOne<Configuration> containerOption;
 
    @Inject
@@ -86,7 +87,13 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
       containerOption.setValueChoices(new Callable<Iterable<Configuration>>() {
          @Override
          public Iterable<Configuration> call() throws Exception {
-            return profileManager.getContainer(container.getValue()).getConfigurations();
+            if(containerOption.isEnabled()) {
+               Iterable<Configuration> config = profileManager.getContainer(container.getValue()).getConfigurations();
+               if(config != null) {
+                  return config;
+               }
+            }
+            return Collections.emptyList();
          }
       });
 
@@ -99,10 +106,19 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
       containerValue.setDefaultValue(new Callable<String>() {
          @Override
          public String call() throws Exception {
-            if(containerOption.hasValue()) {
-               containerOption.getValue().getDefault();
+            if(containerValue.isEnabled()) {
+               return containerOption.getValue().getDefault();
             }
             return null;
+         }
+      });
+      containerValue.setRequired(new Callable<Boolean>() {
+         @Override
+         public Boolean call() throws Exception {
+            if(containerValue.isEnabled()) {
+               return containerOption.getValue().getDefault() != null;
+            }
+            return true;
          }
       });
    }

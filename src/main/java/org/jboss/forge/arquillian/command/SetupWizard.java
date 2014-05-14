@@ -36,7 +36,7 @@ public class SetupWizard extends AbstractProjectCommand implements UIWizard {
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception {
-      return Results.success("Arquillian setup");
+      return Results.success("Arquillian setup complete");
    }
 
    @Override

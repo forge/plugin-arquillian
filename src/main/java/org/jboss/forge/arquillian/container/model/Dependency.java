@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.arquillian.container.model;
 
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
@@ -43,5 +45,11 @@ public class Dependency
    public void setUrl(String url)
    {
       this.url = url;
+   }
+
+   public DependencyBuilder asDependency() {
+      return DependencyBuilder.create()
+            .setGroupId(getGroupId())
+            .setArtifactId(getArtifactId());
    }
 }

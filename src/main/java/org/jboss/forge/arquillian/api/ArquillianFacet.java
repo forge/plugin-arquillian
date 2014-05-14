@@ -14,6 +14,7 @@ import org.jboss.forge.addon.resource.FileResource;
    @FacetConstraint(DependencyFacet.class),
    @FacetConstraint(MetadataFacet.class),
    @FacetConstraint(ProjectFacet.class),
+   @FacetConstraint(ResourcesFacet.class)
 })
 public class ArquillianFacet extends AbstractVersionedFacet {
 

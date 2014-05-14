@@ -1,13 +1,19 @@
 package org.jboss.forge.arquillian.command;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
@@ -16,7 +22,11 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.ValueChangeListener;
+import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -30,9 +40,13 @@ import org.jboss.forge.arquillian.container.ContainerInstaller;
 import org.jboss.forge.arquillian.container.ContainerResolver;
 import org.jboss.forge.arquillian.container.model.Container;
 import org.jboss.forge.arquillian.container.model.ContainerType;
+import org.jboss.forge.arquillian.container.model.Dependency;
 import org.jboss.forge.arquillian.util.DependencyUtil;
 
 public class AddContainerCommand extends AbstractProjectCommand implements UICommand {
+
+   @Inject
+   private InputComponentFactory inputFactory;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -41,7 +55,7 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
    private ContainerInstaller containerInstaller;
 
    @Inject
-   private ContainerResolver containerCompleter;
+   private ContainerResolver containerResolver;
 
    @Inject
    private DependencyResolver resolver;
@@ -50,12 +64,14 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
    @Any
    private Event<ContainerInstallEvent> installEvent;
 
+   private final Map<Dependency, InputComponent<?, String>> dependencyVersions = new HashMap<>();
+
    @Inject
-   @WithAttributes(shortName = 't', label = "Container Adapter", type = InputType.DROPDOWN, required = false)
+   @WithAttributes(shortName = 't', label = "Container Adapter Type", type = InputType.DROPDOWN, required = false)
    private UISelectOne<ContainerType> containerAdapterType;
 
    @Inject
-   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN)
+   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN, required = true)
    private UISelectOne<Container> containerAdapter;
 
    @Inject
@@ -71,19 +87,64 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
    }
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception {
+   public void initializeUI(final UIBuilder builder) throws Exception {
       builder.add(containerAdapterType)
              .add(containerAdapter)
              .add(containerAdapterVersion);
    
       containerAdapterType.setValueChoices(Arrays.asList(ContainerType.values()));
+      containerAdapterType.setEnabled(true);
+      containerAdapter.setEnabled(true);
       containerAdapter.setValueChoices(new Callable<Iterable<Container>>() {
          @Override
          public Iterable<Container> call() throws Exception {
-            return containerCompleter.getContainers(containerAdapterType.getValue());
+            return containerResolver.getContainers(containerAdapterType.getValue());
          }
       });
-      
+      containerAdapter.setItemLabelConverter(new Converter<Container, String>() {
+         @Override
+         public String convert(Container source) {
+            return source.getId();
+         }
+      });
+      containerAdapter.addValueChangeListener(new ValueChangeListener() {
+
+         @Override
+         public void valueChanged(ValueChangeEvent event) {
+            Container selectedContainer = (Container)event.getNewValue();
+            if(selectedContainer == null || selectedContainer.getDependencies() == null) {
+               return;
+            }
+            for(final Dependency dependency : selectedContainer.getDependencies()) {
+               UISelectOne<String> dependencyVersion = inputFactory.createSelectOne(dependency.getArtifactId() + "-version", String.class);
+               builder.add(dependencyVersion);
+               dependencyVersions.put(dependency, dependencyVersion);
+               
+               final DependencyQuery dependencyCoordinate = DependencyQueryBuilder.create(
+                     DependencyBuilder.create()
+                     .setGroupId(dependency.getGroupId())
+                     .setArtifactId(dependency.getArtifactId())
+                     .getCoordinate());
+
+               dependencyVersion.setEnabled(true);
+               dependencyVersion.setValueChoices(new Callable<Iterable<String>>() {
+                  @Override
+                  public Iterable<String> call() throws Exception {
+                     return DependencyUtil.toVersionString(
+                           resolver.resolveVersions(dependencyCoordinate));
+                  }
+               });
+               dependencyVersion.setDefaultValue(new Callable<String>() {
+                  @Override
+                  public String call() throws Exception {
+                     return DependencyUtil.getLatestNonSnapshotVersionCoordinate(
+                           resolver.resolveVersions(dependencyCoordinate));
+                  }
+               });
+
+            }
+         }
+      });
       containerAdapterVersion.setEnabled(new Callable<Boolean>() {
          @Override
          public Boolean call() throws Exception {
@@ -93,19 +154,25 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
       containerAdapterVersion.setValueChoices(new Callable<Iterable<String>>() {
          @Override
          public Iterable<String> call() throws Exception {
-            return DependencyUtil.toVersionString(
-                  resolver.resolveVersions(
-                        DependencyQueryBuilder.create(
-                              containerAdapter.getValue().asDependency().getCoordinate())));
+            if(containerAdapterVersion.isEnabled()) {
+               return DependencyUtil.toVersionString(
+                     resolver.resolveVersions(
+                           DependencyQueryBuilder.create(
+                                 containerAdapter.getValue().asDependency().getCoordinate())));
+            }
+            return Collections.emptyList();
          }
       });
       containerAdapterVersion.setDefaultValue(new Callable<String>() {
          @Override
          public String call() throws Exception {
-            return DependencyUtil.getLatestNonSnapshotVersionCoordinate(
-                  resolver.resolveVersions(
-                        DependencyQueryBuilder.create(
-                              containerAdapter.getValue().asDependency().getCoordinate())));
+            if(containerAdapter.hasValue()) {
+               return DependencyUtil.getLatestNonSnapshotVersionCoordinate(
+                     resolver.resolveVersions(
+                           DependencyQueryBuilder.create(
+                                 containerAdapter.getValue().asDependency().getCoordinate())));
+            }
+            return null;
          }
       });
    }
@@ -115,7 +182,8 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
       containerInstaller.installContainer(
             getSelectedProject(context),
             containerAdapter.getValue(),
-            containerAdapterVersion.getValue());
+            containerAdapterVersion.getValue(),
+            getVersionedDependenciesMap());
 
       ArquillianFacet arquillian = getSelectedProject(context).getFacet(ArquillianFacet.class);
       ArquillianConfig config = arquillian.getConfig();
@@ -124,7 +192,7 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
 
       installEvent.fire(new ContainerInstallEvent(containerAdapter.getValue()));
 
-      return Results.success("Installed");
+      return Results.success("Installed " + containerAdapter.getValue().getName());
    }
    
    @Override
@@ -146,54 +214,14 @@ public class AddContainerCommand extends AbstractProjectCommand implements UICom
       return projectFactory;
    }
 
-   /*
-
-
-   @Command(value = "configure-container")
-   public void configureContainer(@Option(name = "profile", required = true, completer = ProfileCommandCompleter.class) String profileId)
-   {
-      // loop, user presses ctrl-c to exit
-      while (true)
-      {
-         Profile profile = getProfile(profileId);
-         Container container;
-         try
-         {
-            container = getContainer(profile);
-         } catch (IOException e)
-         {
-            throw new RuntimeException(e);
-         }
-
-         // TODO: show current values in options list
-         Configuration configuration = shell.promptChoiceTyped(
-               "Which property do you want to set? (default values shown)\n(Press Enter to return to shell)",
-               container.getConfigurations(), null);
-         if (configuration == null)
-         {
-            break;
-         }
-
-         JavaSourceFacet resources = project.getFacet(JavaSourceFacet.class);
-         FileResource<?> resource = (FileResource<?>) resources.getTestSourceDirectory().getChild("arquillian.xml");
-
-         Node xml = null;
-         if (!resource.exists())
-         {
-            xml = createNewArquillianConfig();
-         } else
-         {
-            xml = XMLParser.parse(resource.getResourceInputStream());
-         }
-
-         // TODO show current value
-         String value = shell.prompt("What value do you want to assign to the " + configuration.getName() + " property?");
-         addPropertyToArquillianConfig(xml, container.getId(), configuration.getName(), value);
-
-         resource.setContents(XMLParser.toXMLString(xml));
+   private Map<Dependency, String> getVersionedDependenciesMap() {
+      if(dependencyVersions.isEmpty()) {
+         return null;
       }
+      Map<Dependency, String> resolved = new HashMap<>();
+      for(Map.Entry<Dependency, InputComponent<?, String>> dep : dependencyVersions.entrySet()) {
+         resolved.put(dep.getKey(), (String)dep.getValue().getValue());
+      }
+      return resolved;
    }
-
-
-    */
 }

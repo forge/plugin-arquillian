@@ -9,7 +9,7 @@
    <name>Arquillian Forge Addon</name>
 
    <properties>
-      <version.forge_core>2.5.0.Final</version.forge_core>
+      <version.forge_core>2.5.1-SNAPSHOT</version.forge_core>
       <version.furnace>${version.forge_core}</version.furnace>
       <version.velocity>1.7</version.velocity>
       <version.jackson>1.9.1</version.jackson>

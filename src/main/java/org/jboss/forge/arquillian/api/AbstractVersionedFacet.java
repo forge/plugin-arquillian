@@ -12,7 +12,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.arquillian.util.DependencyUtil;
 
-abstract class AbstractVersionedFacet extends AbstractFacet<Project> implements ProjectFacet {
+public abstract class AbstractVersionedFacet extends AbstractFacet<Project> implements ProjectFacet {
 
    @Inject
    private DependencyResolver resolver;

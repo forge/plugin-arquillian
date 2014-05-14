@@ -46,7 +46,7 @@ import test.integration.util.Deployments;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-@RunWith(Arquillian.class) @Ignore
+@RunWith(Arquillian.class)
 public class ContainerInstallationIntegrationTest 
 {
    @Deployment
@@ -112,7 +112,13 @@ public class ContainerInstallationIntegrationTest
             pom.getDependencies(), hasItem(
                   new DependencyMatcher(junitFacet.createFrameworkDependency().getCoordinate().getArtifactId())));
       
-      XMLResource arquillianXml = project.getRootDirectory().getChildOfType(XMLResource.class, "src/test/reesources/arquillian.xml");
+      WizardCommandController containerCommand = setup.next();
+      containerCommand.initialize();
+      containerCommand.setValueFor("containerAdapter", container);
+      containerCommand.execute();
+      Assert.assertFalse(setup.canMoveToNextStep());
+
+      XMLResource arquillianXml = project.getRootDirectory().getChildOfType(XMLResource.class, "src/test/resources/arquillian.xml");
 
       assertThat(arquillianXml, is(notNullValue()));
       assertThat(arquillianXml.exists(), is(true));
@@ -120,13 +126,6 @@ public class ContainerInstallationIntegrationTest
       Node arquillianXmlRoot = arquillianXml.getXmlSource();
       assertThat(arquillianXmlRoot.getSingle("container@qualifier=" + container), is(notNullValue()));
 
-      WizardCommandController containerCommand = setup.next();
-      containerCommand.initialize();
-      containerCommand.setValueFor("containerAdapter", container);
-      //containerCommand.setValueFor("testFrameworkVersion", "4.11");
-      containerCommand.execute();
-      Assert.assertFalse(setup.canMoveToNextStep());
-       
       assertThat(metadataFacet.getModel().getProfiles().size(), is(1));
       Profile profile = metadataFacet.getModel().getProfiles().get(0);
       
@@ -147,7 +146,6 @@ public class ContainerInstallationIntegrationTest
                   new DependencyMatcher("openejb-core")));
    }
 
-   /*
    @Test
    public void installOpenWebBeansContainer() throws Exception
    {
@@ -358,7 +356,7 @@ public class ContainerInstallationIntegrationTest
             Arrays.asList(
                   new DependencyMatcher("arquillian-wls-remote-10.3")));
    }
-
+/*
    @Test
    public void installMultipleTimesShouldOverwriteProfile() throws Exception
    {

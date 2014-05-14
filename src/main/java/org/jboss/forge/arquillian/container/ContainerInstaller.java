@@ -8,6 +8,7 @@ package org.jboss.forge.arquillian.container;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -24,27 +25,25 @@ public class ContainerInstaller
    @Inject
    private ProfileManager profileManager;
 
-   public void installContainer(Project project, Container container, String version)
+   public void installContainer(Project project, Container container, String version, Map<Dependency, String> dependencies)
    {
-      List<org.jboss.forge.addon.dependencies.Dependency> dependencies = new ArrayList<org.jboss.forge.addon.dependencies.Dependency>();
+      List<org.jboss.forge.addon.dependencies.Dependency> allDependencies = new ArrayList<org.jboss.forge.addon.dependencies.Dependency>();
       
       DependencyBuilder containerDependency = container.asDependency()
-                .setVersion(version);
+                .setVersion(version)
+                .setScopeType("test");
+      allDependencies.add(containerDependency);
 
-      dependencies.add(containerDependency);
-      
-      if (container.getDependencies() != null)
-      {
-         for (Dependency dependency : container.getDependencies())
-         {
-            DependencyBuilder dependencyBuilder = DependencyBuilder.create()
-                  .setGroupId(dependency.getGroupId())
-                  .setArtifactId(dependency.getArtifactId());
-            // TODO: support nested deps
-            //dependencies.add(resolveVersion(dependencyBuilder));
+      if(dependencies != null) {
+         for(Map.Entry<Dependency, String> dependencyEntry: dependencies.entrySet()) {
+            allDependencies.add(
+                  DependencyBuilder.create(
+                        dependencyEntry.getKey().asDependency()
+                           .setVersion(dependencyEntry.getValue())
+                           .setScopeType("test")));
          }
       }
-      profileManager.addProfile(project, container, dependencies);
+      profileManager.addProfile(project, container, allDependencies);
    }
 
    /*

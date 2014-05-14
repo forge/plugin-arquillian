@@ -1,5 +1,6 @@
 package org.jboss.forge.arquillian.command;
 
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.event.Event;
@@ -88,13 +89,19 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
       testFrameworkVersion.setValueChoices(new Callable<Iterable<String>>() {
          @Override
          public Iterable<String> call() throws Exception {
-            return testFramework.getValue().getAvailableVersions();
+            if(testFrameworkVersion.isEnabled()) {
+               return testFramework.getValue().getAvailableVersions();
+            }
+            return Collections.emptyList();
          }
       });
       testFrameworkVersion.setDefaultValue(new Callable<String>() {
          @Override
          public String call() throws Exception {
-            return testFrameworkVersion.isEnabled() ? testFramework.getValue().getDefaultVersion():null;
+            if(testFrameworkVersion.isEnabled()) {
+               return testFrameworkVersion.isEnabled() ? testFramework.getValue().getDefaultVersion():null;
+            }
+            return null;
          }
       });
    }
@@ -107,9 +114,9 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
          facetFactory.install(getSelectedProject(context), selectedTestFramework);
          installEvent.fire(new TestFrameworkInstallEvent(selectedTestFramework));
 
-         return Results.success(selectedTestFramework + " installed");
+         return Results.success("Installed " + selectedTestFramework.getFrameworkName());
       } catch(Exception e) {
-         return Results.fail("Could not install Test Framework " + selectedTestFramework, e);
+         return Results.fail("Could not install Test Framework " + selectedTestFramework.getFrameworkName(), e);
       }
    }
    
