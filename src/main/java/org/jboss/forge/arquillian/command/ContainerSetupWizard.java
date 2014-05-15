@@ -17,8 +17,11 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.arquillian.api.ArquillianFacet;
 
-public class SetupWizard extends AbstractProjectCommand implements UIWizard {
+public class ContainerSetupWizard extends AbstractProjectCommand implements UIWizard {
 
+   static final String CTX_CONTAINER = "arq-container";
+   static final String CTX_CONTAINER_VERSION = "arq-container-version";
+   
    @Inject
    private ProjectFactory projectFactory;
    
@@ -26,8 +29,8 @@ public class SetupWizard extends AbstractProjectCommand implements UIWizard {
    public UICommandMetadata getMetadata(UIContext context) {
       return Metadata.from(super.getMetadata(context), getClass())
             .category(Categories.create("Arquillian"))
-            .name("Arquillian: Setup")
-            .description("This addon will guide you through installing the basic Arquillian setup");
+            .name("Arquillian: Container Setup")
+            .description("This addon will guide you through adding a Container Adapter for Arquillian");
    }
    
    @Override
@@ -36,16 +39,14 @@ public class SetupWizard extends AbstractProjectCommand implements UIWizard {
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception {
-      return Results.success("Arquillian setup complete");
+      return Results.success("Arquillian container setup complete");
    }
 
    @Override
    @SuppressWarnings("unchecked")
    public NavigationResult next(UINavigationContext context) throws Exception {
-      return Results.navigateTo(
-            AddArquillianCommand.class,
-            AddTestFrameworkCommand.class,
-            ContainerSetupWizard.class);
+      return Results.navigateTo(AddContainerCommand.class,
+            AddContainerDependencyCommand.class);
    }
 
    @Override
@@ -57,7 +58,7 @@ public class SetupWizard extends AbstractProjectCommand implements UIWizard {
    public boolean isEnabled(UIContext context) {
       Boolean parent = super.isEnabled(context);
       if(parent) {
-         return !getSelectedProject(context).hasFacet(ArquillianFacet.class);
+         return getSelectedProject(context).hasFacet(ArquillianFacet.class);
       }
       return parent;
    }

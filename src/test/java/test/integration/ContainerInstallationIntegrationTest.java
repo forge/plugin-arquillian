@@ -46,7 +46,7 @@ import test.integration.util.Deployments;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-@RunWith(Arquillian.class)
+@RunWith(Arquillian.class) @Ignore
 public class ContainerInstallationIntegrationTest 
 {
    @Deployment

@@ -73,7 +73,7 @@ public class ProfileManager {
 
       Plugin surefirePlugin = new Plugin();
       surefirePlugin.setArtifactId("maven-surefire-plugin");
-      surefirePlugin.setConfiguration(buildConfiguration(container.getId()));
+      surefirePlugin.setConfiguration(buildConfiguration(container.getProfileId()));
       surefirePlugin.setVersion("2.14.1");
 
       BuildBase buildBase = new BuildBase();

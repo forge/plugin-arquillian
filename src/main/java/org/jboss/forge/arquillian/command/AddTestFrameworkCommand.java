@@ -44,7 +44,7 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
    private UISelectOne<TestFrameworkFacet> testFramework;
 
    @Inject
-   @WithAttributes(shortName = 'f', label = "Test Framework Version", type = InputType.DROPDOWN)
+   @WithAttributes(shortName = 'n', label = "Test Framework Version", type = InputType.DROPDOWN)
    private UISelectOne<String> testFrameworkVersion;
 
    @Override

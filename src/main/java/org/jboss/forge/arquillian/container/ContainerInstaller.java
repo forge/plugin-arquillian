@@ -45,17 +45,4 @@ public class ContainerInstaller
       }
       profileManager.addProfile(project, container, allDependencies);
    }
-
-   /*
-   private org.jboss.forge.addon.dependencies.Dependency resolveVersion(DependencyBuilder containerDependency)
-   {
-      DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
-
-      List<org.jboss.forge.addon.dependencies.Coordinate> versions = dependencyFacet.resolveAvailableVersions(containerDependency);
-      return shell.promptChoiceTyped(
-            "What version of " + containerDependency.getCoordinate().getArtifactId() + " do you want to use?",
-            versions,
-            DependencyUtil.getLatestNonSnapshotVersion(versions));
-   }
-   */
 }
