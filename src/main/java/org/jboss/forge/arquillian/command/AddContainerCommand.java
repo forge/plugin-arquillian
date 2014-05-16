@@ -63,7 +63,7 @@ public class AddContainerCommand extends AbstractProjectCommand implements UIWiz
    private UISelectOne<String> containerAdapterVersion;
 
    @Override
-   public UICommandMetadata getMetadata(UIContext context) {
+   public UICommandMetadata getMetadata(final UIContext context) {
       return Metadata.from(super.getMetadata(context), getClass())
             .category(Categories.create("Arquillian"))
             .name("Arquillian: Add Container")
@@ -88,6 +88,12 @@ public class AddContainerCommand extends AbstractProjectCommand implements UIWiz
       containerAdapter.setItemLabelConverter(new Converter<Container, String>() {
          @Override
          public String convert(Container source) {
+            if(source == null) {
+               return null;
+            }
+            if(builder.getUIContext().getProvider().isGUI()) {
+               return source.getName();
+            }
             return source.getId();
          }
       });

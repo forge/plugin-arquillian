@@ -56,7 +56,7 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
    }
    
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception {
+   public void initializeUI(final UIBuilder builder) throws Exception {
       builder.add(testFramework)
              .add(testFrameworkVersion);
 
@@ -64,6 +64,12 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
       testFramework.setItemLabelConverter(new Converter<TestFrameworkFacet, String>() {
          @Override
          public String convert(TestFrameworkFacet source) {
+            if(source == null) {
+               return null;
+            }
+            if(builder.getUIContext().getProvider().isGUI()) {
+               return source.getFrameworkName();
+            }
             return source.getFrameworkName().toLowerCase();
          }
       });

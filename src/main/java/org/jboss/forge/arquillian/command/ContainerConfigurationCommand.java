@@ -69,6 +69,9 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
       container.setItemLabelConverter(new Converter<Profile, String>() {
          @Override
          public String convert(Profile source) {
+            if(source == null) {
+               return null;
+            }
             return source.getId();
          }
       });
@@ -81,6 +84,9 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
       containerOption.setItemLabelConverter(new Converter<Configuration, String>() {
          @Override
          public String convert(Configuration source) {
+            if(source == null) {
+               return null;
+            }
             return source.getName();
          }
       });
