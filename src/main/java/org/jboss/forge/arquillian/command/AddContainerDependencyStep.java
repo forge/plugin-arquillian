@@ -36,7 +36,7 @@ import org.jboss.forge.arquillian.container.model.Container;
 import org.jboss.forge.arquillian.container.model.Dependency;
 import org.jboss.forge.arquillian.util.DependencyUtil;
 
-public class AddContainerDependencyCommand extends AbstractProjectCommand implements UIWizardStep {
+public class AddContainerDependencyStep extends AbstractProjectCommand implements UIWizardStep {
 
    @Inject
    private InputComponentFactory inputFactory;

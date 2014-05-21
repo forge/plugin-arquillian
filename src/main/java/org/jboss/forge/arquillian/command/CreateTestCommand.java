@@ -3,6 +3,7 @@ package org.jboss.forge.arquillian.command;
 import java.io.FileNotFoundException;
 import java.io.StringWriter;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -62,9 +63,20 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
    }
    
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception {
+   public void initializeUI(final UIBuilder builder) throws Exception {
       builder.add(value)
              .add(enableJPA);
+
+      value.setDefaultValue(new Callable<JavaResource>() {
+         @Override
+         public JavaResource call() throws Exception {
+            Object selected = builder.getUIContext().getInitialSelection().get();
+            if(selected != null && selected instanceof JavaResource) {
+               return (JavaResource)selected;
+            }
+            return null;
+         }
+      });
    }
 
    @Override

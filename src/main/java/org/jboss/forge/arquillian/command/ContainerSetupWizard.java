@@ -45,8 +45,9 @@ public class ContainerSetupWizard extends AbstractProjectCommand implements UIWi
    @Override
    @SuppressWarnings("unchecked")
    public NavigationResult next(UINavigationContext context) throws Exception {
-      return Results.navigateTo(AddContainerCommand.class,
-            AddContainerDependencyCommand.class);
+      return Results.navigateTo(
+            AddContainerStep.class,
+            AddContainerDependencyStep.class);
    }
 
    @Override

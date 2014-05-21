@@ -35,7 +35,7 @@ import org.jboss.forge.arquillian.container.model.Container;
 import org.jboss.forge.arquillian.container.model.ContainerType;
 import org.jboss.forge.arquillian.util.DependencyUtil;
 
-public class AddContainerCommand extends AbstractProjectCommand implements UIWizardStep {
+public class AddContainerStep extends AbstractProjectCommand implements UIWizardStep {
 
    @Inject
    private ProjectFactory projectFactory;
@@ -55,7 +55,7 @@ public class AddContainerCommand extends AbstractProjectCommand implements UIWiz
    private UISelectOne<ContainerType> containerAdapterType;
 
    @Inject
-   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN, required = true)
+   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN, required = false)
    private UISelectOne<Container> containerAdapter;
 
    @Inject
@@ -72,7 +72,7 @@ public class AddContainerCommand extends AbstractProjectCommand implements UIWiz
 
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception {
-      builder.add(containerAdapterType)
+      builder//.add(containerAdapterType)
              .add(containerAdapter)
              .add(containerAdapterVersion);
    

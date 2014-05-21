@@ -67,6 +67,16 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
             return profileManager.getArquillianProfiles(getSelectedProject(builder.getUIContext()));
          }
       });
+      container.setDefaultValue(new Callable<Profile>() {
+         @Override
+         public Profile call() throws Exception {
+            Iterable<Profile> profiles = container.getValueChoices();
+            if(profiles != null && profiles.iterator().hasNext()) {
+               return profiles.iterator().next();
+            }
+            return null;
+         }
+      });
       container.setItemLabelConverter(new Converter<Profile, String>() {
          @Override
          public String convert(Profile source) {
@@ -103,7 +113,6 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
             return Collections.emptyList();
          }
       });
-
       containerValue.setEnabled(new Callable<Boolean>() {
          @Override
          public Boolean call() throws Exception {
