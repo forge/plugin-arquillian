@@ -14,6 +14,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -43,8 +44,8 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
    private UISelectOne<Configuration> containerOption;
 
    @Inject
-   @WithAttributes(shortName = 'v', label = "Container Configuration Value", type = InputType.DROPDOWN)
-   private UISelectOne<String> containerValue;
+   @WithAttributes(shortName = 'v', label = "Container Configuration Value")
+   private UIInput<String> containerValue;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context) {
