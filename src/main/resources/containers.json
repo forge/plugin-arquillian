@@ -1447,16 +1447,52 @@
 
     },
     {
-        "artifact_id": "arquillian-weld-se-embedded-1",
-        "group_id": "org.jboss.arquillian.container",
-        "name": "Arquillian Container Weld SE Embedded 1.0",
-        "container_type": "EMBEDDED"
+        "artifact_id":"arquillian-weld-se-embedded-1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Weld SE Embedded 1.0",
+        "container_type":"EMBEDDED",
+        "dependencies":[
+            {
+                "artifact_id":"weld-core",
+                "group_id":"org.jboss.weld"
+            },
+            {
+                "artifact_id":"weld-api",
+                "group_id":"org.jboss.weld"
+            },
+            {
+                "artifact_id":"slf4j-simple",
+                "group_id":"org.slf4j"
+            },
+            {
+                "artifact_id":"el-impl",
+                "group_id":"org.glassfish.web"
+            }
+        ]
     },
     {
-        "artifact_id": "arquillian-weld-se-embedded-1.1",
-        "group_id": "org.jboss.arquillian.container",
-        "name": "Arquillian Container Weld SE Embedded 1.1",
-        "container_type": "EMBEDDED"
+        "artifact_id":"arquillian-weld-se-embedded-1.1",
+        "group_id":"org.jboss.arquillian.container",
+        "name":"Arquillian Container Weld SE Embedded 1.1",
+        "container_type":"EMBEDDED",
+        "dependencies":[
+            {
+                "artifact_id":"weld-core",
+                "group_id":"org.jboss.weld"
+            },
+            {
+                "artifact_id":"weld-api",
+                "group_id":"org.jboss.weld"
+            },
+            {
+                "artifact_id":"slf4j-simple",
+                "group_id":"org.slf4j"
+            },
+            {
+                "artifact_id":"el-impl",
+                "group_id":"org.glassfish.web"
+            }
+        ]
     },
     {
         "artifact_id": "arquillian-wls-remote-10.3",
