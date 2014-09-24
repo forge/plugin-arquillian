@@ -10,10 +10,11 @@ package org.jboss.forge.arquillian.command;
 import org.jboss.forge.roaster.model.util.Types;
 
 /**
+ * The Archive type to be generated in the tests
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public enum ArtifactType
+public enum ArchiveType
 {
    JAR("org.jboss.shrinkwrap.api.spec.JavaArchive"),
    WAR("org.jboss.shrinkwrap.api.spec.WebArchive");
@@ -21,7 +22,7 @@ public enum ArtifactType
    private final String className;
    private final String simpleClassName;
 
-   private ArtifactType(String className)
+   private ArchiveType(String className)
    {
       this.className = className;
       this.simpleClassName = Types.toSimpleName(className);

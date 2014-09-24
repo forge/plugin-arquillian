@@ -68,8 +68,8 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
    private UIInput<Boolean> enableJPA;
 
    @Inject
-   @WithAttributes(shortName = 'a', label = "Artifact Type", defaultValue = "JAR")
-   private UISelectOne<ArtifactType> artifactType;
+   @WithAttributes(shortName = 'a', label = "Archive Type", defaultValue = "JAR")
+   private UISelectOne<ArchiveType> archiveType;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -83,7 +83,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-      builder.add(targets).add(enableJPA).add(artifactType);
+      builder.add(targets).add(enableJPA).add(archiveType);
 
       Project project = getSelectedProject(builder);
       final List<JavaClassSource> sources = new ArrayList<>();
@@ -139,7 +139,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       for (JavaClassSource clazz : targets.getValue())
       {
          JavaResource test = createTest(getSelectedProject(context), clazz, enableJPA.getValue(),
-                  artifactType.getValue());
+                  archiveType.getValue());
          resources.add(test);
          results.add(Results.success("Created test class " + test.getJavaType().getQualifiedName()));
       }
@@ -160,7 +160,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       return projectFactory;
    }
 
-   private JavaResource createTest(Project project, JavaClassSource classUnderTest, boolean enableJPA, ArtifactType type)
+   private JavaResource createTest(Project project, JavaClassSource classUnderTest, boolean enableJPA, ArchiveType type)
             throws FileNotFoundException
    {
       final TestFrameworkFacet testFrameworkFacet = project.getFacet(TestFrameworkFacet.class);
@@ -175,7 +175,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       return java.saveTestJavaSource(testClass);
    }
 
-   private VelocityContext initializeVelocityContext(boolean enableJPA, ArtifactType type, JavaSource<?> javaSource)
+   private VelocityContext initializeVelocityContext(boolean enableJPA, ArchiveType type, JavaSource<?> javaSource)
    {
       VelocityContext context = new VelocityContext();
       context.put("package", javaSource.getPackage());
@@ -183,7 +183,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       context.put("classToTest", javaSource.getName().toLowerCase());
       context.put("packageImport", javaSource.getPackage());
       context.put("enableJPA", enableJPA);
-      context.put("artifactType", type);
+      context.put("archiveType", type);
       return context;
    }
 }
