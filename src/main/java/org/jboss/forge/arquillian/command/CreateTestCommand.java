@@ -63,7 +63,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
    private UISelectMany<JavaClassSource> arguments;
 
    @Inject
-   @WithAttributes(shortName = 'e', label = "Enable JPA", defaultValue = "true", required = false)
+   @WithAttributes(shortName = 'e', label = "Enable JPA", required = false)
    private UIInput<Boolean> enableJPA;
 
    @Override
