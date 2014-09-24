@@ -35,7 +35,8 @@ import org.jboss.forge.arquillian.container.model.Container;
 import org.jboss.forge.arquillian.container.model.ContainerType;
 import org.jboss.forge.arquillian.util.DependencyUtil;
 
-public class AddContainerStep extends AbstractProjectCommand implements UIWizardStep {
+public class AddContainerStep extends AbstractProjectCommand implements UIWizardStep
+{
 
    @Inject
    private ProjectFactory projectFactory;
@@ -55,7 +56,7 @@ public class AddContainerStep extends AbstractProjectCommand implements UIWizard
    private UISelectOne<ContainerType> containerAdapterType;
 
    @Inject
-   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN, required = false)
+   @WithAttributes(shortName = 'c', label = "Container Adapter", type = InputType.DROPDOWN, required = true)
    private UISelectOne<Container> containerAdapter;
 
    @Inject
@@ -63,66 +64,82 @@ public class AddContainerStep extends AbstractProjectCommand implements UIWizard
    private UISelectOne<String> containerAdapterVersion;
 
    @Override
-   public UICommandMetadata getMetadata(final UIContext context) {
+   public UICommandMetadata getMetadata(final UIContext context)
+   {
       return Metadata.from(super.getMetadata(context), getClass())
-            .category(Categories.create("Arquillian"))
-            .name("Arquillian: Add Container")
-            .description("This addon will help you setup a Arquillian Container Adapter");
+               .category(Categories.create("Arquillian"))
+               .name("Arquillian: Add Container")
+               .description("This addon will help you setup a Arquillian Container Adapter");
    }
 
    @Override
-   public void initializeUI(final UIBuilder builder) throws Exception {
-      builder//.add(containerAdapterType)
-             .add(containerAdapter)
-             .add(containerAdapterVersion);
-   
+   public void initializeUI(final UIBuilder builder) throws Exception
+   {
+      builder// .add(containerAdapterType)
+      .add(containerAdapter)
+               .add(containerAdapterVersion);
+
       containerAdapterType.setValueChoices(Arrays.asList(ContainerType.values()));
       containerAdapterType.setEnabled(true);
       containerAdapter.setEnabled(true);
-      containerAdapter.setValueChoices(new Callable<Iterable<Container>>() {
+      containerAdapter.setValueChoices(new Callable<Iterable<Container>>()
+      {
          @Override
-         public Iterable<Container> call() throws Exception {
+         public Iterable<Container> call() throws Exception
+         {
             return containerResolver.getContainers(containerAdapterType.getValue());
          }
       });
-      containerAdapter.setItemLabelConverter(new Converter<Container, String>() {
+      containerAdapter.setItemLabelConverter(new Converter<Container, String>()
+      {
          @Override
-         public String convert(Container source) {
-            if(source == null) {
+         public String convert(Container source)
+         {
+            if (source == null)
+            {
                return null;
             }
-            if(builder.getUIContext().getProvider().isGUI()) {
+            if (builder.getUIContext().getProvider().isGUI())
+            {
                return source.getName();
             }
             return source.getId();
          }
       });
-      containerAdapterVersion.setEnabled(new Callable<Boolean>() {
+      containerAdapterVersion.setEnabled(new Callable<Boolean>()
+      {
          @Override
-         public Boolean call() throws Exception {
+         public Boolean call() throws Exception
+         {
             return containerAdapter.hasValue();
          }
       });
-      containerAdapterVersion.setValueChoices(new Callable<Iterable<String>>() {
+      containerAdapterVersion.setValueChoices(new Callable<Iterable<String>>()
+      {
          @Override
-         public Iterable<String> call() throws Exception {
-            if(containerAdapterVersion.isEnabled()) {
+         public Iterable<String> call() throws Exception
+         {
+            if (containerAdapterVersion.isEnabled())
+            {
                return DependencyUtil.toVersionString(
-                     resolver.resolveVersions(
-                           DependencyQueryBuilder.create(
-                                 containerAdapter.getValue().asDependency().getCoordinate())));
+                        resolver.resolveVersions(
+                                 DependencyQueryBuilder.create(
+                                          containerAdapter.getValue().asDependency().getCoordinate())));
             }
             return Collections.emptyList();
          }
       });
-      containerAdapterVersion.setDefaultValue(new Callable<String>() {
+      containerAdapterVersion.setDefaultValue(new Callable<String>()
+      {
          @Override
-         public String call() throws Exception {
-            if(containerAdapter.hasValue()) {
+         public String call() throws Exception
+         {
+            if (containerAdapter.hasValue())
+            {
                return DependencyUtil.getLatestNonSnapshotVersionCoordinate(
-                     resolver.resolveVersions(
-                           DependencyQueryBuilder.create(
-                                 containerAdapter.getValue().asDependency().getCoordinate())));
+                        resolver.resolveVersions(
+                                 DependencyQueryBuilder.create(
+                                          containerAdapter.getValue().asDependency().getCoordinate())));
             }
             return null;
          }
@@ -130,31 +147,37 @@ public class AddContainerStep extends AbstractProjectCommand implements UIWizard
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception {
+   public Result execute(UIExecutionContext context) throws Exception
+   {
       return Results.success("Installed " + containerAdapter.getValue().getName());
    }
-   
+
    @Override
-   protected boolean isProjectRequired() {
+   protected boolean isProjectRequired()
+   {
       return true;
    }
-   
+
    @Override
-   public boolean isEnabled(UIContext context) {
+   public boolean isEnabled(UIContext context)
+   {
       Boolean parent = super.isEnabled(context);
-      if(parent) {
+      if (parent)
+      {
          return getSelectedProject(context).hasFacet(ArquillianFacet.class);
       }
       return parent;
    }
 
    @Override
-   protected ProjectFactory getProjectFactory() {
+   protected ProjectFactory getProjectFactory()
+   {
       return projectFactory;
    }
 
    @Override
-   public NavigationResult next(UINavigationContext context) throws Exception {
+   public NavigationResult next(UINavigationContext context) throws Exception
+   {
       Map<Object, Object> ctx = context.getUIContext().getAttributeMap();
       ctx.put(ContainerSetupWizard.CTX_CONTAINER, containerAdapter.getValue());
       ctx.put(ContainerSetupWizard.CTX_CONTAINER_VERSION, containerAdapterVersion.getValue());
