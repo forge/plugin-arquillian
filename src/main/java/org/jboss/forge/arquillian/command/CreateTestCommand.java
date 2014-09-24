@@ -28,6 +28,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -59,12 +60,16 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
    private ProjectFactory projectFactory;
 
    @Inject
-   @WithAttributes(shortName = 's', label = "Target source", required = true, type = InputType.JAVA_CLASS_PICKER)
-   private UISelectMany<JavaClassSource> arguments;
+   @WithAttributes(shortName = 't', label = "Targets", required = true, type = InputType.JAVA_CLASS_PICKER)
+   private UISelectMany<JavaClassSource> targets;
 
    @Inject
    @WithAttributes(shortName = 'e', label = "Enable JPA", required = false)
    private UIInput<Boolean> enableJPA;
+
+   @Inject
+   @WithAttributes(shortName = 'a', label = "Artifact Type", defaultValue = "JAR")
+   private UISelectOne<ArtifactType> artifactType;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -78,8 +83,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-      builder.add(arguments)
-               .add(enableJPA);
+      builder.add(targets).add(enableJPA).add(artifactType);
 
       Project project = getSelectedProject(builder);
       final List<JavaClassSource> sources = new ArrayList<>();
@@ -103,7 +107,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
             }
          }
       });
-      arguments.setItemLabelConverter(new Converter<JavaClassSource, String>()
+      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
       {
          @Override
          public String convert(JavaClassSource source)
@@ -112,7 +116,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
          }
       });
 
-      arguments.setValueChoices(sources);
+      targets.setValueChoices(sources);
 
       UISelection<Object> initialSelection = builder.getUIContext().getInitialSelection();
       if (initialSelection.get() instanceof JavaResource)
@@ -121,7 +125,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
          JavaType<?> javaType = javaResource.getJavaType();
          if (javaType.isClass())
          {
-            arguments.setDefaultValue(Arrays.asList((JavaClassSource) javaType));
+            targets.setDefaultValue(Arrays.asList((JavaClassSource) javaType));
          }
       }
    }
@@ -132,9 +136,10 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       List<Result> results = new ArrayList<>();
       UIContext uiContext = context.getUIContext();
       List<JavaResource> resources = new ArrayList<>();
-      for (JavaClassSource clazz : arguments.getValue())
+      for (JavaClassSource clazz : targets.getValue())
       {
-         JavaResource test = createTest(getSelectedProject(context), clazz, enableJPA.getValue());
+         JavaResource test = createTest(getSelectedProject(context), clazz, enableJPA.getValue(),
+                  artifactType.getValue());
          resources.add(test);
          results.add(Results.success("Created test class " + test.getJavaType().getQualifiedName()));
       }
@@ -155,13 +160,13 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       return projectFactory;
    }
 
-   private JavaResource createTest(Project project, JavaClassSource classUnderTest, boolean enableJPA)
+   private JavaResource createTest(Project project, JavaClassSource classUnderTest, boolean enableJPA, ArtifactType type)
             throws FileNotFoundException
    {
       final TestFrameworkFacet testFrameworkFacet = project.getFacet(TestFrameworkFacet.class);
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-      final VelocityContext context = initializeVelocityContext(enableJPA, classUnderTest);
+      final VelocityContext context = initializeVelocityContext(enableJPA, type, classUnderTest);
 
       final StringWriter writer = new StringWriter();
       Velocity.mergeTemplate(testFrameworkFacet.getTemplateName(), "UTF-8", context, writer);
@@ -170,7 +175,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       return java.saveTestJavaSource(testClass);
    }
 
-   private VelocityContext initializeVelocityContext(boolean enableJPA, JavaSource<?> javaSource)
+   private VelocityContext initializeVelocityContext(boolean enableJPA, ArtifactType type, JavaSource<?> javaSource)
    {
       VelocityContext context = new VelocityContext();
       context.put("package", javaSource.getPackage());
@@ -178,6 +183,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
       context.put("classToTest", javaSource.getName().toLowerCase());
       context.put("packageImport", javaSource.getPackage());
       context.put("enableJPA", enableJPA);
+      context.put("artifactType", type);
       return context;
    }
 }

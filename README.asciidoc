@@ -20,6 +20,6 @@ Writing Arquillian tests is trivial, and is documented well: https://docs.jboss.
 
 Forge can help you get started however. 
 	
-	arquillian-create-test demo.CoolBean
+	arquillian-create-test --targets demo.CoolBean
 	
 Of course you can use the TAB key to navigate to the class that you want to test.

@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import ${artifactType.className};
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,8 +20,8 @@ public class ${ClassToTest}Test {
     private ${ClassToTest} ${classToTest};
 
     @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
+    public static ${artifactType.simpleClassName} createDeployment() {
+        return ShrinkWrap.create(${artifactType.simpleClassName}.class)
                 .addClass(${ClassToTest}.class)
                 #if($enableJPA)
                 .addAsManifestResource("META-INF/persistence.xml", "persistence.xml")
