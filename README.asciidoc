@@ -7,7 +7,7 @@ In Forge type:
 
 If you've built the add-on from the source and have it in your local Maven repository, you can also do it this way: 
 
-	addon-install --name arquillian-addon --groupId org.arquillian.forge --version 1.0.0-SNAPSHOT
+	addon-install --coordinate org.arquillian.forge:arquillian-addon,1.0.0-SNAPSHOT --ref forge2
 
 That's it! The plugin will be downloaded and installed.
 
