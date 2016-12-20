@@ -11,45 +11,38 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class Dependency
-{
-   private String groupId;
-   private String artifactId;
-   private String url;
+public class Dependency {
+    private String groupId;
+    private String artifactId;
+    private String url;
 
-   public String getGroupId()
-   {
-      return groupId;
-   }
+    public String getGroupId() {
+        return groupId;
+    }
 
-   public void setGroupId(String groupId)
-   {
-      this.groupId = groupId;
-   }
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 
-   public String getArtifactId()
-   {
-      return artifactId;
-   }
+    public String getArtifactId() {
+        return artifactId;
+    }
 
-   public void setArtifactId(String artifactId)
-   {
-      this.artifactId = artifactId;
-   }
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
 
-   public String getUrl()
-   {
-      return url;
-   }
+    public String getUrl() {
+        return url;
+    }
 
-   public void setUrl(String url)
-   {
-      this.url = url;
-   }
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-   public DependencyBuilder asDependency() {
-      return DependencyBuilder.create()
-            .setGroupId(getGroupId())
-            .setArtifactId(getArtifactId());
-   }
+    public DependencyBuilder asDependency() {
+        return DependencyBuilder.create()
+                .setGroupId(getGroupId())
+                .setArtifactId(getArtifactId());
+    }
 }

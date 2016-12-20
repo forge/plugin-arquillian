@@ -35,326 +35,294 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-@RunWith(Arquillian.class) @Ignore
-public class ContainerInstallationIntegrationTest 
-{
-   @Deployment
-   @AddonDependencies({
+@RunWith(Arquillian.class)
+@Ignore
+public class ContainerInstallationIntegrationTest {
+    @Deployment
+    @AddonDependencies({
             @AddonDependency(name = "org.arquillian.forge:arquillian-addon"),
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
-   })
-   public static AddonArchive getDeployment() {
-      return Deployments.basicPluginInfrastructure();
-   }
-   
-   @Inject
-   private UITestHarness testHarness;
+    })
+    public static AddonArchive getDeployment() {
+        return Deployments.basicPluginInfrastructure();
+    }
 
-   @Inject
-   private ProjectFactory factory;
+    @Inject
+    private UITestHarness testHarness;
+
+    @Inject
+    private ProjectFactory factory;
 
 
-   private Project installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception
-   {
-      Project project = factory.createTempProject();
-      MavenFacet metadataFacet = project.getFacet(MavenFacet.class);
-      List<Profile> profiles = metadataFacet.getModel().getProfiles();
-      assertThat(profiles.size(), is(0));
+    private Project installContainer(final String container, final List<DependencyMatcher> dependencies) throws Exception {
+        Project project = factory.createTempProject();
+        MavenFacet metadataFacet = project.getFacet(MavenFacet.class);
+        List<Profile> profiles = metadataFacet.getModel().getProfiles();
+        assertThat(profiles.size(), is(0));
 
-      WizardCommandController setup = testHarness.createWizardController(SetupWizard.class, project.getRootDirectory());
-      setup.initialize();
-      setup.setValueFor("arquillianVersion", "1.1.3.Final");
-      setup.execute();
-      
-      assertTrue(project.hasFacet(ArquillianFacet.class));
-      
-      Assert.assertTrue(setup.canMoveToNextStep());
-      
-      WizardCommandController testFramework = setup.next();
-      testFramework.initialize();
-      testFramework.setValueFor("testFramework", "junit");
-      testFramework.setValueFor("testFrameworkVersion", "4.11");
-      testFramework.execute();
-     
-      Assert.assertTrue(setup.canMoveToNextStep());
+        WizardCommandController setup = testHarness.createWizardController(SetupWizard.class, project.getRootDirectory());
+        setup.initialize();
+        setup.setValueFor("arquillianVersion", "1.1.3.Final");
+        setup.execute();
 
-      JUnitFacet junitFacet = new JUnitFacet();
-      Model pom = metadataFacet.getModel();
-      DependencyMatcher arqBom = new DependencyMatcher("arquillian-bom");
+        assertTrue(project.hasFacet(ArquillianFacet.class));
 
-      assertThat("Verify arquillian:bom was added to DependencyManagement ",
-            pom.getDependencyManagement().getDependencies(), hasItem(arqBom));
+        Assert.assertTrue(setup.canMoveToNextStep());
 
-      assertNotNull("Verify that the plugin use a version property for arquillian core",
-            pom.getProperties().get(ArquillianFacet.ARQ_CORE_VERSION_PROP_NAME));
+        WizardCommandController testFramework = setup.next();
+        testFramework.initialize();
+        testFramework.setValueFor("testFramework", "junit");
+        testFramework.setValueFor("testFrameworkVersion", "4.11");
+        testFramework.execute();
 
-      assertNotNull("Verify that the plugin use a version property for junit",
-            pom.getProperties().get(junitFacet.getVersionPropertyName()));
+        Assert.assertTrue(setup.canMoveToNextStep());
 
-      assertThat("Verify that junit arquillian integration was added",
-            pom.getDependencies(), hasItem(
-                  new DependencyMatcher(junitFacet.createArquillianDependency().getCoordinate().getArtifactId())));
+        JUnitFacet junitFacet = new JUnitFacet();
+        Model pom = metadataFacet.getModel();
+        DependencyMatcher arqBom = new DependencyMatcher("arquillian-bom");
 
-      assertThat("Verify that junit was added",
-            pom.getDependencies(), hasItem(
-                  new DependencyMatcher(junitFacet.createFrameworkDependency().getCoordinate().getArtifactId())));
-      
-      WizardCommandController containerCommand = setup.next();
-      containerCommand.initialize();
-      containerCommand.setValueFor("containerAdapter", container);
-      containerCommand.execute();
-      Assert.assertFalse(setup.canMoveToNextStep());
+        assertThat("Verify arquillian:bom was added to DependencyManagement ",
+                pom.getDependencyManagement().getDependencies(), hasItem(arqBom));
 
-      XMLResource arquillianXml = project.getRootDirectory().getChildOfType(XMLResource.class, "src/test/resources/arquillian.xml");
+        assertNotNull("Verify that the plugin use a version property for arquillian core",
+                pom.getProperties().get(ArquillianFacet.ARQ_CORE_VERSION_PROP_NAME));
 
-      assertThat(arquillianXml, is(notNullValue()));
-      assertThat(arquillianXml.exists(), is(true));
+        assertNotNull("Verify that the plugin use a version property for junit",
+                pom.getProperties().get(junitFacet.getVersionPropertyName()));
 
-      Node arquillianXmlRoot = arquillianXml.getXmlSource();
-      assertThat(arquillianXmlRoot.getSingle("container@qualifier=" + container), is(notNullValue()));
+        assertThat("Verify that junit arquillian integration was added",
+                pom.getDependencies(), hasItem(
+                        new DependencyMatcher(junitFacet.createArquillianDependency().getCoordinate().getArtifactId())));
 
-      assertThat(metadataFacet.getModel().getProfiles().size(), is(1));
-      Profile profile = metadataFacet.getModel().getProfiles().get(0);
-      
-      for (DependencyMatcher dependency : dependencies)
-      {
-         assertThat(profile.getDependencies(), hasItem(dependency));
-      }
+        assertThat("Verify that junit was added",
+                pom.getDependencies(), hasItem(
+                        new DependencyMatcher(junitFacet.createFrameworkDependency().getCoordinate().getArtifactId())));
 
-      return project;
-   }
+        WizardCommandController containerCommand = setup.next();
+        containerCommand.initialize();
+        containerCommand.setValueFor("containerAdapter", container);
+        containerCommand.execute();
+        Assert.assertFalse(setup.canMoveToNextStep());
 
-   @Test
-   public void installOpenEJBContainer() throws Exception
-   {
-      installContainer("openejb-embedded-3.1",
-            Arrays.asList(
-                  new DependencyMatcher("arquillian-openejb-embedded-3.1"),
-                  new DependencyMatcher("openejb-core")));
-   }
+        XMLResource arquillianXml = project.getRootDirectory().getChildOfType(XMLResource.class, "src/test/resources/arquillian.xml");
 
-   @Test
-   public void installOpenWebBeansContainer() throws Exception
-   {
-      installContainer("openwebbeans-embedded-1",
-            Arrays.asList(
-                  new DependencyMatcher("arquillian-openwebbeans-embedded-1"),
-                  new DependencyMatcher("openwebbeans-impl")));
-   }
+        assertThat(arquillianXml, is(notNullValue()));
+        assertThat(arquillianXml.exists(), is(true));
 
-   @Test
-   public void installGlassfishEmbeddedContainer() throws Exception
-   {
-      installContainer("glassfish-embedded-3.1",
-            Arrays.asList(
-                  new DependencyMatcher("arquillian-glassfish-embedded-3.1"),
-                  new DependencyMatcher("glassfish-embedded-all")));
-   }
+        Node arquillianXmlRoot = arquillianXml.getXmlSource();
+        assertThat(arquillianXmlRoot.getSingle("container@qualifier=" + container), is(notNullValue()));
 
-   @Test
-   public void installGlassfishManagedContainer() throws Exception
-   {
-      installContainer("glassfish-managed-3.1",
-            singletonList(
-                  new DependencyMatcher("arquillian-glassfish-managed-3.1")));
-   }
+        assertThat(metadataFacet.getModel().getProfiles().size(), is(1));
+        Profile profile = metadataFacet.getModel().getProfiles().get(0);
 
-   @Test
-   public void installGlassfishRemoteContainer() throws Exception
-   {
-      installContainer("glassfish-remote-3.1",
-            singletonList(
-                  new DependencyMatcher("arquillian-glassfish-remote-3.1")));
-   }
+        for (DependencyMatcher dependency : dependencies) {
+            assertThat(profile.getDependencies(), hasItem(dependency));
+        }
 
-   @Test
-   public void installJBossAS51ManagedContainer() throws Exception
-   {
-      installContainer("jbossas-managed-5.1",
-            singletonList(
-                  new DependencyMatcher("arquillian-jbossas-managed-5.1")));
-   }
-
-   @Test
-   public void installJBossAS51RemoteContainer() throws Exception
-   {
-      installContainer("jbossas-remote-5.1",
-            singletonList(
-                  new DependencyMatcher("arquillian-jbossas-remote-5.1")));
-   }
-
-   @Test
-   public void installJBossAS5RemoteContainer() throws Exception
-   {
-      installContainer("jbossas-remote-5",
-            singletonList(
-                  new DependencyMatcher("arquillian-jbossas-remote-5")));
-   }
-
-   @Test
-   public void installJBossAS6EmbeddedContainer() throws Exception
-   {
-      installContainer("jbossas-embedded-6",
-            singletonList(
-                  new DependencyMatcher("arquillian-jbossas-embedded-6")));
-   }
-
-   @Test
-   public void installJBossAS6ManagedContainer() throws Exception
-   {
-      installContainer("jbossas-managed-6",
-            singletonList(
-                  new DependencyMatcher("arquillian-jbossas-managed-6")));
-   }
-
-   @Test
-   public void installJBossAS6RemoteContainer() throws Exception
-   {
-      installContainer("jbossas-remote-6",
-            singletonList(
-                  new DependencyMatcher("arquillian-jbossas-remote-6")));
-   }
-
-   @Test
-   public void installJBossAS7ManagedContainer() throws Exception
-   {
-      installContainer("jbossas-managed-7",
-            singletonList(
-                  new DependencyMatcher("jboss-as-arquillian-container-managed")));
-   }
-
-   @Test
-   public void installJBossAS7RemoteContainer() throws Exception
-   {
-      installContainer("jbossas-remote-7",
-            singletonList(
-                  new DependencyMatcher("jboss-as-arquillian-container-remote")));
-   }
+        return project;
+    }
 
     @Test
-    public void installWildFlyManagedContainer() throws Exception
-    {
+    public void installOpenEJBContainer() throws Exception {
+        installContainer("openejb-embedded-3.1",
+                Arrays.asList(
+                        new DependencyMatcher("arquillian-openejb-embedded-3.1"),
+                        new DependencyMatcher("openejb-core")));
+    }
+
+    @Test
+    public void installOpenWebBeansContainer() throws Exception {
+        installContainer("openwebbeans-embedded-1",
+                Arrays.asList(
+                        new DependencyMatcher("arquillian-openwebbeans-embedded-1"),
+                        new DependencyMatcher("openwebbeans-impl")));
+    }
+
+    @Test
+    public void installGlassfishEmbeddedContainer() throws Exception {
+        installContainer("glassfish-embedded-3.1",
+                Arrays.asList(
+                        new DependencyMatcher("arquillian-glassfish-embedded-3.1"),
+                        new DependencyMatcher("glassfish-embedded-all")));
+    }
+
+    @Test
+    public void installGlassfishManagedContainer() throws Exception {
+        installContainer("glassfish-managed-3.1",
+                singletonList(
+                        new DependencyMatcher("arquillian-glassfish-managed-3.1")));
+    }
+
+    @Test
+    public void installGlassfishRemoteContainer() throws Exception {
+        installContainer("glassfish-remote-3.1",
+                singletonList(
+                        new DependencyMatcher("arquillian-glassfish-remote-3.1")));
+    }
+
+    @Test
+    public void installJBossAS51ManagedContainer() throws Exception {
+        installContainer("jbossas-managed-5.1",
+                singletonList(
+                        new DependencyMatcher("arquillian-jbossas-managed-5.1")));
+    }
+
+    @Test
+    public void installJBossAS51RemoteContainer() throws Exception {
+        installContainer("jbossas-remote-5.1",
+                singletonList(
+                        new DependencyMatcher("arquillian-jbossas-remote-5.1")));
+    }
+
+    @Test
+    public void installJBossAS5RemoteContainer() throws Exception {
+        installContainer("jbossas-remote-5",
+                singletonList(
+                        new DependencyMatcher("arquillian-jbossas-remote-5")));
+    }
+
+    @Test
+    public void installJBossAS6EmbeddedContainer() throws Exception {
+        installContainer("jbossas-embedded-6",
+                singletonList(
+                        new DependencyMatcher("arquillian-jbossas-embedded-6")));
+    }
+
+    @Test
+    public void installJBossAS6ManagedContainer() throws Exception {
+        installContainer("jbossas-managed-6",
+                singletonList(
+                        new DependencyMatcher("arquillian-jbossas-managed-6")));
+    }
+
+    @Test
+    public void installJBossAS6RemoteContainer() throws Exception {
+        installContainer("jbossas-remote-6",
+                singletonList(
+                        new DependencyMatcher("arquillian-jbossas-remote-6")));
+    }
+
+    @Test
+    public void installJBossAS7ManagedContainer() throws Exception {
+        installContainer("jbossas-managed-7",
+                singletonList(
+                        new DependencyMatcher("jboss-as-arquillian-container-managed")));
+    }
+
+    @Test
+    public void installJBossAS7RemoteContainer() throws Exception {
+        installContainer("jbossas-remote-7",
+                singletonList(
+                        new DependencyMatcher("jboss-as-arquillian-container-remote")));
+    }
+
+    @Test
+    public void installWildFlyManagedContainer() throws Exception {
         installContainer("wildfly-managed",
-              singletonList(
-                    new DependencyMatcher("wildfly-arquillian-container-managed")));
+                singletonList(
+                        new DependencyMatcher("wildfly-arquillian-container-managed")));
     }
 
     @Test
-    public void installWildFlyRemoteContainer() throws Exception
-    {
+    public void installWildFlyRemoteContainer() throws Exception {
         installContainer("wildfly-remote",
-              singletonList(
-                    new DependencyMatcher("wildfly-arquillian-container-remote")));
+                singletonList(
+                        new DependencyMatcher("wildfly-arquillian-container-remote")));
     }
 
-   @Test
-   public void installJetty6EmbeddedContainer() throws Exception
-   {
-      installContainer("jetty-embedded-6.1",
-            Arrays.asList(
-                  new DependencyMatcher("arquillian-jetty-embedded-6.1"),
-                  new DependencyMatcher("jetty")));
-   }
+    @Test
+    public void installJetty6EmbeddedContainer() throws Exception {
+        installContainer("jetty-embedded-6.1",
+                Arrays.asList(
+                        new DependencyMatcher("arquillian-jetty-embedded-6.1"),
+                        new DependencyMatcher("jetty")));
+    }
 
-   @Test
-   public void installJetty7EmbeddedContainer() throws Exception
-   {
-      installContainer("jetty-embedded-7",
-            Arrays.asList(
-                  new DependencyMatcher("arquillian-jetty-embedded-7"),
-                  new DependencyMatcher("jetty-webapp")));
-   }
+    @Test
+    public void installJetty7EmbeddedContainer() throws Exception {
+        installContainer("jetty-embedded-7",
+                Arrays.asList(
+                        new DependencyMatcher("arquillian-jetty-embedded-7"),
+                        new DependencyMatcher("jetty-webapp")));
+    }
 
-   @Test
-   public void installTomcat6EmbeddedContainer() throws Exception
-   {
-      installContainer("tomcat-embedded-6",
-            Arrays.asList(
-                  new DependencyMatcher("arquillian-tomcat-embedded-6"),
-                  new DependencyMatcher("catalina"),
-                  new DependencyMatcher("catalina"),
-                  new DependencyMatcher("coyote"),
-                  new DependencyMatcher("jasper")));
-   }
+    @Test
+    public void installTomcat6EmbeddedContainer() throws Exception {
+        installContainer("tomcat-embedded-6",
+                Arrays.asList(
+                        new DependencyMatcher("arquillian-tomcat-embedded-6"),
+                        new DependencyMatcher("catalina"),
+                        new DependencyMatcher("catalina"),
+                        new DependencyMatcher("coyote"),
+                        new DependencyMatcher("jasper")));
+    }
 
-   @Test
-   @Ignore("Not in default maven repo")
-   public void installWAS7RemoteContainer() throws Exception
-   {
-      installContainer("was-remote-7",
-            singletonList(
-                  new DependencyMatcher("arquillian-was-remote-7")));
-   }
+    @Test
+    @Ignore("Not in default maven repo")
+    public void installWAS7RemoteContainer() throws Exception {
+        installContainer("was-remote-7",
+                singletonList(
+                        new DependencyMatcher("arquillian-was-remote-7")));
+    }
 
-   @Test
-   @Ignore("Not in default maven repo")
-   public void installWAS8EmbeddedContainer() throws Exception
-   {
-      installContainer("was-embedded-8",
-            singletonList(
-                  new DependencyMatcher("arquillian-was-embedded-8")));
-   }
+    @Test
+    @Ignore("Not in default maven repo")
+    public void installWAS8EmbeddedContainer() throws Exception {
+        installContainer("was-embedded-8",
+                singletonList(
+                        new DependencyMatcher("arquillian-was-embedded-8")));
+    }
 
-   @Test
-   @Ignore("Not in default maven repo")
-   public void installWAS8RemoteContainer() throws Exception
-   {
-      installContainer("was-remote-8",
-            singletonList(
-                  new DependencyMatcher("arquillian-was-remote-8")));
-   }
+    @Test
+    @Ignore("Not in default maven repo")
+    public void installWAS8RemoteContainer() throws Exception {
+        installContainer("was-remote-8",
+                singletonList(
+                        new DependencyMatcher("arquillian-was-remote-8")));
+    }
 
-   @Test
-   public void installTomcat6RemoteContainer() throws Exception
-   {
-      installContainer("tomcat-remote-6",
-            singletonList(
-                  new DependencyMatcher("arquillian-tomcat-remote-6")));
-   }
+    @Test
+    public void installTomcat6RemoteContainer() throws Exception {
+        installContainer("tomcat-remote-6",
+                singletonList(
+                        new DependencyMatcher("arquillian-tomcat-remote-6")));
+    }
 
-   @Test
-   public void installWeldEEEmbeddedContainer() throws Exception
-   {
-      installContainer("weld-ee-embedded-1.1",
-            singletonList(
-                  new DependencyMatcher("arquillian-weld-ee-embedded-1.1")));
-   }
+    @Test
+    public void installWeldEEEmbeddedContainer() throws Exception {
+        installContainer("weld-ee-embedded-1.1",
+                singletonList(
+                        new DependencyMatcher("arquillian-weld-ee-embedded-1.1")));
+    }
 
-   @Test
-   public void installWeldSEEmbeddedContainer() throws Exception
-   {
-      installContainer("weld-se-embedded-1",
-            singletonList(
-                  new DependencyMatcher("arquillian-weld-se-embedded-1")));
-   }
+    @Test
+    public void installWeldSEEmbeddedContainer() throws Exception {
+        installContainer("weld-se-embedded-1",
+                singletonList(
+                        new DependencyMatcher("arquillian-weld-se-embedded-1")));
+    }
 
-   @Test
-   public void installWeldSEEmbedded1_1Container() throws Exception
-   {
-      installContainer("weld-se-embedded-1.1",
-            singletonList(
-                  new DependencyMatcher("arquillian-weld-se-embedded-1.1")));
-   }
+    @Test
+    public void installWeldSEEmbedded1_1Container() throws Exception {
+        installContainer("weld-se-embedded-1.1",
+                singletonList(
+                        new DependencyMatcher("arquillian-weld-se-embedded-1.1")));
+    }
 
-   @Test
-   public void installWWeblogicRemoteContainer() throws Exception
-   {
-      installContainer("wls-remote-10.3",
-            singletonList(
-                  new DependencyMatcher("arquillian-wls-remote-10.3")));
-   }
+    @Test
+    public void installWWeblogicRemoteContainer() throws Exception {
+        installContainer("wls-remote-10.3",
+                singletonList(
+                        new DependencyMatcher("arquillian-wls-remote-10.3")));
+    }
 /*
    @Test
    public void installMultipleTimesShouldOverwriteProfile() throws Exception

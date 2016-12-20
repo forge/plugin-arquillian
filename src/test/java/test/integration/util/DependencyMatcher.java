@@ -10,24 +10,20 @@ import org.apache.maven.model.Dependency;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-public class DependencyMatcher extends BaseMatcher<Dependency>
-{
-   private final String artifactId;
+public class DependencyMatcher extends BaseMatcher<Dependency> {
+    private final String artifactId;
 
-   public DependencyMatcher(final String artifactId)
-   {
-      this.artifactId = artifactId;
-   }
+    public DependencyMatcher(final String artifactId) {
+        this.artifactId = artifactId;
+    }
 
-   @Override
-   public boolean matches(final Object o)
-   {
-      Dependency d = (Dependency) o;
-      return d.getArtifactId().equals(artifactId);
-   }
+    @Override
+    public boolean matches(final Object o) {
+        Dependency d = (Dependency) o;
+        return d.getArtifactId().equals(artifactId);
+    }
 
-   @Override
-   public void describeTo(final Description description)
-   {
-   }
+    @Override
+    public void describeTo(final Description description) {
+    }
 }

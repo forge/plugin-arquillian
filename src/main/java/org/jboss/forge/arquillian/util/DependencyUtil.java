@@ -23,10 +23,10 @@
  */
 package org.jboss.forge.arquillian.util;
 
+import org.jboss.forge.addon.dependencies.Coordinate;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jboss.forge.addon.dependencies.Coordinate;
 
 /**
  * DependencyUtil
@@ -34,34 +34,32 @@ import org.jboss.forge.addon.dependencies.Coordinate;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public final class DependencyUtil
-{
-   private DependencyUtil()
-   {
-   }
+public final class DependencyUtil {
+    private DependencyUtil() {
+    }
 
-   public static List<String> toVersionString(List<Coordinate> dependencies) {
-      List<String> versions = new ArrayList<>();
-      for(Coordinate cor : dependencies) {
-         versions.add(cor.getVersion());
-      }
-      return versions;
-   }
+    public static List<String> toVersionString(List<Coordinate> dependencies) {
+        List<String> versions = new ArrayList<>();
+        for (Coordinate cor : dependencies) {
+            versions.add(cor.getVersion());
+        }
+        return versions;
+    }
 
-   public static String getLatestNonSnapshotVersionCoordinate(List<Coordinate> dependencies) {
-      return getLatestNonSnapshotVersion(toVersionString(dependencies));
-   }
+    public static String getLatestNonSnapshotVersionCoordinate(List<Coordinate> dependencies) {
+        return getLatestNonSnapshotVersion(toVersionString(dependencies));
+    }
 
-   public static String getLatestNonSnapshotVersion(List<String> dependencies) {
-      if (dependencies == null) {
-         return null;
-      }
-      for (int i = dependencies.size() - 1; i >= 0; i--) {
-         String dep = dependencies.get(i);
-         if (!dep.endsWith("SNAPSHOT")) {
-            return dep;
-         }
-      }
-      return dependencies.get(dependencies.size() - 1);
-   }
+    public static String getLatestNonSnapshotVersion(List<String> dependencies) {
+        if (dependencies == null) {
+            return null;
+        }
+        for (int i = dependencies.size() - 1; i >= 0; i--) {
+            String dep = dependencies.get(i);
+            if (!dep.endsWith("SNAPSHOT")) {
+                return dep;
+            }
+        }
+        return dependencies.get(dependencies.size() - 1);
+    }
 }

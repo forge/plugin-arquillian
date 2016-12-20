@@ -19,60 +19,60 @@ import org.jboss.forge.arquillian.api.ArquillianFacet;
 
 import javax.inject.Inject;
 
-public class AddArquillianCommand  extends AbstractProjectCommand implements UICommand {
+public class AddArquillianCommand extends AbstractProjectCommand implements UICommand {
 
-   @Inject
-   private ProjectFactory projectFactory;
+    @Inject
+    private ProjectFactory projectFactory;
 
-   @Inject
-   private FacetFactory facetFactory;
+    @Inject
+    private FacetFactory facetFactory;
 
-   @Inject
-   private ArquillianFacet facet;
+    @Inject
+    private ArquillianFacet facet;
 
-   @Inject
-   @WithAttributes(shortName = 'v', label = "Arquillian Core version", type = InputType.DROPDOWN)
-   private UISelectOne<String> arquillianVersion;
+    @Inject
+    @WithAttributes(shortName = 'v', label = "Arquillian Core version", type = InputType.DROPDOWN)
+    private UISelectOne<String> arquillianVersion;
 
-   @Override
-   public UICommandMetadata getMetadata(UIContext context) {
-      return Metadata.from(super.getMetadata(context), getClass())
-            .category(Categories.create("Arquillian"))
-            .name("Arquillian: Add")
-            .description("This addon will help you setup the base Arquillian");
-   }
+    @Override
+    public UICommandMetadata getMetadata(UIContext context) {
+        return Metadata.from(super.getMetadata(context), getClass())
+                .category(Categories.create("Arquillian"))
+                .name("Arquillian: Add")
+                .description("This addon will help you setup the base Arquillian");
+    }
 
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception {
-      builder.add(arquillianVersion);
-      
-      arquillianVersion.setDefaultValue(() -> facet.getDefaultVersion());
-      arquillianVersion.setValueChoices(() -> facet.getAvailableVersions());
-   }
+    @Override
+    public void initializeUI(UIBuilder builder) throws Exception {
+        builder.add(arquillianVersion);
 
-   @Override
-   public Result execute(UIExecutionContext context) throws Exception {
-      facet.setVersion(arquillianVersion.getValue());
-      facetFactory.install(getSelectedProject(context), facet);
-      return Results.success("Installed Arquillian " + arquillianVersion.getValue());
-   }
+        arquillianVersion.setDefaultValue(() -> facet.getDefaultVersion());
+        arquillianVersion.setValueChoices(() -> facet.getAvailableVersions());
+    }
 
-   @Override
-   protected boolean isProjectRequired() {
-      return true;
-   }
-   
-   @Override
-   public boolean isEnabled(UIContext context) {
-      Boolean parent = super.isEnabled(context);
-      if(parent) {
-         return !getSelectedProject(context).hasFacet(ArquillianFacet.class);
-      }
-      return parent;
-   }
+    @Override
+    public Result execute(UIExecutionContext context) throws Exception {
+        facet.setVersion(arquillianVersion.getValue());
+        facetFactory.install(getSelectedProject(context), facet);
+        return Results.success("Installed Arquillian " + arquillianVersion.getValue());
+    }
 
-   @Override
-   protected ProjectFactory getProjectFactory() {
-      return projectFactory;
-   }
+    @Override
+    protected boolean isProjectRequired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled(UIContext context) {
+        Boolean parent = super.isEnabled(context);
+        if (parent) {
+            return !getSelectedProject(context).hasFacet(ArquillianFacet.class);
+        }
+        return parent;
+    }
+
+    @Override
+    protected ProjectFactory getProjectFactory() {
+        return projectFactory;
+    }
 }

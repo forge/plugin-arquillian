@@ -23,14 +23,14 @@
  */
 package org.jboss.forge.arquillian;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.arquillian.util.DependencyUtil;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DependencyUtilTestCase
@@ -38,30 +38,27 @@ import org.junit.Test;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DependencyUtilTest
-{
+public class DependencyUtilTest {
 
-   @Test
-   public void shouldGetLastNonSnapshotVersion()
-   {
-      List<Coordinate> deps = new ArrayList<>();
-      deps.add(DependencyBuilder.create().setVersion("1.0").getCoordinate());
-      deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
+    @Test
+    public void shouldGetLastNonSnapshotVersion() {
+        List<Coordinate> deps = new ArrayList<>();
+        deps.add(DependencyBuilder.create().setVersion("1.0").getCoordinate());
+        deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
 
-      String dep = DependencyUtil.getLatestNonSnapshotVersion(DependencyUtil.toVersionString(deps));
+        String dep = DependencyUtil.getLatestNonSnapshotVersion(DependencyUtil.toVersionString(deps));
 
-      Assert.assertEquals("1.0", dep);
-   }
+        Assert.assertEquals("1.0", dep);
+    }
 
-   @Test
-   public void shouldReturnLatestIfAllSnapshots()
-   {
-      List<Coordinate> deps = new ArrayList<>();
-      deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
-      deps.add(DependencyBuilder.create().setVersion("2.0-SNAPSHOT").getCoordinate());
+    @Test
+    public void shouldReturnLatestIfAllSnapshots() {
+        List<Coordinate> deps = new ArrayList<>();
+        deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
+        deps.add(DependencyBuilder.create().setVersion("2.0-SNAPSHOT").getCoordinate());
 
-      String dep = DependencyUtil.getLatestNonSnapshotVersion(DependencyUtil.toVersionString(deps));
+        String dep = DependencyUtil.getLatestNonSnapshotVersion(DependencyUtil.toVersionString(deps));
 
-      Assert.assertEquals("2.0-SNAPSHOT", dep);
-   }
+        Assert.assertEquals("2.0-SNAPSHOT", dep);
+    }
 }

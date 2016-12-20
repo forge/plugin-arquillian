@@ -14,22 +14,20 @@ import static org.jboss.forge.furnace.repositories.AddonDependencyEntry.create;
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public class Deployments
-{
+public class Deployments {
 
-   public static AddonArchive basicPluginInfrastructure()
-   {
-      AddonArchive archive = ShrinkWrap
-            .create(AddonArchive.class)
-            .addBeansXML()
-            .addAsAddonDependencies(
-                     create("org.jboss.forge.furnace.container:cdi"),
-                     create("org.jboss.forge.addon:projects"),
-                     create("org.jboss.forge.addon:maven"),
-                     create("org.arquillian.forge:arquillian-addon"),
-                     create("org.jboss.forge.addon:ui-test-harness")
-            ).addClasses(DependencyMatcher.class);
+    public static AddonArchive basicPluginInfrastructure() {
+        AddonArchive archive = ShrinkWrap
+                .create(AddonArchive.class)
+                .addBeansXML()
+                .addAsAddonDependencies(
+                        create("org.jboss.forge.furnace.container:cdi"),
+                        create("org.jboss.forge.addon:projects"),
+                        create("org.jboss.forge.addon:maven"),
+                        create("org.arquillian.forge:arquillian-addon"),
+                        create("org.jboss.forge.addon:ui-test-harness")
+                ).addClasses(DependencyMatcher.class);
 
-      return archive;
-   }
+        return archive;
+    }
 }

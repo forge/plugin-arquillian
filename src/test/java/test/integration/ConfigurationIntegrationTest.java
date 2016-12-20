@@ -23,36 +23,35 @@ import javax.inject.Inject;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-@RunWith(Arquillian.class) @Ignore
-public class ConfigurationIntegrationTest
-{
-   @Deployment
-   @AddonDependencies({
+@RunWith(Arquillian.class)
+@Ignore
+public class ConfigurationIntegrationTest {
+    @Deployment
+    @AddonDependencies({
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
-   })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
+    })
+    public static AddonArchive getDeployment() {
+        AddonArchive archive = ShrinkWrap
+                .create(AddonArchive.class)
+                .addBeansXML()
+                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.arquillian.forge:arquillian-addon"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+                );
 
-      return archive;
-   }
-   
-   @Inject
-   private UITestHarness testHarness;
+        return archive;
+    }
 
-   @Inject
-   private ProjectFactory factory;
+    @Inject
+    private UITestHarness testHarness;
+
+    @Inject
+    private ProjectFactory factory;
 
    /*
 

@@ -11,8 +11,7 @@ package test.integration;
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
 //@RunWith(Arquillian.class)
-public class TestNGTestGenerationIntegrationTest 
-{
+public class TestNGTestGenerationIntegrationTest {
 /*
    @Deployment
    public static JavaArchive getDeployment()

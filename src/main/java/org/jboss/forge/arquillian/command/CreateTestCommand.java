@@ -42,140 +42,122 @@ import java.util.Properties;
 import static java.util.Collections.singletonList;
 
 @FacetConstraint(ArquillianFacet.class)
-public class CreateTestCommand extends AbstractProjectCommand implements UICommand
-{
+public class CreateTestCommand extends AbstractProjectCommand implements UICommand {
 
-   static
-   {
-      Properties properties = new Properties();
-      properties.setProperty("resource.loader", "class");
-      properties.setProperty("class.resource.loader.class",
-               "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+    static {
+        Properties properties = new Properties();
+        properties.setProperty("resource.loader", "class");
+        properties.setProperty("class.resource.loader.class",
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
-      Velocity.init(properties);
-   }
+        Velocity.init(properties);
+    }
 
-   @Inject
-   private ProjectFactory projectFactory;
+    @Inject
+    private ProjectFactory projectFactory;
 
-   @Inject
-   @WithAttributes(shortName = 't', label = "Targets", required = true, type = InputType.JAVA_CLASS_PICKER)
-   private UISelectMany<JavaClassSource> targets;
+    @Inject
+    @WithAttributes(shortName = 't', label = "Targets", required = true, type = InputType.JAVA_CLASS_PICKER)
+    private UISelectMany<JavaClassSource> targets;
 
-   @Inject
-   @WithAttributes(shortName = 'e', label = "Enable JPA", required = false)
-   private UIInput<Boolean> enableJPA;
+    @Inject
+    @WithAttributes(shortName = 'e', label = "Enable JPA", required = false)
+    private UIInput<Boolean> enableJPA;
 
-   @Inject
-   @WithAttributes(shortName = 'a', label = "Archive Type", defaultValue = "JAR")
-   private UISelectOne<ArchiveType> archiveType;
+    @Inject
+    @WithAttributes(shortName = 'a', label = "Archive Type", defaultValue = "JAR")
+    private UISelectOne<ArchiveType> archiveType;
 
-   @Override
-   public UICommandMetadata getMetadata(UIContext context)
-   {
-      return Metadata.from(super.getMetadata(context), getClass())
-               .category(Categories.create("Arquillian"))
-               .name("Arquillian: Create Test")
-               .description("This addon will help you create a test skeleton based on a given class");
-   }
+    @Override
+    public UICommandMetadata getMetadata(UIContext context) {
+        return Metadata.from(super.getMetadata(context), getClass())
+                .category(Categories.create("Arquillian"))
+                .name("Arquillian: Create Test")
+                .description("This addon will help you create a test skeleton based on a given class");
+    }
 
-   @Override
-   public void initializeUI(final UIBuilder builder) throws Exception
-   {
-      builder.add(targets).add(enableJPA).add(archiveType);
+    @Override
+    public void initializeUI(final UIBuilder builder) throws Exception {
+        builder.add(targets).add(enableJPA).add(archiveType);
 
-      Project project = getSelectedProject(builder);
-      final List<JavaClassSource> sources = new ArrayList<>();
-      project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-      {
-         @Override
-         public void visit(VisitContext context, JavaResource javaResource)
-         {
-            JavaType<?> javaType;
-            try
-            {
-               javaType = javaResource.getJavaType();
-               if (javaType.isClass())
-               {
-                  sources.add((JavaClassSource) javaType);
-               }
+        Project project = getSelectedProject(builder);
+        final List<JavaClassSource> sources = new ArrayList<>();
+        project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor() {
+            @Override
+            public void visit(VisitContext context, JavaResource javaResource) {
+                JavaType<?> javaType;
+                try {
+                    javaType = javaResource.getJavaType();
+                    if (javaType.isClass()) {
+                        sources.add((JavaClassSource) javaType);
+                    }
+                } catch (FileNotFoundException e) {
+                    // Do nothing
+                }
             }
-            catch (FileNotFoundException e)
-            {
-               // Do nothing
+        });
+        targets.setItemLabelConverter(source -> source == null ? null : source.getQualifiedName());
+
+        targets.setValueChoices(sources);
+
+        UISelection<Object> initialSelection = builder.getUIContext().getInitialSelection();
+        if (initialSelection.get() instanceof JavaResource) {
+            JavaResource javaResource = (JavaResource) initialSelection.get();
+            JavaType<?> javaType = javaResource.getJavaType();
+            if (javaType.isClass()) {
+                targets.setDefaultValue(singletonList((JavaClassSource) javaType));
             }
-         }
-      });
-      targets.setItemLabelConverter(source -> source == null ? null : source.getQualifiedName());
+        }
+    }
 
-      targets.setValueChoices(sources);
+    @Override
+    public Result execute(UIExecutionContext context) throws Exception {
+        List<Result> results = new ArrayList<>();
+        UIContext uiContext = context.getUIContext();
+        List<JavaResource> resources = new ArrayList<>();
+        for (JavaClassSource clazz : targets.getValue()) {
+            JavaResource test = createTest(getSelectedProject(context), clazz, enableJPA.getValue(),
+                    archiveType.getValue());
+            resources.add(test);
+            results.add(Results.success("Created test class " + test.getJavaType().getQualifiedName()));
+        }
+        if (!resources.isEmpty())
+            uiContext.setSelection(resources);
+        return Results.aggregate(results);
+    }
 
-      UISelection<Object> initialSelection = builder.getUIContext().getInitialSelection();
-      if (initialSelection.get() instanceof JavaResource)
-      {
-         JavaResource javaResource = (JavaResource) initialSelection.get();
-         JavaType<?> javaType = javaResource.getJavaType();
-         if (javaType.isClass())
-         {
-            targets.setDefaultValue(singletonList((JavaClassSource) javaType));
-         }
-      }
-   }
+    @Override
+    protected boolean isProjectRequired() {
+        return true;
+    }
 
-   @Override
-   public Result execute(UIExecutionContext context) throws Exception
-   {
-      List<Result> results = new ArrayList<>();
-      UIContext uiContext = context.getUIContext();
-      List<JavaResource> resources = new ArrayList<>();
-      for (JavaClassSource clazz : targets.getValue())
-      {
-         JavaResource test = createTest(getSelectedProject(context), clazz, enableJPA.getValue(),
-                  archiveType.getValue());
-         resources.add(test);
-         results.add(Results.success("Created test class " + test.getJavaType().getQualifiedName()));
-      }
-      if (!resources.isEmpty())
-         uiContext.setSelection(resources);
-      return Results.aggregate(results);
-   }
+    @Override
+    protected ProjectFactory getProjectFactory() {
+        return projectFactory;
+    }
 
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return true;
-   }
+    private JavaResource createTest(Project project, JavaClassSource classUnderTest, boolean enableJPA, ArchiveType type)
+            throws FileNotFoundException {
+        final TestFrameworkFacet testFrameworkFacet = project.getFacet(TestFrameworkFacet.class);
+        final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-   @Override
-   protected ProjectFactory getProjectFactory()
-   {
-      return projectFactory;
-   }
+        final VelocityContext context = initializeVelocityContext(enableJPA, type, classUnderTest);
 
-   private JavaResource createTest(Project project, JavaClassSource classUnderTest, boolean enableJPA, ArchiveType type)
-            throws FileNotFoundException
-   {
-      final TestFrameworkFacet testFrameworkFacet = project.getFacet(TestFrameworkFacet.class);
-      final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+        final StringWriter writer = new StringWriter();
+        Velocity.mergeTemplate(testFrameworkFacet.getTemplateName(), "UTF-8", context, writer);
 
-      final VelocityContext context = initializeVelocityContext(enableJPA, type, classUnderTest);
+        final JavaSource<?> testClass = Roaster.parse(JavaSource.class, writer.toString());
+        return java.saveTestJavaSource(testClass);
+    }
 
-      final StringWriter writer = new StringWriter();
-      Velocity.mergeTemplate(testFrameworkFacet.getTemplateName(), "UTF-8", context, writer);
-
-      final JavaSource<?> testClass = Roaster.parse(JavaSource.class, writer.toString());
-      return java.saveTestJavaSource(testClass);
-   }
-
-   private VelocityContext initializeVelocityContext(boolean enableJPA, ArchiveType type, JavaSource<?> javaSource)
-   {
-      VelocityContext context = new VelocityContext();
-      context.put("package", javaSource.getPackage());
-      context.put("ClassToTest", javaSource.getName());
-      context.put("classToTest", javaSource.getName().toLowerCase());
-      context.put("packageImport", javaSource.getPackage());
-      context.put("enableJPA", enableJPA);
-      context.put("archiveType", type);
-      return context;
-   }
+    private VelocityContext initializeVelocityContext(boolean enableJPA, ArchiveType type, JavaSource<?> javaSource) {
+        VelocityContext context = new VelocityContext();
+        context.put("package", javaSource.getPackage());
+        context.put("ClassToTest", javaSource.getName());
+        context.put("classToTest", javaSource.getName().toLowerCase());
+        context.put("packageImport", javaSource.getPackage());
+        context.put("enableJPA", enableJPA);
+        context.put("archiveType", type);
+        return context;
+    }
 }

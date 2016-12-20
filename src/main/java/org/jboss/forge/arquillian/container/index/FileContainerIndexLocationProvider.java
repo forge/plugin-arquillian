@@ -13,18 +13,13 @@ import java.net.URL;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class FileContainerIndexLocationProvider implements ContainerIndexLocationProvider
-{
-   @Override
-   public URL getUrl()
-   {
-      try
-      {
-         return this.getClass().getClassLoader().getResource("containers.json").toURI().toURL();
-      }
-      catch (MalformedURLException | URISyntaxException e)
-      {
-         throw new RuntimeException(e);
-      }
-   }
+public class FileContainerIndexLocationProvider implements ContainerIndexLocationProvider {
+    @Override
+    public URL getUrl() {
+        try {
+            return this.getClass().getClassLoader().getResource("containers.json").toURI().toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

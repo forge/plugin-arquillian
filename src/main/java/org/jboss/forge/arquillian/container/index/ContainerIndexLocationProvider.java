@@ -11,7 +11,6 @@ import java.net.URL;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public interface ContainerIndexLocationProvider
-{
-   URL getUrl();
+public interface ContainerIndexLocationProvider {
+    URL getUrl();
 }

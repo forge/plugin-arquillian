@@ -7,12 +7,13 @@ import org.junit.Test;
 @Ignore
 public class AddArquillianCommandTestCase {
 
-   @Test
-   public void shouldDefaultVersion() {
-      Assert.fail("NOT IMPLEMENTED");
-   }
-   @Test
-   public void shouldAllowToSetVersion() {
-      Assert.fail("NOT IMPLEMENTED");
-   }
+    @Test
+    public void shouldDefaultVersion() {
+        Assert.fail("NOT IMPLEMENTED");
+    }
+
+    @Test
+    public void shouldAllowToSetVersion() {
+        Assert.fail("NOT IMPLEMENTED");
+    }
 }

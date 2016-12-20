@@ -6,23 +6,23 @@
  */
 package org.jboss.forge.arquillian.container.model;
 
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
 public class Container implements Comparable<Container> {
 
-    private static final Map<String,String> ABBREVIATIONS = new HashMap<>();
+    private static final Map<String, String> ABBREVIATIONS = new HashMap<>();
 
     static {
         ABBREVIATIONS.put("jbossas-", "jboss-as-");
-        ABBREVIATIONS.put("wls-",     "weblogic-server-");
-        ABBREVIATIONS.put("was-",     "websphere-as-");
+        ABBREVIATIONS.put("wls-", "weblogic-server-");
+        ABBREVIATIONS.put("was-", "websphere-as-");
     }
 
     private String groupId;
@@ -104,9 +104,8 @@ public class Container implements Comparable<Container> {
     private String getBaseId() {
         String id = getArtifactId().replaceAll("arquillian-(?:container-)?", "");
         // HACK fix names for JBoss AS containers since they don't follow the naming conventions
-        if ("org.jboss.as".equals(getGroupId()))
-        {
-          id = id.replace("jboss-as-", "jbossas-") + "-7";
+        if ("org.jboss.as".equals(getGroupId())) {
+            id = id.replace("jboss-as-", "jbossas-") + "-7";
         }
 
         return id;
@@ -117,9 +116,9 @@ public class Container implements Comparable<Container> {
     }
 
     public DependencyBuilder asDependency() {
-       return DependencyBuilder.create()
-             .setGroupId(getGroupId())
-             .setArtifactId(getArtifactId());
+        return DependencyBuilder.create()
+                .setGroupId(getGroupId())
+                .setArtifactId(getArtifactId());
     }
 
     @Override
@@ -132,7 +131,7 @@ public class Container implements Comparable<Container> {
     }
 
     public static String expandAbbr(String id) {
-        for (Map.Entry<String,String> abbr : ABBREVIATIONS.entrySet()) {
+        for (Map.Entry<String, String> abbr : ABBREVIATIONS.entrySet()) {
             if (id.contains(abbr.getKey())) {
                 id = id.replace(abbr.getKey(), abbr.getValue());
             }
@@ -142,7 +141,7 @@ public class Container implements Comparable<Container> {
     }
 
     public static String abbr(String id) {
-        for (Map.Entry<String,String> abbr : ABBREVIATIONS.entrySet()) {
+        for (Map.Entry<String, String> abbr : ABBREVIATIONS.entrySet()) {
             if (id.contains(abbr.getValue())) {
                 id = id.replace(abbr.getValue(), abbr.getKey());
             }

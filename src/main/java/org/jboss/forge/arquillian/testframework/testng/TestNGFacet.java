@@ -12,42 +12,36 @@ import org.jboss.forge.arquillian.api.TestFrameworkFacet;
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-public class TestNGFacet extends TestFrameworkFacet
-{
-   @Override
-   public String getFrameworkName()
-   {
-      return "testng";
-   }
+public class TestNGFacet extends TestFrameworkFacet {
+    @Override
+    public String getFrameworkName() {
+        return "testng";
+    }
 
-   @Override
-   public String getTemplateName()
-   {
-      return "TestNGTest.vtl";
-   }
+    @Override
+    public String getTemplateName() {
+        return "TestNGTest.vtl";
+    }
 
-   @Override
-   public String getVersionPropertyName()
-   {
-      return "version.testng";
-   }
+    @Override
+    public String getVersionPropertyName() {
+        return "version.testng";
+    }
 
 
-   @Override
-   public DependencyBuilder createFrameworkDependency()
-   {
-      return DependencyBuilder.create()
-            .setGroupId("org.testng")
-            .setArtifactId("testng")
-            .setScopeType("test");
-   }
+    @Override
+    public DependencyBuilder createFrameworkDependency() {
+        return DependencyBuilder.create()
+                .setGroupId("org.testng")
+                .setArtifactId("testng")
+                .setScopeType("test");
+    }
 
-   @Override
-   public DependencyBuilder createArquillianDependency()
-   {
-      return DependencyBuilder.create()
-            .setGroupId("org.jboss.arquillian.testng")
-            .setArtifactId("arquillian-testng-container")
-            .setScopeType("test");
-   }
+    @Override
+    public DependencyBuilder createArquillianDependency() {
+        return DependencyBuilder.create()
+                .setGroupId("org.jboss.arquillian.testng")
+                .setArtifactId("arquillian-testng-container")
+                .setScopeType("test");
+    }
 }

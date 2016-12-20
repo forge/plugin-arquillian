@@ -6,21 +6,20 @@
  */
 package org.jboss.forge.arquillian.observers;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.input.UIPrompt;
+
+import javax.inject.Inject;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class DownloadServerObserver
-{
-   @Inject
-   Project project;
+public class DownloadServerObserver {
+    @Inject
+    Project project;
 
-   @Inject
-   UIPrompt shell;
+    @Inject
+    UIPrompt shell;
 
    /*
    public void install(@Observes ContainerInstallEvent event)

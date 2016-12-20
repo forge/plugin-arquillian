@@ -10,17 +10,14 @@ package org.jboss.forge.arquillian.api;
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
  */
-public class TestFrameworkInstallEvent
-{
-   private final TestFrameworkFacet testFramework;
+public class TestFrameworkInstallEvent {
+    private final TestFrameworkFacet testFramework;
 
-   public TestFrameworkInstallEvent(TestFrameworkFacet testFramework)
-   {
-      this.testFramework = testFramework;
-   }
+    public TestFrameworkInstallEvent(TestFrameworkFacet testFramework) {
+        this.testFramework = testFramework;
+    }
 
-   public TestFrameworkFacet getContainer()
-   {
-      return testFramework;
-   }
+    public TestFrameworkFacet getContainer() {
+        return testFramework;
+    }
 }

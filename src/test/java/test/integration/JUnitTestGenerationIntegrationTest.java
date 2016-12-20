@@ -13,9 +13,9 @@ import org.junit.runner.RunWith;
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
-@RunWith(Arquillian.class) @Ignore
-public class JUnitTestGenerationIntegrationTest
-{
+@RunWith(Arquillian.class)
+@Ignore
+public class JUnitTestGenerationIntegrationTest {
 /*
    @Deployment
    public static JavaArchive getDeployment()

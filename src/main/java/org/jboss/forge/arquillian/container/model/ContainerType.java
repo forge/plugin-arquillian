@@ -30,9 +30,8 @@ package org.jboss.forge.arquillian.container.model;
 /**
  * @author <a href="mailto:benevides@redhat.com">Rafael Benevides</a>
  */
-public enum ContainerType
-{
-   REMOTE,
-   MANAGED,
-   EMBEDDED
+public enum ContainerType {
+    REMOTE,
+    MANAGED,
+    EMBEDDED
 }
