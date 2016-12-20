@@ -1,14 +1,5 @@
 package org.jboss.forge.arquillian.container;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
@@ -22,6 +13,13 @@ import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.arquillian.container.model.Container;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class ProfileManager {
 
    @Inject
@@ -29,19 +27,14 @@ public class ProfileManager {
    
    public List<Profile> getArquillianProfiles(Project project) {
       MavenFacet mavenCoreFacet = project.getFacet(MavenFacet.class);
-      List<Profile> profiles = new ArrayList<Profile>();
+      List<Profile> profiles = new ArrayList<>();
       List<Profile> profileList = mavenCoreFacet.getModel().getProfiles();
       for (Profile profile : profileList)
       {
          profiles.add(profile);
       }
 
-      Collections.sort(profiles, new Comparator<Profile>() {
-         @Override
-         public int compare(Profile o1, Profile o2) {
-            return o1.getId().compareTo(o2.getId());
-         }
-      });
+      profiles.sort((o1, o2) -> o1.getId().compareTo(o2.getId()));
       return profiles;
    }
    
@@ -127,11 +120,8 @@ public class ProfileManager {
                    "    </systemPropertyVariables>\n" +
                    "</configuration>"));
        }
-       catch (XmlPullParserException e) {
+       catch (XmlPullParserException | IOException e) {
           throw new IllegalStateException(e);
-       }
-       catch (IOException e) {
-          throw new java.lang.IllegalStateException(e);
        }
    }
 }

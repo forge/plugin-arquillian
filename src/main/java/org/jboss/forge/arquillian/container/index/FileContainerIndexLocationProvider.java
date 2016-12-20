@@ -22,11 +22,7 @@ public class FileContainerIndexLocationProvider implements ContainerIndexLocatio
       {
          return this.getClass().getClassLoader().getResource("containers.json").toURI().toURL();
       }
-      catch (MalformedURLException e)
-      {
-         throw new RuntimeException(e);
-      }
-      catch (URISyntaxException e)
+      catch (MalformedURLException | URISyntaxException e)
       {
          throw new RuntimeException(e);
       }

@@ -22,7 +22,7 @@ public enum ArchiveType
    private final String className;
    private final String simpleClassName;
 
-   private ArchiveType(String className)
+   ArchiveType(String className)
    {
       this.className = className;
       this.simpleClassName = Types.toSimpleName(className);

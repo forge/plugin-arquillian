@@ -44,7 +44,7 @@ public class DependencyUtilTest
    @Test
    public void shouldGetLastNonSnapshotVersion()
    {
-      List<Coordinate> deps = new ArrayList<Coordinate>();
+      List<Coordinate> deps = new ArrayList<>();
       deps.add(DependencyBuilder.create().setVersion("1.0").getCoordinate());
       deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
 
@@ -56,7 +56,7 @@ public class DependencyUtilTest
    @Test
    public void shouldReturnLatestIfAllSnapshots()
    {
-      List<Coordinate> deps = new ArrayList<Coordinate>();
+      List<Coordinate> deps = new ArrayList<>();
       deps.add(DependencyBuilder.create().setVersion("1.0-SNAPSHOT").getCoordinate());
       deps.add(DependencyBuilder.create().setVersion("2.0-SNAPSHOT").getCoordinate());
 

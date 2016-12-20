@@ -41,7 +41,7 @@ public final class DependencyUtil
    }
 
    public static List<String> toVersionString(List<Coordinate> dependencies) {
-      List<String> versions = new ArrayList<String>();
+      List<String> versions = new ArrayList<>();
       for(Coordinate cor : dependencies) {
          versions.add(cor.getVersion());
       }

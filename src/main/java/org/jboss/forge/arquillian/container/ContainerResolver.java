@@ -33,7 +33,7 @@ public class ContainerResolver
    public Iterable<Container> getContainers(ContainerType type) {
       List<Container> availableContainers = null;
       try {
-         availableContainers = new ArrayList<Container>(parser.getContainers());
+         availableContainers = new ArrayList<>(parser.getContainers());
          Collections.sort(availableContainers);
 
          if (type == null) {
@@ -48,7 +48,7 @@ public class ContainerResolver
    }
 
    private Iterable<Container> filterByType(List<Container> containers, ContainerType containerType) {
-      List<Container> filtered = new ArrayList<Container>();
+      List<Container> filtered = new ArrayList<>();
       for (Container container : containers) {
          if (containerType.equals(container.getContainerType())) {
             filtered.add(container);

@@ -107,14 +107,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
             }
          }
       });
-      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
-      {
-         @Override
-         public String convert(JavaClassSource source)
-         {
-            return source == null ? null : source.getQualifiedName();
-         }
-      });
+      targets.setItemLabelConverter(source -> source == null ? null : source.getQualifiedName());
 
       targets.setValueChoices(sources);
 

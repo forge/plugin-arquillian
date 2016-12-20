@@ -61,81 +61,54 @@ public class ContainerConfigurationCommand extends AbstractProjectCommand implem
              .add(containerOption)
              .add(containerValue);
       
-      container.setValueChoices(new Callable<Iterable<Profile>>() {
-         @Override
-         public Iterable<Profile> call() throws Exception {
-            return profileManager.getArquillianProfiles(getSelectedProject(builder.getUIContext()));
+      container.setValueChoices(() -> profileManager.getArquillianProfiles(getSelectedProject(builder.getUIContext())));
+      container.setDefaultValue(() ->
+      {
+         Iterable<Profile> profiles = container.getValueChoices();
+         if(profiles != null && profiles.iterator().hasNext()) {
+            return profiles.iterator().next();
          }
+         return null;
       });
-      container.setDefaultValue(new Callable<Profile>() {
-         @Override
-         public Profile call() throws Exception {
-            Iterable<Profile> profiles = container.getValueChoices();
-            if(profiles != null && profiles.iterator().hasNext()) {
-               return profiles.iterator().next();
-            }
+      container.setItemLabelConverter(source ->
+      {
+         if(source == null) {
             return null;
          }
+         return source.getId();
       });
-      container.setItemLabelConverter(new Converter<Profile, String>() {
-         @Override
-         public String convert(Profile source) {
-            if(source == null) {
-               return null;
-            }
-            return source.getId();
-         }
-      });
-      containerOption.setEnabled(new Callable<Boolean>() {
-         @Override
-         public Boolean call() throws Exception {
-            return container.hasValue();
-         }
-      });
-      containerOption.setItemLabelConverter(new Converter<Configuration, String>() {
-         @Override
-         public String convert(Configuration source) {
-            if(source == null) {
-               return null;
-            }
-            return source.getName();
-         }
-      });
-      containerOption.setValueChoices(new Callable<Iterable<Configuration>>() {
-         @Override
-         public Iterable<Configuration> call() throws Exception {
-            if(containerOption.isEnabled()) {
-               Iterable<Configuration> config = profileManager.getContainer(container.getValue()).getConfigurations();
-               if(config != null) {
-                  return config;
-               }
-            }
-            return Collections.emptyList();
-         }
-      });
-      containerValue.setEnabled(new Callable<Boolean>() {
-         @Override
-         public Boolean call() throws Exception {
-            return containerOption.hasValue();
-         }
-      });
-      containerValue.setDefaultValue(new Callable<String>() {
-         @Override
-         public String call() throws Exception {
-            if(containerValue.isEnabled()) {
-               return containerOption.getValue().getDefault();
-            }
+      containerOption.setEnabled(() -> container.hasValue());
+      containerOption.setItemLabelConverter(source ->
+      {
+         if(source == null) {
             return null;
          }
+         return source.getName();
       });
-      containerValue.setRequired(new Callable<Boolean>() {
-         @Override
-         public Boolean call() throws Exception {
-            if(containerValue.isEnabled()) {
-               return containerOption.getValue().getDefault() != null;
+      containerOption.setValueChoices(() ->
+      {
+         if(containerOption.isEnabled()) {
+            Iterable<Configuration> config = profileManager.getContainer(container.getValue()).getConfigurations();
+            if(config != null) {
+               return config;
             }
-            return true;
          }
+         return Collections.emptyList();
+      });
+      containerValue.setEnabled(() -> containerOption.hasValue());
+      containerValue.setDefaultValue(() ->
+      {
+         if(containerValue.isEnabled()) {
+            return containerOption.getValue().getDefault();
+         }
+         return null;
+      });
+      containerValue.setRequired(() ->
+      {
+         if(containerValue.isEnabled()) {
+            return containerOption.getValue().getDefault() != null;
+         }
+         return true;
       });
    }
 

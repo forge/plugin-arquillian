@@ -1,13 +1,5 @@
 package org.jboss.forge.arquillian.command;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
@@ -35,6 +27,12 @@ import org.jboss.forge.arquillian.container.ContainerInstaller;
 import org.jboss.forge.arquillian.container.model.Container;
 import org.jboss.forge.arquillian.container.model.Dependency;
 import org.jboss.forge.arquillian.util.DependencyUtil;
+
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Any;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddContainerDependencyStep extends AbstractProjectCommand implements UIWizardStep {
 
@@ -83,20 +81,10 @@ public class AddContainerDependencyStep extends AbstractProjectCommand implement
                .getCoordinate());
 
          dependencyVersion.setEnabled(true);
-         dependencyVersion.setValueChoices(new Callable<Iterable<String>>() {
-            @Override
-            public Iterable<String> call() throws Exception {
-               return DependencyUtil.toVersionString(
-                     resolver.resolveVersions(dependencyCoordinate));
-            }
-         });
-         dependencyVersion.setDefaultValue(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-               return DependencyUtil.getLatestNonSnapshotVersionCoordinate(
-                     resolver.resolveVersions(dependencyCoordinate));
-            }
-         });
+         dependencyVersion.setValueChoices(() -> DependencyUtil.toVersionString(
+               resolver.resolveVersions(dependencyCoordinate)));
+         dependencyVersion.setDefaultValue(() -> DependencyUtil.getLatestNonSnapshotVersionCoordinate(
+               resolver.resolveVersions(dependencyCoordinate)));
 
       }
    }

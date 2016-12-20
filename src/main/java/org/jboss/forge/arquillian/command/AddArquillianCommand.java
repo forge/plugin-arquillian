@@ -1,9 +1,5 @@
 package org.jboss.forge.arquillian.command;
 
-import java.util.concurrent.Callable;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
@@ -20,6 +16,8 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.arquillian.api.ArquillianFacet;
+
+import javax.inject.Inject;
 
 public class AddArquillianCommand  extends AbstractProjectCommand implements UICommand {
 
@@ -48,18 +46,8 @@ public class AddArquillianCommand  extends AbstractProjectCommand implements UIC
    public void initializeUI(UIBuilder builder) throws Exception {
       builder.add(arquillianVersion);
       
-      arquillianVersion.setDefaultValue(new Callable<String>() {
-         @Override
-         public String call() throws Exception {
-            return facet.getDefaultVersion();
-         }
-      });
-      arquillianVersion.setValueChoices(new Callable<Iterable<String>>() {
-         @Override
-         public Iterable<String> call() throws Exception {
-            return facet.getAvailableVersions();
-         }
-      });
+      arquillianVersion.setDefaultValue(() -> facet.getDefaultVersion());
+      arquillianVersion.setValueChoices(() -> facet.getAvailableVersions());
    }
 
    @Override

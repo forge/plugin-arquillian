@@ -17,7 +17,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
  */
 public class Container implements Comparable<Container> {
 
-    private static final Map<String,String> ABBREVIATIONS = new HashMap<String,String>();
+    private static final Map<String,String> ABBREVIATIONS = new HashMap<>();
 
     static {
         ABBREVIATIONS.put("jbossas-", "jboss-as-");

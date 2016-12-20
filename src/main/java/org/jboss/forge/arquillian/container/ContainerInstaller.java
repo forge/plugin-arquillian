@@ -27,7 +27,7 @@ public class ContainerInstaller
 
    public void installContainer(Project project, Container container, String version, Map<Dependency, String> dependencies)
    {
-      List<org.jboss.forge.addon.dependencies.Dependency> allDependencies = new ArrayList<org.jboss.forge.addon.dependencies.Dependency>();
+      List<org.jboss.forge.addon.dependencies.Dependency> allDependencies = new ArrayList<>();
       
       DependencyBuilder containerDependency = container.asDependency()
                 .setVersion(version)

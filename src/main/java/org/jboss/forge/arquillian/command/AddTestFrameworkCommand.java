@@ -1,13 +1,5 @@
 package org.jboss.forge.arquillian.command;
 
-import java.util.Collections;
-import java.util.concurrent.Callable;
-
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
@@ -26,6 +18,11 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.arquillian.api.ArquillianFacet;
 import org.jboss.forge.arquillian.api.TestFrameworkFacet;
 import org.jboss.forge.arquillian.api.TestFrameworkInstallEvent;
+
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Any;
+import javax.inject.Inject;
+import java.util.Collections;
 
 public class AddTestFrameworkCommand extends AbstractProjectCommand implements UICommand {
 
@@ -61,54 +58,36 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
              .add(testFrameworkVersion);
 
       testFramework.setEnabled(true);
-      testFramework.setItemLabelConverter(new Converter<TestFrameworkFacet, String>() {
-         @Override
-         public String convert(TestFrameworkFacet source) {
-            if(source == null) {
-               return null;
-            }
-            if(builder.getUIContext().getProvider().isGUI()) {
-               return source.getFrameworkName();
-            }
-            return source.getFrameworkName().toLowerCase();
-         }
-      });
-      testFramework.setRequired(new Callable<Boolean>() {
-         @Override
-         public Boolean call() throws Exception {
-            return true; // check if already installed
-         }
-      });
-
-      testFrameworkVersion.setRequired(new Callable<Boolean>() {
-         @Override
-         public Boolean call() throws Exception {
-            return true;
-         }
-      });
-      testFrameworkVersion.setEnabled(new Callable<Boolean>() {
-         @Override
-         public Boolean call() throws Exception {
-            return testFramework.hasValue();
-         }
-      });
-      testFrameworkVersion.setValueChoices(new Callable<Iterable<String>>() {
-         @Override
-         public Iterable<String> call() throws Exception {
-            if(testFrameworkVersion.isEnabled()) {
-               return testFramework.getValue().getAvailableVersions();
-            }
-            return Collections.emptyList();
-         }
-      });
-      testFrameworkVersion.setDefaultValue(new Callable<String>() {
-         @Override
-         public String call() throws Exception {
-            if(testFrameworkVersion.isEnabled()) {
-               return testFrameworkVersion.isEnabled() ? testFramework.getValue().getDefaultVersion():null;
-            }
+      testFramework.setItemLabelConverter(source ->
+      {
+         if(source == null) {
             return null;
          }
+         if(builder.getUIContext().getProvider().isGUI()) {
+            return source.getFrameworkName();
+         }
+         return source.getFrameworkName().toLowerCase();
+      });
+      testFramework.setRequired(() ->
+      {
+         return true; // check if already installed
+      });
+
+      testFrameworkVersion.setRequired(() -> true);
+      testFrameworkVersion.setEnabled(() -> testFramework.hasValue());
+      testFrameworkVersion.setValueChoices(() ->
+      {
+         if(testFrameworkVersion.isEnabled()) {
+            return testFramework.getValue().getAvailableVersions();
+         }
+         return Collections.emptyList();
+      });
+      testFrameworkVersion.setDefaultValue(() ->
+      {
+         if(testFrameworkVersion.isEnabled()) {
+            return testFrameworkVersion.isEnabled() ? testFramework.getValue().getDefaultVersion():null;
+         }
+         return null;
       });
    }
 
