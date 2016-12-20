@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
-      <version>16</version>
+      <version>21</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.arquillian.forge</groupId>
@@ -12,11 +12,11 @@
    <version>1.0.0-SNAPSHOT</version>
    <name>Arquillian Forge Addon</name>
    <properties>
-      <version.junit>4.11</version.junit>
+      <version.junit>4.12</version.junit>
       <version.jackson>1.9.1</version.jackson>
       <version.velocity>1.7</version.velocity>
-      <furnace.version>2.10.1.Final</furnace.version>
-      <version.arquillian_core>1.1.4.Final</version.arquillian_core>
+      <furnace.version>3.4.0.Final</furnace.version>
+      <version.arquillian_core>1.1.11.Final</version.arquillian_core>
    </properties>
    <dependencyManagement>
       <dependencies>
