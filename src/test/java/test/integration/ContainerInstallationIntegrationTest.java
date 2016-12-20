@@ -6,18 +6,6 @@
  */
 package test.integration;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -28,10 +16,10 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.api.ArquillianFacet;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.arquillian.command.SetupWizard;
 import org.jboss.forge.arquillian.testframework.junit.JUnitFacet;
 import org.jboss.forge.parser.xml.Node;
@@ -39,9 +27,20 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import test.integration.util.DependencyMatcher;
 import test.integration.util.Deployments;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @Author Paul Bakker - paul.bakker.nl@gmail.com
@@ -50,13 +49,13 @@ import test.integration.util.Deployments;
 public class ContainerInstallationIntegrationTest 
 {
    @Deployment
-   @Dependencies({
+   @AddonDependencies({
             @AddonDependency(name = "org.arquillian.forge:arquillian-addon"),
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
    })
-   public static ForgeArchive getDeployment() {
+   public static AddonArchive getDeployment() {
       return Deployments.basicPluginInfrastructure();
    }
    
@@ -168,7 +167,7 @@ public class ContainerInstallationIntegrationTest
    public void installGlassfishManagedContainer() throws Exception
    {
       installContainer("glassfish-managed-3.1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-glassfish-managed-3.1")));
    }
 
@@ -176,7 +175,7 @@ public class ContainerInstallationIntegrationTest
    public void installGlassfishRemoteContainer() throws Exception
    {
       installContainer("glassfish-remote-3.1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-glassfish-remote-3.1")));
    }
 
@@ -184,7 +183,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS51ManagedContainer() throws Exception
    {
       installContainer("jbossas-managed-5.1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-jbossas-managed-5.1")));
    }
 
@@ -192,7 +191,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS51RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-5.1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-jbossas-remote-5.1")));
    }
 
@@ -200,7 +199,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS5RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-5",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-jbossas-remote-5")));
    }
 
@@ -208,7 +207,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS6EmbeddedContainer() throws Exception
    {
       installContainer("jbossas-embedded-6",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-jbossas-embedded-6")));
    }
 
@@ -216,7 +215,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS6ManagedContainer() throws Exception
    {
       installContainer("jbossas-managed-6",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-jbossas-managed-6")));
    }
 
@@ -224,7 +223,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS6RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-6",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-jbossas-remote-6")));
    }
 
@@ -232,7 +231,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS7ManagedContainer() throws Exception
    {
       installContainer("jbossas-managed-7",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("jboss-as-arquillian-container-managed")));
    }
 
@@ -240,7 +239,7 @@ public class ContainerInstallationIntegrationTest
    public void installJBossAS7RemoteContainer() throws Exception
    {
       installContainer("jbossas-remote-7",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("jboss-as-arquillian-container-remote")));
    }
 
@@ -248,16 +247,16 @@ public class ContainerInstallationIntegrationTest
     public void installWildFlyManagedContainer() throws Exception
     {
         installContainer("wildfly-managed",
-                Arrays.asList(
-                        new DependencyMatcher("wildfly-arquillian-container-managed")));
+              singletonList(
+                    new DependencyMatcher("wildfly-arquillian-container-managed")));
     }
 
     @Test
     public void installWildFlyRemoteContainer() throws Exception
     {
         installContainer("wildfly-remote",
-                Arrays.asList(
-                        new DependencyMatcher("wildfly-arquillian-container-remote")));
+              singletonList(
+                    new DependencyMatcher("wildfly-arquillian-container-remote")));
     }
 
    @Test
@@ -295,7 +294,7 @@ public class ContainerInstallationIntegrationTest
    public void installWAS7RemoteContainer() throws Exception
    {
       installContainer("was-remote-7",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-was-remote-7")));
    }
 
@@ -304,7 +303,7 @@ public class ContainerInstallationIntegrationTest
    public void installWAS8EmbeddedContainer() throws Exception
    {
       installContainer("was-embedded-8",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-was-embedded-8")));
    }
 
@@ -313,7 +312,7 @@ public class ContainerInstallationIntegrationTest
    public void installWAS8RemoteContainer() throws Exception
    {
       installContainer("was-remote-8",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-was-remote-8")));
    }
 
@@ -321,7 +320,7 @@ public class ContainerInstallationIntegrationTest
    public void installTomcat6RemoteContainer() throws Exception
    {
       installContainer("tomcat-remote-6",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-tomcat-remote-6")));
    }
 
@@ -329,7 +328,7 @@ public class ContainerInstallationIntegrationTest
    public void installWeldEEEmbeddedContainer() throws Exception
    {
       installContainer("weld-ee-embedded-1.1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-weld-ee-embedded-1.1")));
    }
 
@@ -337,7 +336,7 @@ public class ContainerInstallationIntegrationTest
    public void installWeldSEEmbeddedContainer() throws Exception
    {
       installContainer("weld-se-embedded-1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-weld-se-embedded-1")));
    }
 
@@ -345,7 +344,7 @@ public class ContainerInstallationIntegrationTest
    public void installWeldSEEmbedded1_1Container() throws Exception
    {
       installContainer("weld-se-embedded-1.1",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-weld-se-embedded-1.1")));
    }
 
@@ -353,7 +352,7 @@ public class ContainerInstallationIntegrationTest
    public void installWWeblogicRemoteContainer() throws Exception
    {
       installContainer("wls-remote-10.3",
-            Arrays.asList(
+            singletonList(
                   new DependencyMatcher("arquillian-wls-remote-10.3")));
    }
 /*

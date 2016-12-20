@@ -1,17 +1,7 @@
 package org.jboss.forge.arquillian.command;
 
-import java.io.FileNotFoundException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
-import javax.inject.Inject;
-
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -41,6 +31,15 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+
+import javax.inject.Inject;
+import java.io.FileNotFoundException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import static java.util.Collections.singletonList;
 
 @FacetConstraint(ArquillianFacet.class)
 public class CreateTestCommand extends AbstractProjectCommand implements UICommand
@@ -118,7 +117,7 @@ public class CreateTestCommand extends AbstractProjectCommand implements UIComma
          JavaType<?> javaType = javaResource.getJavaType();
          if (javaType.isClass())
          {
-            targets.setDefaultValue(Arrays.asList((JavaClassSource) javaType));
+            targets.setDefaultValue(singletonList((JavaClassSource) javaType));
          }
       }
    }

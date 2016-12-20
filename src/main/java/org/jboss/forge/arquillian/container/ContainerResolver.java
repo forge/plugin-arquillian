@@ -6,16 +6,15 @@
  */
 package org.jboss.forge.arquillian.container;
 
+import org.jboss.forge.arquillian.container.index.ContainerDirectoryParser;
+import org.jboss.forge.arquillian.container.model.Container;
+import org.jboss.forge.arquillian.container.model.ContainerType;
+
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.inject.Inject;
-
-import org.jboss.forge.arquillian.container.index.ContainerDirectoryParser;
-import org.jboss.forge.arquillian.container.model.Container;
-import org.jboss.forge.arquillian.container.model.ContainerType;
 
 
 /**
@@ -31,7 +30,7 @@ public class ContainerResolver
    }
 
    public Iterable<Container> getContainers(ContainerType type) {
-      List<Container> availableContainers = null;
+      List<Container> availableContainers;
       try {
          availableContainers = new ArrayList<>(parser.getContainers());
          Collections.sort(availableContainers);

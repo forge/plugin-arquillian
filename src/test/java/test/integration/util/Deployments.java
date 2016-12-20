@@ -6,9 +6,10 @@
  */
 package test.integration.util;
 
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+
+import static org.jboss.forge.furnace.repositories.AddonDependencyEntry.create;
 
 /**
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
@@ -16,17 +17,17 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 public class Deployments
 {
 
-   public static ForgeArchive basicPluginInfrastructure()
+   public static AddonArchive basicPluginInfrastructure()
    {
-      ForgeArchive archive = ShrinkWrap
-            .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+            .create(AddonArchive.class)
             .addBeansXML()
             .addAsAddonDependencies(
-                     AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                     AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                     AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                     AddonDependencyEntry.create("org.arquillian.forge:arquillian-addon"),
-                     AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+                     create("org.jboss.forge.furnace.container:cdi"),
+                     create("org.jboss.forge.addon:projects"),
+                     create("org.jboss.forge.addon:maven"),
+                     create("org.arquillian.forge:arquillian-addon"),
+                     create("org.jboss.forge.addon:ui-test-harness")
             ).addClasses(DependencyMatcher.class);
 
       return archive;

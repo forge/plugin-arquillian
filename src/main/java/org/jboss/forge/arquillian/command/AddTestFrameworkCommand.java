@@ -49,7 +49,7 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
       return Metadata.from(super.getMetadata(context), getClass())
             .category(Categories.create("Arquillian"))
             .name("Arquillian: Add TestFramework")
-            .description("This addon will help you setup a testframework for Arquillian");
+            .description("This addon will help you setup a test framework for Arquillian");
    }
    
    @Override
@@ -68,10 +68,7 @@ public class AddTestFrameworkCommand extends AbstractProjectCommand implements U
          }
          return source.getFrameworkName().toLowerCase();
       });
-      testFramework.setRequired(() ->
-      {
-         return true; // check if already installed
-      });
+      testFramework.setRequired(() -> true); // check if already installed
 
       testFrameworkVersion.setRequired(() -> true);
       testFrameworkVersion.setEnabled(() -> testFramework.hasValue());
