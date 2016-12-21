@@ -1,3 +1,5 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 # IMPORTANT
 
 This plugin is for JBoss Forge 1.x and is not maintained anymore. Newer version can be found in this repository: https://github.com/forge/addon-arquillian
