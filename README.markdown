@@ -1,3 +1,7 @@
+# IMPORTANT
+
+This plugin is for JBoss Forge 1.x and is not maintained anymore. Newer version can be found in this repository: https://github.com/forge/addon-arquillian
+
 Installation
 ============
 The Arquillian plugin is listed in the Forge plugin repository so installation is trivial. 
